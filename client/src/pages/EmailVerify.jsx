@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { assets } from '../assets/assets'
 import axios from 'axios';
 import { useContext } from 'react';
@@ -63,6 +63,14 @@ function EmailVerify() {
             
         }
     }
+
+
+    useEffect(()=>{
+
+        isLoggedin && userData && userData.isAccountVerified && navigate('/')
+
+    },[isLoggedin,userData])
+
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to bg-purple-400">
