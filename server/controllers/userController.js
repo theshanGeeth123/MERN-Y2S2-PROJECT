@@ -72,18 +72,22 @@ export const getUserIdByEmail = async (req, res) => {
 // UPDATE user by ID
 export const updateUser = async (req, res) => {
   const { id } = req.params;
-  const { name, email } = req.body;
+  const { name, email, age, phone, address } = req.body;
 
   try {
-    const user = await userModel.findByIdAndUpdate(id, { name, email }, { new: true });
+    const updatedData = { name, email, age, phone, address };
+
+    const user = await userModel.findByIdAndUpdate(id, updatedData, { new: true });
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
+
     res.json({ success: true, message: "User updated", data: user });
   } catch (err) {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // DELETE user by ID
 export const deleteUser = async (req, res) => {
