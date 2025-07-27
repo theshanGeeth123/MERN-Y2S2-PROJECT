@@ -25,7 +25,7 @@ function Login() {
 
             if(state === 'Sign Up'){
 
-                const {data} =  await axios.post(backendUrl+'api/auth/register',{
+                const {data} =  await axios.post('http://localhost:4000/api/auth/register',{
                     name,email,password
                 })
 
@@ -63,7 +63,7 @@ function Login() {
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to bg-purple-400">
       <img
       onClick={()=>navigate('/')}
-        src={assets.logo}
+        src={assets.pic2}
         alt=""
         className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer"
       />
