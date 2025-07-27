@@ -9,7 +9,7 @@ function Login() {
   const navigate = useNavigate();
   const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContent);
 
-  const [state, setState] = useState("Sign Up");
+  const [state, setState] = useState("login");
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,6 +36,7 @@ function Login() {
           setIsLoggedin(true);
           getUserData();
           navigate('/');
+          localStorage.setItem("customer", JSON.stringify({ email }));
         } else {
           toast.error(data.message);
         }
