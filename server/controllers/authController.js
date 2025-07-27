@@ -4,9 +4,9 @@ import userModel from "../models/userModel.js";
 import tranporter from "../config/nodemailer.js";
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, age, phone, address } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !age || !phone || !address) {
     return res.json({ success: false, message: "Missing Details" });
   }
 
@@ -14,12 +14,20 @@ export const register = async (req, res) => {
     const existingUser = await userModel.findOne({ email });
 
     if (existingUser) {
-      return res.json({ success: false, message: "User already exist" });
+      return res.json({ success: false, message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new userModel({ name, email, password: hashedPassword });
+    // ✅ Include age, phone, address here
+    const user = new userModel({ 
+      name, 
+      email, 
+      password: hashedPassword,
+      age,
+      phone,
+      address
+    });
 
     await user.save();
 
@@ -34,22 +42,23 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // sending welcome email
+    // Send welcome email
     const mailOptions = {
-      from : process.env.SENDER_EMAIL,
+      from: process.env.SENDER_EMAIL,
       to: email,
-      subject:'Welcome to Greatstack',
-      text:`Welcome to Greatstack website , Tour account has created with email id :${email}`
-    }
+      subject: 'Welcome to Greatstack',
+      text: `Welcome to Greatstack website, Your account has been created with email ID: ${email}`
+    };
 
     await tranporter.sendMail(mailOptions);
 
-    return res.json({success:true});
+    return res.json({ success: true });
 
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
+
 
 export const login = async (req, res) => {
   const { email, password } = req.body;

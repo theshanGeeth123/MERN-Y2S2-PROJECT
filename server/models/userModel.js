@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema({
   isAccountVerified: { type: Boolean, default: false },
   resetOtp: { type: String, default: "" },
   resetOtpExpireAt: { type: Number, default: 0 },
+  age:{type:String,required:true},
+  phone:{type:String,required:true},
+  address:{type:String,required:true}
 });
 
 const userModel = mongoose.model.user ||  mongoose.model('user',userSchema);

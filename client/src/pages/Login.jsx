@@ -2,85 +2,80 @@ import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { AppContent } from "../context/AppContext";
-import axios from 'axios'
+import axios from 'axios';
 import { toast } from "react-toastify";
 
 function Login() {
-
-    const navigate = useNavigate();
-
-    const {backendUrl,setIsLoggedin,getUserData} = useContext(AppContent);
+  const navigate = useNavigate();
+  const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContent);
 
   const [state, setState] = useState("Sign Up");
-    const [name,setName] = useState('');
-    const [email,setEmail] = useState('');
-    const [password,setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [age, setAge] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
 
-    const onSubmitHandler = async(e)=>{
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    axios.defaults.withCredentials = true;
 
-        try {
-            e.preventDefault();
+    try {
+      if (state === 'Sign Up') {
+        const { data } = await axios.post('http://localhost:4000/api/auth/register', {
+          name,
+          email,
+          password,
+          age,
+          phone,
+          address
+        });
 
-            axios.defaults.withCredentials = true;
-
-            if(state === 'Sign Up'){
-
-                const {data} =  await axios.post('http://localhost:4000/api/auth/register',{
-                    name,email,password
-                })
-
-                if(data.success){
-                    setIsLoggedin(true);
-                    getUserData();
-                    
-                    navigate('/');
-                }else{
-                    toast.error(data.message);
-                }
-
-            }else{
-
-                const {data} =  await axios.post('http://localhost:4000/api/auth/login',{
-                    email,password
-                })
-
-                if(data.success){
-                    setIsLoggedin(true);
-                    getUserData();
-                    localStorage.setItem("customer",JSON.stringify({email:email}))
-                    navigate('/');
-
-                }else{
-                    toast.error(data.message);
-                }
-            }
-
-        } catch (error) {
-            toast.error(error.message || "An error occurred");
+        if (data.success) {
+          setIsLoggedin(true);
+          getUserData();
+          navigate('/');
+        } else {
+          toast.error(data.message);
         }
+      } else {
+        const { data } = await axios.post('http://localhost:4000/api/auth/login', {
+          email,
+          password
+        });
 
+        if (data.success) {
+          setIsLoggedin(true);
+          getUserData();
+          localStorage.setItem("customer", JSON.stringify({ email }));
+          navigate('/');
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(error.message || "An error occurred");
     }
- 
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to bg-purple-400">
       <img
-      onClick={()=>navigate('/')}
+        onClick={() => navigate('/')}
         src={assets.pic2}
         alt=""
         className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer"
       />
       <div className="bg-slate-900 p-10 rounded-lg shadow-lg w-full sm:w-96 text-indigo-300 text-sm">
-        <h2 className="text-3xl font-semibold text-white text-center mb-3 ">
+        <h2 className="text-3xl font-semibold text-white text-center mb-3">
           {state === "Sign Up" ? "Create account" : "Login"}
         </h2>
         <p className="text-center text-sm mb-6">
-          {state === "Sign Up"
-            ? "Create your account"
-            : "Login to your account"}
+          {state === "Sign Up" ? "Create your account" : "Login to your account"}
         </p>
 
-        <form onSubmit={onSubmitHandler} action="" className=" text-sm mb-6">
+        <form onSubmit={onSubmitHandler} className="text-sm mb-6">
           {state === "Sign Up" && (
             <div className="flex mb-4 items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
               <img src={assets.person_icon} alt="" />
@@ -89,8 +84,8 @@ function Login() {
                 type="text"
                 placeholder="Full Name"
                 required
-                onChange={e => setName(e.target.value)}
                 value={name}
+                onChange={(e) => setName(e.target.value)}
               />
             </div>
           )}
@@ -102,8 +97,8 @@ function Login() {
               type="email"
               placeholder="Email id"
               required
-              onChange={e => setEmail(e.target.value)}
               value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -114,12 +109,52 @@ function Login() {
               type="password"
               placeholder="Password"
               required
-              onChange={e => setPassword(e.target.value)}
               value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
 
-          <p onClick={()=>navigate('/reset-password')} className="mb-4 text-indigo-500 cursor-pointer">
+          {state === "Sign Up" && (
+            <>
+              <div className="flex mb-4 items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+                <img src={assets.person_icon} alt="" />
+                <input
+                  className="bg-transparent outline-none"
+                  type="number"
+                  placeholder="Age"
+                  required
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                />
+              </div>
+
+              <div className="flex mb-4 items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+                <img src={assets.person_icon} alt="" />
+                <input
+                  className="bg-transparent outline-none"
+                  type="text"
+                  placeholder="Phone Number"
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+
+              <div className="flex mb-4 items-center gap-3 w-full px-5 py-2.5 rounded-full bg-[#333A5C]">
+                <img src={assets.person_icon} alt="" />
+                <input
+                  className="bg-transparent outline-none"
+                  type="text"
+                  placeholder="Address"
+                  required
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                />
+              </div>
+            </>
+          )}
+
+          <p onClick={() => navigate('/reset-password')} className="mb-4 text-indigo-500 cursor-pointer">
             Forgot password?
           </p>
 
@@ -128,33 +163,23 @@ function Login() {
           </button>
         </form>
 
-        {state === "Sign Up" ? (
-          <p className="text-center text-gray-400 text-xs mt-4">
-            Already have an account?{" "}
-            <span onClick={()=>setState('Login')} className="cursor-pointer underline text-blue-400">
-              {" "}
-              Login here
-            </span>
-          </p>
-        ) : (
-          <p className="text-center text-gray-400 text-xs mt-4">
-            Dont have an account?{" "}
-            <span onClick={()=>setState('Sign Up')} className="cursor-pointer underline text-blue-400">
-              {" "}
-              Sign Up
-            </span>
-          </p>
-        )}
         <p className="text-center text-gray-400 text-xs mt-4">
-            Staff Member?{" "}
-            <span onClick={()=>navigate('/admin/login')} className="cursor-pointer underline text-red-700">
-              {" "}
-              Sign Up
-            </span>
-          </p>
+          {state === "Sign Up" ? "Already have an account?" : "Don't have an account?"}{" "}
+          <span
+            onClick={() => setState(state === "Sign Up" ? "Login" : "Sign Up")}
+            className="cursor-pointer underline text-blue-400"
+          >
+            {state === "Sign Up" ? "Login here" : "Sign Up"}
+          </span>
+        </p>
 
+        <p className="text-center text-gray-400 text-xs mt-4">
+          Staff Member?{" "}
+          <span onClick={() => navigate('/admin/login')} className="cursor-pointer underline text-red-700">
+            Sign Up
+          </span>
+        </p>
       </div>
-      
     </div>
   );
 }
