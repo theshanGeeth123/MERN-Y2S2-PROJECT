@@ -1,0 +1,22 @@
+TbFjpGAgkNlGVgER
+
+jwstudio12345
+
+mongodb+srv://jwstudio12345:TbFjpGAgkNlGVgER@cluster0.nlaqawi.mongodb.net/
+
+
+mongodb+srv://jwstudio12345:TbFjpGAgkNlGVgER@cluster0.nlaqawi.mongodb.net/mern-project
+
+
+
+old (.env file )-> 
+
+
+MONGODB_URI='mongodb+srv://greatstack:greatstack123@cluster0.cui2so9.mongodb.net/mern-auth'
+JWT_SECRET='secret#text'
+NODE_ENV='development'
+
+SMTP_USER="931cc9001@smtp-brevo.com"
+SMTP_PASS="4H5UyLxWF1d26RsE"
+
+SENDER_EMAIL="theshangeethanjana@gmail.com"
