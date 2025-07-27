@@ -31,7 +31,8 @@ function Login() {
 
                 if(data.success){
                     setIsLoggedin(true);
-                    getUserData()
+                    getUserData();
+                    
                     navigate('/');
                 }else{
                     toast.error(data.message);
@@ -46,7 +47,9 @@ function Login() {
                 if(data.success){
                     setIsLoggedin(true);
                     getUserData();
+                    localStorage.setItem("customer",JSON.stringify({email:email}))
                     navigate('/');
+
                 }else{
                     toast.error(data.message);
                 }

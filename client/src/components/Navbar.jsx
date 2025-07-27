@@ -48,7 +48,13 @@ function Navbar() {
         } catch (error) {
             toast.error(error.message)
         }
-    }
+    };
+
+    const viewProfile = () => {
+
+      navigate('/my-profile');
+
+    };
 
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24">
@@ -63,6 +69,7 @@ function Navbar() {
                    
                     <li onClick={logout} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Logout</li>
                     {userData.isAccountVerified && <li className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Home</li>}
+                    <li onClick={viewProfile} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">My Profile</li>
                 </ul>
             </div>
         </div>

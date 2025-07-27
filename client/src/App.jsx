@@ -12,7 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
-
+import MyProfile from './pages/MyProfile'
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
         <Route path='/login' element={<Login/>}/>
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-password' element={<ResetPassword/>}/>
+        <Route path='/my-profile' element={<MyProfile/>}/>
         
 
         {/* admin */}
