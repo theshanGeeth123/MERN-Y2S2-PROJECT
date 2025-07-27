@@ -36,6 +36,8 @@ function Navbar() {
 
     const logout = async () =>{
         try {
+
+            localStorage.removeItem('customer');
             
             axios.defaults.withCredentials = true;
 
