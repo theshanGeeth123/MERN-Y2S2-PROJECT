@@ -56,6 +56,12 @@ function Navbar() {
 
     };
 
+    const viewHome = () => {
+
+      navigate('/customer-home');
+
+    };
+
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24">
       <img src={assets.pic2} alt="" className="w-28 sm:w-32 " />
@@ -68,8 +74,8 @@ function Navbar() {
                     {!userData.isAccountVerified && <li onClick={sendVerificationOtp} className="py-1 px-2 hover:bg-gray-200 cursor-pointer">Verify email</li> }
                    
                     <li onClick={logout} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Logout</li>
-                    {userData.isAccountVerified && <li className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Home</li>}
-                    <li onClick={viewProfile} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">My Profile</li>
+                    {userData.isAccountVerified && <li onClick={viewHome} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Home</li>}
+                    {userData.isAccountVerified &&<li onClick={viewProfile} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">My Profile</li>}
                 </ul>
             </div>
         </div>
