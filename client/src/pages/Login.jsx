@@ -144,7 +144,7 @@ function Login() {
         )}
         <p className="text-center text-gray-400 text-xs mt-4">
             Staff Member?{" "}
-            <span  className="cursor-pointer underline text-red-700">
+            <span onClick={()=>navigate('/admin/login')} className="cursor-pointer underline text-red-700">
               {" "}
               Sign Up
             </span>
