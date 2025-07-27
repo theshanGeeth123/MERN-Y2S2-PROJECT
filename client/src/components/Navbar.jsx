@@ -7,8 +7,7 @@ import { toast } from "react-toastify";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { userData, backendUrl, setUserData, setIsLoggedin } =
-    useContext(AppContent);
+  const { userData, backendUrl, setUserData, setIsLoggedin } = useContext(AppContent);
 
     const sendVerificationOtp = async () =>{
 
@@ -53,7 +52,7 @@ function Navbar() {
 
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24">
-      <img src={assets.logo} alt="" className="w-28 sm:w-32 " />
+      <img src={assets.pic2} alt="" className="w-28 sm:w-32 " />
 
       {userData ? (
         <div className="w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group">
@@ -63,6 +62,7 @@ function Navbar() {
                     {!userData.isAccountVerified && <li onClick={sendVerificationOtp} className="py-1 px-2 hover:bg-gray-200 cursor-pointer">Verify email</li> }
                    
                     <li onClick={logout} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Logout</li>
+                    {userData.isAccountVerified && <li className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Home</li>}
                 </ul>
             </div>
         </div>
