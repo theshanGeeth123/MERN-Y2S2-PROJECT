@@ -15,6 +15,8 @@ import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/customer/CustomerHome'
 import ProductList from './pages/product/ProductList'
+import CartPage from "./pages/cart/CartPage";
+import AddProduct from "./pages/admin/AddProduct";
 
 function App() {
   return (
@@ -38,6 +40,9 @@ function App() {
 
         <Route path="/customer" element={<CustomerHome />} />
         <Route path="/products" element={<ProductList />} />
+        <Route path="/cart" element={<CartPage />} />
+        
+        <Route path="/admin/add-product" element={<AddProduct />} />  
 
 
 
