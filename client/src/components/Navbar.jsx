@@ -60,7 +60,7 @@ function Navbar() {
 
     const viewHome = () => {
 
-      navigate('/customer-home');
+      navigate('/customer');
 
     };
 

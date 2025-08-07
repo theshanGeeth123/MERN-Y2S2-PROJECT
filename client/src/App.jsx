@@ -13,7 +13,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
-import CustomerHome from './pages/CustomerHome'
+import CustomerHome from './pages/customer/CustomerHome'
+import ProductList from './pages/product/ProductList'
 
 function App() {
   return (
@@ -25,13 +26,20 @@ function App() {
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-password' element={<ResetPassword/>}/>
         <Route path='/my-profile' element={<MyProfile/>}/>
-        <Route path='/customer-home' element={<CustomerHome/>}/>
+       
         
 
         {/* admin */}
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+
+
+
+        <Route path="/customer" element={<CustomerHome />} />
+        <Route path="/products" element={<ProductList />} />
+
+
 
       </Routes>
     </div>
