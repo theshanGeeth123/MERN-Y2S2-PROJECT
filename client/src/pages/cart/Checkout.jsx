@@ -6,48 +6,70 @@ import { useNavigate } from "react-router-dom";
 const Checkout = () => {
   const { userData } = useContext(AppContent);
   const [total, setTotal] = useState(0);
-  const [card, setCard] = useState({ number: "", expiry: "", cvv: "" });
+  const [loading, setLoading] = useState(true);
+  const [card, setCard] = useState({
+    number: "",
+    month: "",
+    year: "",
+    cvv: "",
+  });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        const res = await axios.get(`http://localhost:4000/api/cart/${userData.id}`);
-        const items = res.data.cart.items || [];
-        const totalPrice = items.reduce(
-          (acc, item) => acc + item.productId.price * item.quantity,
-          0
-        );
-        setTotal(totalPrice);
-      } catch (err) {
-        console.error("Fetch cart error:", err.message);
-      }
-    };
+  const fetchCartTotal = async () => {
+    try {
+      const res = await axios.get(`http://localhost:4000/api/cart/${userData.id}`);
+      const items = res.data.cart.items || [];
+      const totalPrice = items.reduce(
+        (acc, item) => acc + item.productId.price * item.quantity,
+        0
+      );
+      setTotal(totalPrice);
+    } catch (err) {
+      console.error("Fetch cart error:", err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchCart();
-  }, []);
+  useEffect(() => {
+    if (userData.id) {
+      fetchCartTotal();
+    }
+  }, [userData.id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCard((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePayment = async (e) => {
+  const handlePayment = (e) => {
     e.preventDefault();
 
-    // Simple mock validation
-    if (!card.number || !card.expiry || !card.cvv) {
+    if (!card.number || !card.month || !card.year || !card.cvv) {
       setError("All fields are required.");
       return;
     }
 
-    // Simulated payment delay
+    // Optional validation
+    if (
+      card.month.length !== 2 ||
+      card.year.length !== 4 ||
+      parseInt(card.month) < 1 ||
+      parseInt(card.month) > 12
+    ) {
+      setError("Invalid month or year.");
+      return;
+    }
+
     setError("");
+
     setTimeout(() => {
       navigate("/payment-success");
     }, 1500);
   };
+
+  if (loading) return <p className="text-center mt-10">Loading checkout...</p>;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-indigo-100 to-blue-100 p-4">
@@ -71,14 +93,28 @@ const Checkout = () => {
           onChange={handleInputChange}
           className="w-full border p-2 rounded-lg"
         />
-        <input
-          type="text"
-          name="expiry"
-          placeholder="MM/YY"
-          value={card.expiry}
-          onChange={handleInputChange}
-          className="w-full border p-2 rounded-lg"
-        />
+
+        <div className="flex gap-4">
+          <input
+            type="text"
+            name="month"
+            placeholder="MM"
+            value={card.month}
+            onChange={handleInputChange}
+            className="w-1/2 border p-2 rounded-lg"
+            maxLength={2}
+          />
+          <input
+            type="text"
+            name="year"
+            placeholder="YYYY"
+            value={card.year}
+            onChange={handleInputChange}
+            className="w-1/2 border p-2 rounded-lg"
+            maxLength={4}
+          />
+        </div>
+
         <input
           type="text"
           name="cvv"
