@@ -43,31 +43,23 @@ const Checkout = () => {
     setCard((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePayment = (e) => {
-    e.preventDefault();
+  const handlePayment = async (e) => {
+  e.preventDefault();
 
-    if (!card.number || !card.month || !card.year || !card.cvv) {
-      setError("All fields are required.");
-      return;
-    }
+  if (!card.number || !card.month || !card.year || !card.cvv) {
+    setError("All fields are required.");
+    return;
+  }
 
-    // Optional validation
-    if (
-      card.month.length !== 2 ||
-      card.year.length !== 4 ||
-      parseInt(card.month) < 1 ||
-      parseInt(card.month) > 12
-    ) {
-      setError("Invalid month or year.");
-      return;
-    }
+  try {
+    await axios.post("http://localhost:4000/api/orders/place");
+    navigate("/payment-success");
+  } catch (err) {
+    setError("Payment failed or order could not be placed");
+  }
+};
 
-    setError("");
 
-    setTimeout(() => {
-      navigate("/payment-success");
-    }, 1500);
-  };
 
   if (loading) return <p className="text-center mt-10">Loading checkout...</p>;
 
