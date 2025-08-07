@@ -1,17 +1,27 @@
-import express from 'express';
-import { addProduct,deleteProduct,getDetailsById,getProducts, updateProduct } from '../controllers/Product.controller.js';
+import express from "express";
+import {
+  addProduct,
+  deleteProduct,
+  getDetailsById,
+  getProducts,
+  updateProduct,
+} from "../controllers/Product.controller.js";
 
 const router = express.Router();
 
-router.post('/',addProduct);
+// All Products (Public/User/Admin)
+router.get("/", getProducts);
 
-router.get('/',getProducts);
+// Create Product (Admin only – later add auth middleware)
+router.post("/", addProduct);
 
-router.put('/:id',updateProduct);
+// Get Product by ID
+router.get("/:id", getDetailsById);
 
-router.get('/:id',getDetailsById);
+// Update Product by ID (Admin)
+router.put("/:id", updateProduct);
 
-router.delete('/:id',deleteProduct);
+// Delete Product by ID (Admin)
+router.delete("/:id", deleteProduct);
 
 export default router;
-
