@@ -8,6 +8,7 @@ import userRouter from "./routes/userRoutes.js";
 import adminRouter from './routes/Admin.route.js'
 import productRouter from './routes/Product.routes.js'
 import cartRouter from './routes/Cart.routes.js'
+import orderRouter from './routes/Order.routes.js';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use('/api/user',userRouter);
 app.use('/api/admin',adminRouter);
 app.use('/api/product',productRouter);
 app.use('/api/cart',cartRouter);
+app.use('/api/orders', orderRouter);
 
 app.listen(port,()=>console.log(`Server started on PORT:${port}
 `));
