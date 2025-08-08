@@ -24,9 +24,10 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   status: {
-    type: String,
-    default: 'Processing',
-  },
+  type: String,
+  enum: ['Processing', 'Confirmed', 'Canceled'],
+  default: 'Processing',
+},
 }, { timestamps: true });
 
 const Order = mongoose.model('Order', orderSchema);
