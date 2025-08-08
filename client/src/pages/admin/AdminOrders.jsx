@@ -36,6 +36,18 @@ const AdminOrders = () => {
   }
 };
 
+const deleteOrder = async (orderId) => {
+  if (!window.confirm("Are you sure you want to delete this order?")) return;
+
+  try {
+    await axios.delete(`http://localhost:4000/api/orders/delete/${orderId}`);
+    fetchAllOrders(); // Refresh the list
+  } catch (error) {
+    console.error("Error deleting order:", error);
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
@@ -58,6 +70,7 @@ const AdminOrders = () => {
                 <th className="px-4 py-3 text-left">Total</th>
                 <th className="px-4 py-3 text-left">Status</th>
                 <th className="px-4 py-3 text-left">Date</th>
+                <th className="px-4 py-2">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -85,6 +98,16 @@ const AdminOrders = () => {
                   <td className="px-4 py-2 text-gray-500">
                     {new Date(order.createdAt).toLocaleString()}
                   </td>
+
+                  <td className="px-4 py-2">
+  <button
+    onClick={() => deleteOrder(order._id)}
+    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+  >
+    Delete
+  </button>
+</td>
+
                 </tr>
               ))}
             </tbody>
