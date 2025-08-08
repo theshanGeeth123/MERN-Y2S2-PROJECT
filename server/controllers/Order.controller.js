@@ -1,5 +1,6 @@
 import Order from '../models/Order.model.js';
 import Cart from '../models/Cart.model.js';
+import Product from '../models/Products.model.js';
 import mongoose from 'mongoose';
 
 // Manually import and register 'user' model name to avoid populate error
@@ -16,11 +17,33 @@ export const placeOrder = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Cart is empty' });
     }
 
+    // Check stock for each item
+    for (const item of cart.items) {
+      const product = await Product.findById(item.productId._id);
+
+      if (!product || product.stock < item.quantity) {
+        return res.status(400).json({
+          success: false,
+          message: `Not enough stock for "${product?.name || 'Product'}"`,
+        });
+      }
+    }
+
+    // Calculate total
     const total = cart.items.reduce(
       (acc, item) => acc + item.productId.price * item.quantity,
       0
     );
 
+    // Reduce stock and update availability
+    for (const item of cart.items) {
+      const product = await Product.findById(item.productId._id);
+      product.stock -= item.quantity;
+      product.availability = product.stock > 0;
+      await product.save();
+    }
+
+    // Create order
     const newOrder = new Order({
       userId,
       products: cart.items.map((item) => ({
@@ -31,10 +54,14 @@ export const placeOrder = async (req, res) => {
     });
 
     await newOrder.save();
+
+    // Clear cart
     await Cart.deleteOne({ userId });
 
     res.status(201).json({ success: true, order: newOrder });
+
   } catch (err) {
+    console.error("Place order error:", err.message);
     res.status(500).json({ success: false, message: 'Order creation failed' });
   }
 };
