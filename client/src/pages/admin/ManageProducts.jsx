@@ -23,7 +23,7 @@ const ManageProducts = () => {
 
   const deleteProduct = async (id) => {
     try {
-      await axios.delete(`http://localhost:4000/api/product/${id}`);
+      await axios.delete(`http://localhost:4000/api/product/remove/${id}`);
       toast.success("Product deleted ✅");
       fetchProducts();
     } catch (err) {
