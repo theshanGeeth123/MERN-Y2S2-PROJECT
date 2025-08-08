@@ -70,26 +70,30 @@ export const getDetailsById = async (req, res) => {
 // 🔹 Update Product by ID (Admin Only)
 export const updateProduct = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ success: false, message: "Invalid product ID" });
-  }
+  const { name, description, price, url, category, stock } = req.body;
 
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(id, updates, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        name,
+        description,
+        price,
+        url,
+        category,
+        stock,
+        availability: stock > 0, // ✅ auto-calculate
+      },
+      { new: true }
+    );
 
     if (!updatedProduct) {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    return res.status(200).json({ success: true, data: updatedProduct });
-  } catch (error) {
-    console.error("Update Product Error:", error.message);
-    return res.status(500).json({ success: false, message: "Server Error" });
+    res.status(200).json({ success: true, data: updatedProduct });
+  } catch (err) {
+    res.status(500).json({ success: false, message: "Update failed" });
   }
 };
 
