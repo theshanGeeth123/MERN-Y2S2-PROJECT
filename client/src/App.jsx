@@ -23,6 +23,7 @@ import Checkout from "./pages/cart/Checkout";
 import PaymentSuccess from "./pages/cart/PaymentSuccess";
 import MyOrders from "./pages/order/MyOrders";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminReports from "./pages/admin/AdminReports";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
 
 
       </Routes>
