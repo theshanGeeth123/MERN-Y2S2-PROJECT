@@ -1,17 +1,31 @@
-// controllers/Cart.controller.js
-
 import Cart from "../models/Cart.model.js";
+import Product from "../models/Products.model.js"; // ✅ Required for stock check
 
 // 🔹 Add to cart (create or update)
 export const addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-    const userId = req.user?.id || req.body.userId; // use auth OR testing fallback
+    const userId = req.user?.id || req.body.userId;
 
     if (!productId || !quantity) {
       return res.status(400).json({ success: false, message: "Product ID and quantity required." });
     }
 
+    // ✅ 1. Fetch product and validate stock
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ success: false, message: "Product not found." });
+    }
+
+    if (!product.availability || product.stock < quantity) {
+      return res.status(400).json({
+        success: false,
+        message: "Not enough stock available or product is unavailable.",
+      });
+    }
+
+    // ✅ 2. Fetch or create cart
     let cart = await Cart.findOne({ userId });
 
     if (!cart) {
@@ -23,10 +37,25 @@ export const addToCart = async (req, res) => {
       const itemIndex = cart.items.findIndex(item => item.productId.equals(productId));
 
       if (itemIndex > -1) {
-        // Already exists, update quantity
-        cart.items[itemIndex].quantity += quantity;
+        // Existing item: calculate total requested quantity
+        const totalQty = cart.items[itemIndex].quantity + quantity;
+        if (totalQty > product.stock) {
+          return res.status(400).json({
+            success: false,
+            message: "Total quantity exceeds stock availability.",
+          });
+        }
+
+        cart.items[itemIndex].quantity = totalQty;
       } else {
-        // New item
+        // New item: validate quantity again
+        if (quantity > product.stock) {
+          return res.status(400).json({
+            success: false,
+            message: "Requested quantity exceeds stock availability.",
+          });
+        }
+
         cart.items.push({ productId, quantity });
       }
     }
@@ -39,6 +68,7 @@ export const addToCart = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 // 🔹 Get cart by user ID
 export const getCartByUser = async (req, res) => {
