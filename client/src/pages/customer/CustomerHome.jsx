@@ -7,7 +7,9 @@ const CustomerHome = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl text-center w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Welcome, Customer 👋</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">
+          Welcome, Customer 👋
+        </h1>
         <p className="text-gray-600 mb-8">Choose an option below:</p>
 
         <div className="space-y-4">
@@ -26,6 +28,13 @@ const CustomerHome = () => {
           </button>
         </div>
       </div>
+
+      <button
+        onClick={() => navigate("/my-orders")}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        View My Orders
+      </button>
     </div>
   );
 };

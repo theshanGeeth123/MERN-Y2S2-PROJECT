@@ -21,6 +21,7 @@ import ManageProducts from "./pages/admin/ManageProducts";
 import OrderSummary from "./pages/cart/OrderSummary";
 import Checkout from "./pages/cart/Checkout";
 import PaymentSuccess from "./pages/cart/PaymentSuccess";
+import MyOrders from "./pages/order/MyOrders";
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
         <Route path="/order-summary" element={<OrderSummary />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/my-orders" element={<MyOrders />} />
 
 
       </Routes>
