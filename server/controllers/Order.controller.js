@@ -1,5 +1,11 @@
 import Order from '../models/Order.model.js';
 import Cart from '../models/Cart.model.js';
+import mongoose from 'mongoose';
+
+// Manually import and register 'user' model name to avoid populate error
+import userModel from '../models/userModel.js';
+
+mongoose.model('User', userModel.schema); //
 
 export const placeOrder = async (req, res) => {
   try {
@@ -42,3 +48,22 @@ export const getOrdersByUser = async (req, res) => {
   }
 };
 
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("userId", "name email")  // populate using registered alias
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    console.error("Failed to fetch orders:", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch orders",
+    });
+  }
+};
