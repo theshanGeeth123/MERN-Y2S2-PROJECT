@@ -76,24 +76,21 @@ export const getOrdersByUser = async (req, res) => {
 };
 
 
+// controllers/Order.controller.js
+
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("userId", "name email")  // populate using registered alias
-      .sort({ createdAt: -1 });
+      .populate("userId", "name email")
+      .populate("products.productId", "name price"); // This is the key line
 
-    res.status(200).json({
-      success: true,
-      orders,
-    });
+    res.status(200).json({ success: true, orders });
   } catch (error) {
-    console.error("Failed to fetch orders:", error.message);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch orders",
-    });
+    console.error("Get all orders error:", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 
 export const updateOrderStatus = async (req, res) => {
