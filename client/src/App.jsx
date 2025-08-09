@@ -24,7 +24,7 @@ import Checkout from './pages/cart/Checkout';
 import PaymentSuccess from './pages/cart/PaymentSuccess';
 import MyOrders from './pages/order/MyOrders';
 import AdminOrders from './pages/admin/AdminOrders';
-import AdminReports from './pages/admin/AdminReports';
+import AdminReports from './pages/admin/ProuductSalesReports';
 import ManageCards from './pages/payments/ManageCards';
 
 function App() {

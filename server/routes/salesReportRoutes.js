@@ -6,7 +6,7 @@ import {
   getTopProducts,
   getOrderStatusReport,
   getRevenueByCategory,
-} from "../controllers/reportController.js";
+} from "../controllers/salesReportController.js";
 
 const router = express.Router();
 

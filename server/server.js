@@ -13,7 +13,7 @@ import userReportRoutes from "./routes/userReportRoutes.js";   // from theshan-t
 import productRouter from "./routes/Product.routes.js";        // from aloka-test-branch
 import cartRouter from "./routes/Cart.routes.js";
 import orderRouter from "./routes/Order.routes.js";
-import reportRoutes from "./routes/reportRoutes.js";
+import reportRoutes from "./routes/salesReportRoutes.js";
 import cardRoutes from "./routes/Cards.routes.js";
 
 const app = express();
