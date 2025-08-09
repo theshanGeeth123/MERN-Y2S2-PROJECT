@@ -7,96 +7,101 @@ import { toast } from "react-toastify";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { userData, backendUrl, setUserData, setIsLoggedin } = useContext(AppContent);
+  const { userData, setUserData, setIsLoggedin } = useContext(AppContent);
 
-    const sendVerificationOtp = async () =>{
-
-        try {
-            
-            axios.defaults.withCredentials = true;
-
-            const {data} = await axios.post('http://localhost:4000/api/auth/send-verify-otp');
-
-            if(data.success){
-
-                navigate('/email-verify');
-                toast.success(data.message);
-
-            }else{
-
-                 toast.error(data.message);
-
-            }
-
-        } catch (error) {
-            toast.error(error.message);
-        }
-
+  const sendVerificationOtp = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+      const { data } = await axios.post("http://localhost:4000/api/auth/send-verify-otp");
+      if (data.success) {
+        navigate("/email-verify");
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
+  };
 
-    const logout = async () =>{
+  const logout = async () => {
+    try {
+      axios.defaults.withCredentials = true;
+
+      // 1) Clear cart on server (pass userId in body for your controller fallback)
+      if (userData?.id) {
         try {
-
-            localStorage.removeItem('customer');
-            
-            axios.defaults.withCredentials = true;
-
-            const {data} = await axios.post('http://localhost:4000/api/auth/logout');
-
-            data.success && setIsLoggedin(false);
-            data.success && setUserData(false);
-            navigate('/');
-
-        } catch (error) {
-            toast.error(error.message)
+          await axios.delete("http://localhost:4000/api/cart/clear", {
+            data: { userId: userData.id },
+          });
+        } catch (err) {
+          // Not fatal—still proceed with logout
+          console.error("Failed to clear cart on logout:", err?.response?.data || err.message);
         }
-    };
+      }
 
-    const viewProfile = () => {
+      // 2) Clear local storage/session state
+      localStorage.removeItem("customer");
 
-      navigate('/my-profile');
+      // 3) Invalidate session cookie on server
+      const { data } = await axios.post("http://localhost:4000/api/auth/logout");
 
-    };
+      if (data.success) {
+        setIsLoggedin(false);
+        setUserData(null);
+        toast.success("Logged out");
+      } else {
+        toast.error(data.message || "Logout failed");
+      }
 
-    const viewHome = () => {
+      // 4) Navigate home
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
-      navigate('/customer');
-
-    };
+  const viewProfile = () => navigate("/my-profile");
+  const viewHome = () => navigate("/customer");
 
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24">
-      <img src={assets.pic2} alt="" className="w-28 sm:w-32 " />
+      <img src={assets.pic2} alt="" className="w-28 sm:w-32" />
 
       {userData ? (
         <div className="w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group">
-            {userData.name[0].toUpperCase()}
-            <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10">
-                <ul className="list-none m-0 p-2 bg-gray-100 text-sm">
-                    {!userData.isAccountVerified && <li onClick={sendVerificationOtp} className="py-1 px-2 hover:bg-gray-200 cursor-pointer">Verify email</li> }
-                   
-                    <li onClick={logout} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Logout</li>
-                    {userData.isAccountVerified && <li onClick={viewHome} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">Home</li>}
-                    {userData.isAccountVerified &&<li onClick={viewProfile} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">My Profile</li>}
-                </ul>
-            </div>
+          {userData.name[0].toUpperCase()}
+          <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded pt-10">
+            <ul className="list-none m-0 p-2 bg-gray-100 text-sm">
+              {!userData.isAccountVerified && (
+                <li
+                  onClick={sendVerificationOtp}
+                  className="py-1 px-2 hover:bg-gray-200 cursor-pointer"
+                >
+                  Verify email
+                </li>
+              )}
+              <li onClick={viewHome} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
+                Home
+              </li>
+              <li onClick={viewProfile} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
+                My Profile
+              </li>
+              <li onClick={logout} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
+                Logout
+              </li>
+            </ul>
+          </div>
         </div>
       ) : (
         <button
           onClick={() => navigate("/login")}
-          className="flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800
-        hover:bg-gray-100 transition-all" 
+          className="flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all"
         >
           Login <img src={assets.arrow_icon} alt="" />
         </button>
       )}
-
-
-      
-
     </div>
-
-    
   );
 }
 
