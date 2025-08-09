@@ -14,6 +14,7 @@ import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
+import UsersReport from "./pages/admin/UsersReport";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+        <Route path="/admin/user-reports" element={<UsersReport />} />
 
       </Routes>
     </div>
