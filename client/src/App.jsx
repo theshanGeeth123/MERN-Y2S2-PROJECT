@@ -24,6 +24,7 @@ import PaymentSuccess from "./pages/cart/PaymentSuccess";
 import MyOrders from "./pages/order/MyOrders";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminReports from "./pages/admin/AdminReports";
+import ManageCards from "./pages/payments/ManageCards";
 
 function App() {
   return (
@@ -57,7 +58,7 @@ function App() {
         <Route path="/my-orders" element={<MyOrders />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/reports" element={<AdminReports />} />
-
+        <Route path="/cards" element={<ManageCards />} />
 
       </Routes>
     </div>
