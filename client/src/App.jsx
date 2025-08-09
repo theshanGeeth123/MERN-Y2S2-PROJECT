@@ -13,7 +13,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
-import CustomerHome from './pages/CustomerHome'
+import CustomerHome from './pages/customer/CustomerHome'
+import ProductList from './pages/product/ProductList'
+import CartPage from "./pages/cart/CartPage";
+import AddProduct from "./pages/admin/AddProduct";
+import ManageProducts from "./pages/admin/ManageProducts";
+import OrderSummary from "./pages/cart/OrderSummary";
+import Checkout from "./pages/cart/Checkout";
+import PaymentSuccess from "./pages/cart/PaymentSuccess";
+import MyOrders from "./pages/order/MyOrders";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminReports from "./pages/admin/AdminReports";
+import ManageCards from "./pages/payments/ManageCards";
 
 function App() {
   return (
@@ -25,13 +36,29 @@ function App() {
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-password' element={<ResetPassword/>}/>
         <Route path='/my-profile' element={<MyProfile/>}/>
-        <Route path='/customer-home' element={<CustomerHome/>}/>
+       
         
 
         {/* admin */}
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+
+
+
+        <Route path="/customer" element={<CustomerHome />} />
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/cart" element={<CartPage />} />
+        
+        <Route path="/admin/add-product" element={<AddProduct />} />  
+        <Route path="/admin/products" element={<ManageProducts />} />
+        <Route path="/order-summary" element={<OrderSummary />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/cards" element={<ManageCards />} />
 
       </Routes>
     </div>
