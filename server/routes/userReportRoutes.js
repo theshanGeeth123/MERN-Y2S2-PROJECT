@@ -7,7 +7,7 @@ import {
   getUsersByMonth,
   getVerifiedSplit,
   getTopAddresses,
-} from "../controllers/report.controller.js";
+} from "../controllers/userReport.controller.js";
 
 const router = express.Router();
 
