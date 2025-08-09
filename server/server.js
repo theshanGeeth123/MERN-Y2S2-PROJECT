@@ -1,35 +1,48 @@
 import express from "express";
 import cors from "cors";
-import 'dotenv/config';
+import "dotenv/config";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/mongodb.js";
+
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
-import adminRouter from './routes/Admin.route.js'
-import userReportRoutes from "./routes/userReportRoutes.js";
+import adminRouter from "./routes/Admin.route.js";
 
+// Keep both branches' routers
+import userReportRoutes from "./routes/userReportRoutes.js";   // from theshan-test-branch
+import productRouter from "./routes/Product.routes.js";        // from aloka-test-branch
+import cartRouter from "./routes/Cart.routes.js";
+import orderRouter from "./routes/Order.routes.js";
+import reportRoutes from "./routes/reportRoutes.js";
+import cardRoutes from "./routes/Cards.routes.js";
 
 const app = express();
 
 const port = process.env.PORT || 4000;
 connectDB();
 
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = ["http://localhost:5173"];
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({origin:allowedOrigins,credentials:true}));
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 
-// API Endpoint 
-app.get("/",(req,res)=>res.send("API working"));
-app.use('/api/auth',authRouter);
-app.use('/api/user',userRouter);
-app.use('/api/admin',adminRouter);
-app.use("/api/user-reports", userReportRoutes);
+// API Endpoint
+app.get("/", (req, res) => res.send("API working"));
 
-app.listen(port,()=>console.log(`Server started on PORT:${port}
-`));
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/admin", adminRouter);
 
-//greatstack123
+// Routes from both branches
+app.use("/api/user-reports", userReportRoutes); // Admin -> UsersReport page
+app.use("/api/product", productRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/orders", orderRouter);
+app.use("/api/reports", reportRoutes);          // Admin -> Reports page
+app.use("/api/cards", cardRoutes);
 
-//mongodb+srv://greatstack:<db_password>@cluster0.cui2so9.mongodb.net/
+app.listen(port, () => console.log(`Server started on PORT:${port}`));
+
+// greatstack123
+// mongodb+srv://greatstack:<db_password>@cluster0.cui2so9.mongodb.net/
