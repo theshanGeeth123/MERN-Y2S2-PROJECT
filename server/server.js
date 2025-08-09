@@ -10,6 +10,7 @@ import productRouter from './routes/Product.routes.js'
 import cartRouter from './routes/Cart.routes.js'
 import orderRouter from './routes/Order.routes.js';
 import reportRoutes from "./routes/reportRoutes.js";
+import cardRoutes from "./routes/Cards.routes.js";
 
 const app = express();
 
@@ -31,6 +32,8 @@ app.use('/api/product',productRouter);
 app.use('/api/cart',cartRouter);
 app.use('/api/orders', orderRouter);
 app.use("/api/reports", reportRoutes);
+app.use("/api/cards", cardRoutes);
+
 
 app.listen(port,()=>console.log(`Server started on PORT:${port}
 `));

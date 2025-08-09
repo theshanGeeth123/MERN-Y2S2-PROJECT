@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AppContent } from "../../context/AppContext"
 import { useNavigate } from "react-router-dom";
 
 const CustomerHome = () => {
   const navigate = useNavigate();
+
+  const { userData } = useContext(AppContent);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-blue-300 p-4">
@@ -35,7 +38,11 @@ const CustomerHome = () => {
       >
         View My Orders
       </button>
+
+      <h1>{userData.email}</h1>
     </div>
+
+
   );
 };
 
