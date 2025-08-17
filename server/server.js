@@ -6,7 +6,7 @@ import connectDB from "./config/mongodb.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import adminRouter from './routes/Admin.route.js'
-import userReportRoutes from "./routes/reportRoutes.js";
+import userReportRoutes from "./routes/userReportRoutes.js";
 
 
 const app = express();
