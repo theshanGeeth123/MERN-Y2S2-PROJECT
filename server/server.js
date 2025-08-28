@@ -7,6 +7,7 @@ import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import adminRouter from './routes/Admin.route.js'
 import userReportRoutes from "./routes/userReportRoutes.js";
+import notificationRoutes from './routes/notificationRoutes.js';
 
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/api/auth',authRouter);
 app.use('/api/user',userRouter);
 app.use('/api/admin',adminRouter);
 app.use("/api/user-reports", userReportRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.listen(port,()=>console.log(`Server started on PORT:${port}
 `));
