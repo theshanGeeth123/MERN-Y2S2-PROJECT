@@ -15,8 +15,15 @@
           res.json({
               success:true,
               userData:{
+                  id:user._id,
                   name:user.name,
-                  isAccountVerified: user.isAccountVerified
+                  isAccountVerified: user.isAccountVerified,
+                  email:user.email,
+                  age:user.age,
+                  phone:user.phone,
+                  address:user.address,
+                  phone:user.phone
+
               }
           })
           
