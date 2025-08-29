@@ -22,8 +22,6 @@ const notificationSchema = new mongoose.Schema({
   startAt:  { type: Date, default: Date.now },
   expiresAt:{ type: Date },
 
-  // 🔧 Now OPTIONAL (no required:true)
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true });
 
 notificationSchema.index({ audience: 1, isActive: 1, startAt: 1, expiresAt: 1, type: 1 });
