@@ -14,14 +14,16 @@ import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
-import UsersReport from "./pages/admin/UsersReport";
+import UsersReport from "./pages/admin/UsersReport.jsx";
+
+import Notifications from './admin/Notifications/Notifications.jsx'
 
 function App() {
   return (
     <div>
       <ToastContainer/>
       <Routes>
-        <Route path='/' element={<Home/>}/>
+        <Route path='/' element={<Notifications/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-password' element={<ResetPassword/>}/>
@@ -34,6 +36,10 @@ function App() {
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
         <Route path="/admin/user-reports" element={<UsersReport />} />
+
+
+        {/* Notifications  */}
+        <Route path="/admin/notifications" element={<Notifications />} />
 
       </Routes>
     </div>
