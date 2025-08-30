@@ -1,24 +1,43 @@
+// client/src/pages/payments/ManageCards.jsx
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AppContent } from "../../context/AppContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { FaCreditCard, FaEdit, FaTrash, FaPlus, FaArrowLeft, FaCheck } from "react-icons/fa";
+
+// ✅ Local card-type images (exact file names from your folder)
+import visaIcon from "./card_type_images/visa.png";
+import masterIcon from "./card_type_images/Master.png";
+import amexIcon from "./card_type_images/AmericanExpress.png";
+import discoverIcon from "./card_type_images/Discover.png";
+import otherIcon from "./card_type_images/Other.png";
 
 const ManageCards = () => {
   const { userData } = useContext(AppContent);
   const navigate = useNavigate();
+
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
+  const [form, setForm] = useState({
+    type: "VISA",
+    cardNumber: "",
+    expMonth: "",
+    expYear: "",
+    name: "",
+  });
+
   const [editingCard, setEditingCard] = useState(null);
   const [editForm, setEditForm] = useState({
     type: "VISA",
     cardNumber: "",
     expMonth: "",
     expYear: "",
+    name: "",
   });
 
+  // --- API calls ---
   const fetchCards = async () => {
     if (!userData?.id) return;
     try {
@@ -34,13 +53,6 @@ const ManageCards = () => {
     }
   };
 
-  const [form, setForm] = useState({
-    type: "VISA",
-    cardNumber: "",
-    expMonth: "",
-    expYear: "",
-  });
-
   const addCard = async (e) => {
     e.preventDefault();
     if (!userData?.id) return toast.error("Please login first");
@@ -48,12 +60,13 @@ const ManageCards = () => {
       await axios.post("http://localhost:4000/api/cards", {
         userId: userData.id,
         type: form.type,
-        cardNumber: form.cardNumber,
+        cardNumber: form.cardNumber.replace(/\s/g, ""),
         expMonth: Number(form.expMonth),
         expYear: Number(form.expYear),
+        name: form.name,
       });
-      toast.success("Card saved");
-      setForm({ type: "VISA", cardNumber: "", expMonth: "", expYear: "" });
+      toast.success("Card saved successfully");
+      setForm({ type: "VISA", cardNumber: "", expMonth: "", expYear: "", name: "" });
       fetchCards();
     } catch (err) {
       console.error("Add card error:", err?.response?.data || err.message);
@@ -62,10 +75,10 @@ const ManageCards = () => {
   };
 
   const deleteCard = async (id) => {
-    if (!confirm("Delete this saved card?")) return;
+    if (!window.confirm("Are you sure you want to delete this card?")) return;
     try {
       await axios.delete(`http://localhost:4000/api/cards/${id}`);
-      toast.success("Card deleted");
+      toast.success("Card deleted successfully");
       fetchCards();
     } catch (err) {
       console.error("Delete card error:", err?.response?.data || err.message);
@@ -75,7 +88,6 @@ const ManageCards = () => {
 
   const openEdit = async (id) => {
     try {
-      
       const res = await axios.get(`http://localhost:4000/api/cards/${id}`, {
         params: { userId: userData.id },
       });
@@ -87,6 +99,7 @@ const ManageCards = () => {
           cardNumber: c.cardNumber || "",
           expMonth: String(c.expMonth || ""),
           expYear: String(c.expYear || ""),
+          name: c.name || "",
         });
       }
     } catch (err) {
@@ -101,11 +114,12 @@ const ManageCards = () => {
     try {
       await axios.put(`http://localhost:4000/api/cards/${editingCard._id}`, {
         type: editForm.type,
-        cardNumber: editForm.cardNumber,
+        cardNumber: editForm.cardNumber.replace(/\s/g, ""),
         expMonth: Number(editForm.expMonth),
         expYear: Number(editForm.expYear),
+        name: editForm.name,
       });
-      toast.success("Card updated");
+      toast.success("Card updated successfully");
       setEditingCard(null);
       fetchCards();
     } catch (err) {
@@ -114,204 +128,293 @@ const ManageCards = () => {
     }
   };
 
-  useEffect(() => { fetchCards(); }, [userData?.id]);
+  // --- Helpers ---
+  const handleCardNumberChange = (e, isEditForm = false) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 16);
+    const formattedValue = value.replace(/(\d{4})/g, "$1 ").trim();
+    if (isEditForm) {
+      setEditForm((prev) => ({ ...prev, cardNumber: formattedValue }));
+    } else {
+      setForm((prev) => ({ ...prev, cardNumber: formattedValue }));
+    }
+  };
 
+  const getCardIcon = (cardType = "") => {
+    const t = String(cardType).trim().toUpperCase();
+    if (t === "VISA") return visaIcon;
+    if (t === "MASTERCARD" || t === "MASTER CARD" || t === "MASTER") return masterIcon;
+    if (t === "AMEX" || t === "AMERICAN EXPRESS" || t === "AMERICANEXPRESS") return amexIcon;
+    if (t === "DISCOVER") return discoverIcon;
+    return otherIcon;
+  };
+
+  useEffect(() => {
+    fetchCards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData?.id]);
+
+  // --- UI ---
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-3xl mx-auto space-y-8">
-      
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">💳 Manage Saved Cards</h2>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
+            >
+              <FaArrowLeft className="mr-2" />
+            </button>
+            <h1 className="text-2xl font-bold text-gray-900">Payment Methods</h1>
+          </div>
           <button
             onClick={() => navigate("/checkout")}
-            className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
           >
             Go to Checkout
           </button>
         </div>
 
-        
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h3 className="text-xl font-semibold mb-4">Add a Card</h3>
-          <form onSubmit={addCard} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <label className="block">
-              <span className="text-sm text-gray-700">Type</span>
-              <select
-                value={form.type}
-                onChange={(e) => setForm({ ...form, type: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
-              >
-                <option>VISA</option>
-                <option>MASTERCARD</option>
-                <option>AMEX</option>
-                <option>DISCOVER</option>
-                <option>OTHER</option>
-              </select>
-            </label>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Add Card Form */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+              <FaPlus className="mr-2 text-blue-500" /> Add New Card
+            </h2>
+            <form onSubmit={addCard} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Card Type</label>
+                <select
+                  value={form.type}
+                  onChange={(e) => setForm({ ...form, type: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="VISA">Visa</option>
+                  <option value="MASTERCARD">Mastercard</option>
+                  <option value="AMEX">American Express</option>
+                  <option value="DISCOVER">Discover</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
 
-            <label className="block sm:col-span-2">
-              <span className="text-sm text-gray-700">Card Number</span>
-              <input
-                type="text"
-                value={form.cardNumber}
-                onChange={(e) => setForm({ ...form, cardNumber: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
-                placeholder="4111111111111111"
-                required
-              />
-            </label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                <input
+                  type="text"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="John Doe"
+                  required
+                />
+              </div>
 
-            <label className="block">
-              <span className="text-sm text-gray-700">Exp. Month</span>
-              <input
-                type="number"
-                value={form.expMonth}
-                onChange={(e) => setForm({ ...form, expMonth: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
-                placeholder="MM"
-                min="1"
-                max="12"
-                required
-              />
-            </label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                <input
+                  type="text"
+                  value={form.cardNumber}
+                  onChange={(e) => handleCardNumberChange(e, false)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="1234 5678 9012 3456"
+                  required
+                />
+              </div>
 
-            <label className="block">
-              <span className="text-sm text-gray-700">Exp. Year</span>
-              <input
-                type="number"
-                value={form.expYear}
-                onChange={(e) => setForm({ ...form, expYear: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
-                placeholder="YYYY"
-                required
-              />
-            </label>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Month</label>
+                  <input
+                    type="number"
+                    value={form.expMonth}
+                    onChange={(e) => setForm({ ...form, expMonth: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="MM"
+                    min="1"
+                    max="12"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Year</label>
+                  <input
+                    type="number"
+                    value={form.expYear}
+                    onChange={(e) => setForm({ ...form, expYear: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="YYYY"
+                    min={new Date().getFullYear()}
+                    required
+                  />
+                </div>
+              </div>
 
-            <div className="sm:col-span-2">
               <button
                 type="submit"
-                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors mt-2"
               >
                 Save Card
               </button>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
 
-        
-        <div className="bg-white p-6 rounded-xl shadow">
-          <h3 className="text-xl font-semibold mb-4">Saved Cards</h3>
-          {loading ? (
-            <p className="text-gray-500">Loading…</p>
-          ) : cards.length === 0 ? (
-            <p className="text-gray-500">No saved cards.</p>
-          ) : (
-            <div className="space-y-3">
-              {cards.map((c) => (
-                <div key={c._id} className="flex items-center justify-between border rounded p-3">
-                  <div>
-                    <div className="font-medium">{c.type} • {c.maskedCardNumber}</div>
-                    <div className="text-xs text-gray-500">
-                      Exp: {String(c.expMonth).padStart(2, "0")}/{c.expYear}
+          {/* Saved Cards */}
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+              <FaCreditCard className="mr-2 text-blue-500" /> Saved Cards
+            </h2>
+
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+              </div>
+            ) : cards.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="bg-gray-100 rounded-full p-4 inline-flex mb-4">
+                  <FaCreditCard className="text-gray-400 text-2xl" />
+                </div>
+                <p className="text-gray-500">No saved payment methods</p>
+                <p className="text-sm text-gray-400 mt-1">Add a card to get started</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {cards.map((card) => (
+                  <div
+                    key={card._id}
+                    className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center">
+                        <img
+                          src={getCardIcon(card.type)}
+                          alt={card.type}
+                          className="h-8 w-12 object-contain mr-4"
+                        />
+                        <div>
+                          <div className="font-medium text-gray-900">
+                            {card.name || "Cardholder Name"}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            •••• {card.maskedCardNumber} • Exp:{" "}
+                            {String(card.expMonth).padStart(2, "0")}/{card.expYear}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => openEdit(card._id)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+                          title="Edit card"
+                        >
+                          <FaEdit size={14} />
+                        </button>
+                        <button
+                          onClick={() => deleteCard(card._id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-colors"
+                          title="Delete card"
+                        >
+                          <FaTrash size={14} />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => openEdit(c._id)}
-                      className="px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => deleteCard(c._id)}
-                      className="px-3 py-1.5 rounded bg-red-500 text-white hover:bg-red-600"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
- 
+      {/* Edit Card Modal */}
       {editingCard && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <form
-            onSubmit={updateCard}
-            className="bg-white w-full max-w-lg p-6 rounded-xl shadow space-y-4"
-          >
-            <h4 className="text-xl font-semibold">Edit Card</h4>
-
-            <label className="block">
-              <span className="text-sm text-gray-700">Type</span>
-              <select
-                value={editForm.type}
-                onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
-              >
-                <option>VISA</option>
-                <option>MASTERCARD</option>
-                <option>AMEX</option>
-                <option>DISCOVER</option>
-                <option>OTHER</option>
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="text-sm text-gray-700">Card Number</span>
-              <input
-                type="text"
-                value={editForm.cardNumber}
-                onChange={(e) => setEditForm({ ...editForm, cardNumber: e.target.value })}
-                className="w-full border rounded px-3 py-2 mt-1"
-                required
-              />
-            </label>
-
-            <div className="grid grid-cols-2 gap-4">
-              <label className="block">
-                <span className="text-sm text-gray-700">Exp. Month</span>
-                <input
-                  type="number"
-                  value={editForm.expMonth}
-                  onChange={(e) => setEditForm({ ...editForm, expMonth: e.target.value })}
-                  className="w-full border rounded px-3 py-2 mt-1"
-                  min="1"
-                  max="12"
-                  required
-                />
-              </label>
-              <label className="block">
-                <span className="text-sm text-gray-700">Exp. Year</span>
-                <input
-                  type="number"
-                  value={editForm.expYear}
-                  onChange={(e) => setEditForm({ ...editForm, expYear: e.target.value })}
-                  className="w-full border rounded px-3 py-2 mt-1"
-                  required
-                />
-              </label>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-lg overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Edit Card Details</h3>
             </div>
 
-            <div className="flex justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setEditingCard(null)}
-                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
-              >
-                Save Changes
-              </button>
-            </div>
-          </form>
+            <form onSubmit={updateCard} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Card Type</label>
+                <select
+                  value={editForm.type}
+                  onChange={(e) => setEditForm({ ...editForm, type: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="VISA">Visa</option>
+                  <option value="MASTERCARD">Mastercard</option>
+                  <option value="AMEX">American Express</option>
+                  <option value="DISCOVER">Discover</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cardholder Name</label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                <input
+                  type="text"
+                  value={editForm.cardNumber}
+                  onChange={(e) => handleCardNumberChange(e, true)}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Month</label>
+                  <input
+                    type="number"
+                    value={editForm.expMonth}
+                    onChange={(e) => setEditForm({ ...editForm, expMonth: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    min="1"
+                    max="12"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Year</label>
+                  <input
+                    type="number"
+                    value={editForm.expYear}
+                    onChange={(e) => setEditForm({ ...editForm, expYear: e.target.value })}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    min={new Date().getFullYear()}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setEditingCard(null)}
+                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium flex items-center"
+                >
+                  <FaCheck className="mr-2" /> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

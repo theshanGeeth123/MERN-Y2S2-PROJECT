@@ -29,6 +29,16 @@ const CustomerHome = () => {
           >
             🛒 View Cart
           </button>
+
+          <button
+            onClick={() => navigate("/cards")}
+            className="w-full py-3 px-4 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition"
+          >
+            My cards
+          </button>
+
+          
+
         </div>
       </div>
 

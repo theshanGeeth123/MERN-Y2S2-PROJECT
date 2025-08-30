@@ -278,12 +278,7 @@ const ProductList = () => {
                 <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">{product.name}</h3>
                 <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
                 
-                <div className="flex items-center mt-2">
-                  <div className="flex">
-                    {renderStars(product.rating || 4.5)}
-                  </div>
-                  <span className="text-xs text-gray-500 ml-1">({product.reviews || 24})</span>
-                </div>
+                
                 
                 <div className="mt-3 flex items-center justify-between">
                   <p className="text-xl font-bold text-gray-900">${product.price.toFixed(2)}</p>
