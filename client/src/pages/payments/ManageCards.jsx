@@ -168,12 +168,12 @@ const ManageCards = () => {
             </button>
             <h1 className="text-2xl font-bold text-gray-900">Payment Methods</h1>
           </div>
-          <button
+          {/* <button
             onClick={() => navigate("/checkout")}
             className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
           >
             Go to Checkout
-          </button>
+          </button> */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

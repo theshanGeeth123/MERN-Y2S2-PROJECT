@@ -1,18 +1,11 @@
 import SavedCard from "../models/SavedCard.model.js";
 
-
-const maskCard = (num = "") => {
-  const s = String(num).replace(/\s+/g, "");
-  const keep = s.slice(-3);
-  return `${"*".repeat(Math.max(0, s.length - 3))}${keep}`;
-};
-
-
+// ----------------- Add New Card -----------------
 export const addCard = async (req, res) => {
   try {
-    const { userId, type, cardNumber, expMonth, expYear } = req.body;
+    const { userId, type, cardNumber, expMonth, expYear, name } = req.body;
 
-    if (!userId || !type || !cardNumber || !expMonth || !expYear) {
+    if (!userId || !type || !cardNumber || !expMonth || !expYear || !name) {
       return res.status(400).json({ success: false, message: "Missing fields" });
     }
 
@@ -22,6 +15,7 @@ export const addCard = async (req, res) => {
       cardNumber,
       expMonth,
       expYear,
+      name,
     });
 
     return res.status(201).json({
@@ -30,9 +24,10 @@ export const addCard = async (req, res) => {
         _id: doc._id,
         userId: doc.userId,
         type: doc.type,
-        maskedCardNumber: maskCard(doc.cardNumber),
+        cardNumber: doc.cardNumber, // full number
         expMonth: doc.expMonth,
         expYear: doc.expYear,
+        name: doc.name,
         createdAt: doc.createdAt,
       },
     });
@@ -42,20 +37,22 @@ export const addCard = async (req, res) => {
   }
 };
 
-
+// ----------------- List Cards -----------------
 export const listCards = async (req, res) => {
   try {
     const { userId } = req.query;
     if (!userId) return res.status(400).json({ success: false, message: "Missing userId" });
 
     const cards = await SavedCard.find({ userId }).sort({ createdAt: -1 });
+
     const result = cards.map((c) => ({
       _id: c._id,
       userId: c.userId,
       type: c.type,
-      maskedCardNumber: maskCard(c.cardNumber),
+      cardNumber: c.cardNumber, // full number
       expMonth: c.expMonth,
       expYear: c.expYear,
+      name: c.name,
       createdAt: c.createdAt,
     }));
 
@@ -66,6 +63,7 @@ export const listCards = async (req, res) => {
   }
 };
 
+// ----------------- Get One Card (for prefill) -----------------
 export const getCardForPrefill = async (req, res) => {
   try {
     const { id } = req.params;
@@ -81,9 +79,10 @@ export const getCardForPrefill = async (req, res) => {
         _id: card._id,
         userId: card.userId,
         type: card.type,
-        cardNumber: card.cardNumber, 
+        cardNumber: card.cardNumber,
         expMonth: card.expMonth,
         expYear: card.expYear,
+        name: card.name,
         createdAt: card.createdAt,
       },
     });
@@ -93,7 +92,7 @@ export const getCardForPrefill = async (req, res) => {
   }
 };
 
-
+// ----------------- Delete Card -----------------
 export const deleteCard = async (req, res) => {
   try {
     const { id } = req.params;
@@ -101,35 +100,28 @@ export const deleteCard = async (req, res) => {
     const del = await SavedCard.findByIdAndDelete(id);
     if (!del) return res.status(404).json({ success: false, message: "Card not found" });
 
-    return res.json({ success: true });
+    return res.json({ success: true, message: "Card deleted successfully" });
   } catch (err) {
     console.error("deleteCard error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
-
-
+// ----------------- Update Card -----------------
 export const updateCard = async (req, res) => {
   try {
     const { id } = req.params;
-    const { type, cardNumber, expMonth, expYear } = req.body;
+    const { type, cardNumber, expMonth, expYear, name } = req.body;
 
     const update = {};
     if (type !== undefined) update.type = type;
     if (cardNumber !== undefined) update.cardNumber = cardNumber;
     if (expMonth !== undefined) update.expMonth = expMonth;
     if (expYear !== undefined) update.expYear = expYear;
+    if (name !== undefined) update.name = name;
 
     const doc = await SavedCard.findByIdAndUpdate(id, update, { new: true });
     if (!doc) return res.status(404).json({ success: false, message: "Card not found" });
-
-   
-    const maskCard = (num = "") => {
-      const s = String(num).replace(/\s+/g, "");
-      const keep = s.slice(-3);
-      return `${"*".repeat(Math.max(0, s.length - 3))}${keep}`;
-    };
 
     return res.json({
       success: true,
@@ -137,9 +129,10 @@ export const updateCard = async (req, res) => {
         _id: doc._id,
         userId: doc.userId,
         type: doc.type,
-        maskedCardNumber: maskCard(doc.cardNumber),
+        cardNumber: doc.cardNumber,
         expMonth: doc.expMonth,
         expYear: doc.expYear,
+        name: doc.name,
         updatedAt: doc.updatedAt,
       },
     });
