@@ -18,7 +18,6 @@ import ProductList from './pages/product/ProductList'
 import CartPage from "./pages/cart/CartPage";
 import AddProduct from "./pages/admin/AddProduct";
 import ManageProducts from "./pages/admin/ManageProducts";
-import OrderSummary from "./pages/cart/OrderSummary";
 import Checkout from "./pages/cart/Checkout";
 import PaymentSuccess from "./pages/cart/PaymentSuccess";
 import MyOrders from "./pages/order/MyOrders";
@@ -52,7 +51,7 @@ function App() {
         
         <Route path="/admin/add-product" element={<AddProduct />} />  
         <Route path="/admin/products" element={<ManageProducts />} />
-        <Route path="/order-summary" element={<OrderSummary />} />
+     
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/my-orders" element={<MyOrders />} />

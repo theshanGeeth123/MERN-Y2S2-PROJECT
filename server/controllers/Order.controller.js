@@ -1,26 +1,24 @@
+import mongoose from 'mongoose';
 import Order from '../models/Order.model.js';
 import Cart from '../models/Cart.model.js';
 import Product from '../models/Products.model.js';
-import mongoose from 'mongoose';
-
-// Manually import and register 'user' model name to avoid populate error
 import userModel from '../models/userModel.js';
 
-mongoose.model('User', userModel.schema); //
+mongoose.model('User', userModel.schema); // register for population if needed
 
 export const placeOrder = async (req, res) => {
   try {
-    const userId = req.userId;
+    const userId = req.body.userId;
+    const products = req.body.products;
+    const total = req.body.total;
 
-    const cart = await Cart.findOne({ userId }).populate('items.productId');
-    if (!cart || cart.items.length === 0) {
-      return res.status(400).json({ success: false, message: 'Cart is empty' });
+    if (!userId || !products || !Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ success: false, message: 'Missing required order data' });
     }
 
-    // Check stock for each item
-    for (const item of cart.items) {
-      const product = await Product.findById(item.productId._id);
-
+    // Validate stock
+    for (const item of products) {
+      const product = await Product.findById(item.productId);
       if (!product || product.stock < item.quantity) {
         return res.status(400).json({
           success: false,
@@ -29,15 +27,9 @@ export const placeOrder = async (req, res) => {
       }
     }
 
-    // Calculate total
-    const total = cart.items.reduce(
-      (acc, item) => acc + item.productId.price * item.quantity,
-      0
-    );
-
-    // Reduce stock and update availability
-    for (const item of cart.items) {
-      const product = await Product.findById(item.productId._id);
+    // Update stock
+    for (const item of products) {
+      const product = await Product.findById(item.productId);
       product.stock -= item.quantity;
       product.availability = product.stock > 0;
       await product.save();
@@ -46,16 +38,13 @@ export const placeOrder = async (req, res) => {
     // Create order
     const newOrder = new Order({
       userId,
-      products: cart.items.map((item) => ({
-        productId: item.productId._id,
-        quantity: item.quantity,
-      })),
+      products,
       total,
     });
 
     await newOrder.save();
 
-    // Clear cart
+    // Optional: Clear MongoDB cart if used
     await Cart.deleteOne({ userId });
 
     res.status(201).json({ success: true, order: newOrder });
@@ -75,23 +64,17 @@ export const getOrdersByUser = async (req, res) => {
   }
 };
 
-
-// controllers/Order.controller.js
-
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("userId", "name email")
-      .populate("products.productId", "name price"); // This is the key line
-
+      .populate("products.productId", "name price");
     res.status(200).json({ success: true, orders });
   } catch (error) {
     console.error("Get all orders error:", error.message);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
-
 
 export const updateOrderStatus = async (req, res) => {
   try {
@@ -122,7 +105,6 @@ export const updateOrderStatus = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
 
 export const deleteOrder = async (req, res) => {
   try {

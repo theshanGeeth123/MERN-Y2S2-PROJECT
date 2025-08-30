@@ -5,12 +5,13 @@ import Product from "../models/Products.model.js";
 import mongoose from "mongoose";
 
 // 📈 Total sales per month
+// 📅 Total sales per day
 export const getSalesReport = async (req, res) => {
   try {
     const sales = await Order.aggregate([
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
           totalSales: { $sum: "$total" },
           count: { $sum: 1 },
         },
@@ -23,6 +24,7 @@ export const getSalesReport = async (req, res) => {
     res.status(500).json({ success: false, message: "Sales report failed" });
   }
 };
+
 
 // 🛒 Top 5 best-selling products
 export const getTopProducts = async (req, res) => {
