@@ -16,10 +16,14 @@ import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
 import UsersReport from "./pages/admin/UsersReport.jsx";
 
-import Notifications from './admin/T_Notifications/Notifications.jsx'
-import NotificationDetail from './admin/T_Notifications/NotificationDetail.jsx'
-import NotificationEdit from './admin/T_Notifications/NotificationEdit.jsx'
-import NotificationCreate from './admin/T_Notifications/NotificationCreate.jsx'
+
+// Admin Notifications pages
+import Notifications from './admin/T_Notifications/Notifications';
+import NotificationDetail from './admin/T_Notifications/NotificationDetail';
+import NotificationCreate from './admin/T_Notifications/NotificationCreate';
+
+
+
 
 function App() {
   return (
@@ -41,11 +45,11 @@ function App() {
         <Route path="/admin/user-reports" element={<UsersReport />} />
 
 
-        {/* Notifications  */}
-        <Route path="/admin/notifications" element={<Notifications />} />
-<Route path="/admin/notifications/create" element={<NotificationCreate />} />
-<Route path="/admin/notifications/:id" element={<NotificationDetail />} />
-<Route path="/admin/notifications/:id/edit" element={<NotificationEdit />} />
+         {/*Admin Notifications routes */}
+        <Route path='/admin/notifications' element={<Notifications />} />
+        <Route path='/admin/notifications/create' element={<NotificationCreate />} />
+        <Route path='/admin/notifications/:id' element={<NotificationDetail />} />
+  
 
       </Routes>
     </div>
