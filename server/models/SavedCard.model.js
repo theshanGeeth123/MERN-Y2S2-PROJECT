@@ -7,6 +7,13 @@ const savedCardSchema = new mongoose.Schema(
     cardNumber: { type: String, required: true },   // stored plain (learning/demo)
     expMonth: { type: Number, required: true },     // 1..12
     expYear: { type: Number, required: true },      // e.g. 2027
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minlength: 2,
+      maxlength: 80,
+    },
   },
   { timestamps: true }
 );
