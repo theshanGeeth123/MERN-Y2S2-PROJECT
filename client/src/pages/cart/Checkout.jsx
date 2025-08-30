@@ -4,6 +4,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaCreditCard, FaLock, FaChevronLeft, FaPlus, FaCheck } from "react-icons/fa";
 
+// Import card logos
+import VisaIcon from "../payments/card_type_images/visa.png";
+import MasterIcon from "../payments/card_type_images/Master.png";
+import AmexIcon from "../payments/card_type_images/AmericanExpress.png";
+import DiscoverIcon from "../payments/card_type_images/Discover.png";
+import OtherIcon from "../payments/card_type_images/Other.png";
+
 const Checkout = () => {
   const { userData } = useContext(AppContent);
   const navigate = useNavigate();
@@ -71,7 +78,6 @@ const Checkout = () => {
     const { name, value } = e.target;
 
     if (name === "number") {
-      // Format card number with spaces every 4 digits
       const formattedValue = value
         .replace(/\s/g, "")
         .replace(/(\d{4})/g, "$1 ")
@@ -82,7 +88,6 @@ const Checkout = () => {
     }
 
     if (name === "month") {
-      // Limit to 2 digits and ensure valid month
       let monthValue = value.replace(/\D/g, "").slice(0, 2);
       if (monthValue && parseInt(monthValue) > 12) monthValue = "12";
       setCard((prev) => ({ ...prev, [name]: monthValue }));
@@ -90,14 +95,12 @@ const Checkout = () => {
     }
 
     if (name === "year") {
-      // Limit to 4 digits
       let yearValue = value.replace(/\D/g, "").slice(0, 4);
       setCard((prev) => ({ ...prev, [name]: yearValue }));
       return;
     }
 
     if (name === "cvv") {
-      // Limit to 3-4 digits based on card type
       const maxLength = type === "AMEX" ? 4 : 3;
       let cvvValue = value.replace(/\D/g, "").slice(0, maxLength);
       setCard((prev) => ({ ...prev, [name]: cvvValue }));
@@ -133,51 +136,54 @@ const Checkout = () => {
     }
   };
 
-const handlePayment = async (e) => {
-  e.preventDefault();
-  setError("");
-  setSuccess("");
+  const handlePayment = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
 
-  const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
-  if (cartItems.length === 0) {
-    setError("Your cart is empty");
-    return;
-  }
+    const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cartItems.length === 0) {
+      setError("Your cart is empty");
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const orderPayload = {
-      userId: userData?.id,
-      products: cartItems.map((item) => ({
-        productId: item._id,
-        quantity: item.quantity,
-      })),
-      total: total,
-    };
+      const orderPayload = {
+        userId: userData?.id,
+        products: cartItems.map((item) => ({
+          productId: item._id,
+          quantity: item.quantity,
+        })),
+        total: total,
+      };
 
-    await axios.post("http://localhost:4000/api/orders/place", orderPayload);
+      await axios.post("http://localhost:4000/api/orders/place", orderPayload);
 
-    localStorage.removeItem("cart");
-    navigate("/payment-success");
-  } catch (err) {
-    console.error("Order placement failed:", err.response?.data || err.message);
-    setError("Payment failed or order could not be placed");
-    setTimeout(() => setError(""), 5000);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+      localStorage.removeItem("cart");
+      navigate("/payment-success");
+    } catch (err) {
+      console.error("Order placement failed:", err.response?.data || err.message);
+      setError("Payment failed or order could not be placed");
+      setTimeout(() => setError(""), 5000);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getCardIcon = (cardType) => {
     switch (cardType) {
-      case "VISA": return "/icons/visa.png";
-      case "MASTERCARD": return "/icons/mastercard.png";
-      case "AMEX": return "/icons/amex.png";
-      case "DISCOVER": return "/icons/discover.png";
-      default: return "/icons/credit-card.png";
+      case "VISA":
+        return VisaIcon;
+      case "MASTERCARD":
+        return MasterIcon;
+      case "AMEX":
+        return AmexIcon;
+      case "DISCOVER":
+        return DiscoverIcon;
+      default:
+        return OtherIcon;
     }
   };
 
@@ -246,10 +252,11 @@ const handlePayment = async (e) => {
                             />
                             <div>
                               <div className="font-medium text-gray-900">
-                                •••• {c.maskedCardNumber}
+                                {c.name || "Cardholder"}
                               </div>
                               <div className="text-xs text-gray-500">
-                                Exp: {String(c.expMonth).padStart(2, "0")}/{c.expYear}
+                                •••• {c.cardNumber?.slice(-4)} | Exp:{" "}
+                                {String(c.expMonth).padStart(2, "0")}/{c.expYear}
                               </div>
                             </div>
                           </div>
