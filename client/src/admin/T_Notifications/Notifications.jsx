@@ -1,13 +1,9 @@
-// src/admin/T_Notifications/Notifications.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const API_BASE =
-  (import.meta.env.VITE_BACKEND_URL
-    ? `${import.meta.env.VITE_BACKEND_URL}/api/notifications`
-    : "http://localhost:4000/api/notifications");
+const API_BASE ="http://localhost:4000/api/notifications";
 
 function Notifications() {
   const navigate = useNavigate();
@@ -21,7 +17,13 @@ function Notifications() {
     setLoading(true);
     try {
       const { data } = await axios.get(API_BASE, { withCredentials: true });
-      setNotifications(data?.data || data || []);
+
+      // Sort by createdAt descending (latest first)
+      const sorted = [...(data?.data || data || [])].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      setNotifications(sorted);
     } catch {
       toast.error("Failed to load notifications");
     } finally {
@@ -63,12 +65,8 @@ function Notifications() {
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Notifications
-            </h1>
-            <p className="text-sm text-neutral-500">
-              Manage messages shown to users.
-            </p>
+            <h1 className="text-2xl font-semibold tracking-tight">Notifications</h1>
+            <p className="text-sm text-neutral-500">Manage messages shown to users.</p>
           </div>
 
           <button
@@ -104,7 +102,11 @@ function Notifications() {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+              />
             </svg>
           </div>
 
@@ -150,22 +152,13 @@ function Notifications() {
                   key={n._id}
                   className="grid grid-cols-1 gap-3 px-4 py-4 transition hover:bg-neutral-50 sm:grid-cols-12 sm:items-center"
                 >
-                  {/* Title & preview */}
                   <div className="col-span-6">
                     <div className="font-medium">{n.title}</div>
-                    <div className="mt-1 line-clamp-1 text-sm text-neutral-500">
-                      {n.body}
-                    </div>
+                    <div className="mt-1 line-clamp-1 text-sm text-neutral-500">{n.body}</div>
                   </div>
 
-                  {/* Audience */}
-                  <div className="col-span-2">
-                    <span className="inline-flex items-center ml-[-10px] border-neutral-300 px-2.5 py-0.5 text-xs capitalize text-neutral-700">
-                      {n.audience}
-                    </span>
-                  </div>
+                  <div className="col-span-2 capitalize text-sm text-neutral-700">{n.audience}</div>
 
-                  {/* Status */}
                   <div className="col-span-2">
                     {n.isActive ? (
                       <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
@@ -178,7 +171,6 @@ function Notifications() {
                     )}
                   </div>
 
-                  {/* Actions */}
                   <div className="col-span-2 flex items-center justify-start gap-2 sm:justify-end">
                     <button
                       onClick={() => navigate(`/admin/notifications/${n._id}`)}
@@ -199,7 +191,6 @@ function Notifications() {
           )}
         </div>
 
-        {/* Footer actions */}
         <div className="mt-4 flex justify-end">
           <button
             onClick={fetchNotifications}
