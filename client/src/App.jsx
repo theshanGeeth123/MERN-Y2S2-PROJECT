@@ -22,6 +22,8 @@ import Notifications from './admin/T_Notifications/Notifications';
 import NotificationDetail from './admin/T_Notifications/NotificationDetail';
 import NotificationCreate from './admin/T_Notifications/NotificationCreate';
 
+import CustomerNotifications from "./T_Customer/T_Cus_notifications/CustomerNotifications";
+
 
 
 
@@ -49,6 +51,10 @@ function App() {
         <Route path='/admin/notifications' element={<Notifications />} />
         <Route path='/admin/notifications/create' element={<NotificationCreate />} />
         <Route path='/admin/notifications/:id' element={<NotificationDetail />} />
+
+        <Route path="/notifications" element={<CustomerNotifications />} />
+  
+
   
 
       </Routes>
