@@ -45,9 +45,9 @@ function Navbar() {
     navigate('/customer-home');
   };
 
-  // NEW: notifications navigation
+  
   const viewNotifications = () => {
-    navigate('/notifications'); // adjust path if your route differs
+    navigate('/notifications'); 
   };
 
   return (
