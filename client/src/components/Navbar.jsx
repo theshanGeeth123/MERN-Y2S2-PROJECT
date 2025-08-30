@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 function Navbar() {
   const navigate = useNavigate();
-  const { userData, backendUrl, setUserData, setIsLoggedin } = useContext(AppContent);
+  const { userData, backendUrl, setUserData, setIsLoggedin,isLoggedin } = useContext(AppContent);
 
   const sendVerificationOtp = async () => {
     try {
@@ -54,10 +54,14 @@ function Navbar() {
     <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24">
       <img src={assets.pic2} alt="" className="w-28 sm:w-32 " />
 
+          
       {/* Right side: Notification + existing content (unchanged) */}
       <div className="flex items-center gap-4">
         {/* Notification icon */}
-        <button
+
+      
+        {
+          isLoggedin &&   <button
           onClick={viewNotifications}
           aria-label="Notifications"
           className="relative p-2 rounded-full hover:bg-gray-100 transition"
@@ -85,6 +89,11 @@ function Navbar() {
             </span>
           )}
         </button>
+
+            
+        }
+
+      
 
         {userData ? (
           <div className="w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group">
