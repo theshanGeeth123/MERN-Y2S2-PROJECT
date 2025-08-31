@@ -2,10 +2,16 @@ import React, { useContext, useState } from "react";
 import { AppContent } from "../context/AppContext";
 import axios from 'axios';
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 import CustomerHomeNavbar from '../components/CustomerHomeNavbar';
+import CustomerFeedbackDisplay from './CustomerFeedbackDisplay';
 
 function CustomerFeedback() {
   const { userData } = useContext(AppContent);
+  const [selectedPhotographer, setSelectedPhotographer] = useState('');
+  const [rate, setRate] = useState('Excellent'); // Set Excellent since it is the default value in rating
+  const [comment, setComment] = useState('');
+  const navigate = useNavigate();
   if (!userData) {
     return (
       <div className="text-center mt-10">
@@ -14,9 +20,6 @@ function CustomerFeedback() {
     );
   }
 
-  const [selectedPhotographer, setSelectedPhotographer] = useState('');
-  const [rate, setRate] = useState('Execllent'); // Set Excellent since it is the default value in rating
-  const [comment, setComment] = useState('');
   const username = userData.name;
   const email = userData.email;
 
@@ -51,10 +54,10 @@ function CustomerFeedback() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-green-100">
       <CustomerHomeNavbar />
       <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
-        <h1 className="text-4xl font-bold text-center mb-6">Feedback Form</h1>
+        <h3 className="text-4xl font-bold text-left mb-6">Submit Feedback</h3>
         <form onSubmit={onSubmitFeedbackHandler} className="space-y-4">
           <label className="mb-1 block text-sm text-gray-700"> Selected photographer </label>
           <div class="mt-2">
@@ -83,6 +86,8 @@ function CustomerFeedback() {
           </div>
         </form>
       </div>
+      <CustomerFeedbackDisplay/>
+      <br/>
     </div>
   );
 }

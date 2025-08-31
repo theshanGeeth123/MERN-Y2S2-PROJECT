@@ -1,7 +1,7 @@
 import express from 'express'
 import userAuth from '../middleware/userAuth.js';
 import { getUserById, getUserData, getUserIdByEmail,updateUser,deleteUser } from '../controllers/userController.js';
-import { feedbackSubmission, getfeedbacks, deletefeedback} from "../controllers/feedbackController.js";
+import { feedbackSubmission, getFeedbacksById, getFeedbacks, deletefeedback} from "../controllers/feedbackController.js";
 
 const userRouter = express.Router();
 
@@ -11,8 +11,9 @@ userRouter.get('/customer',getUserIdByEmail);
 userRouter.put('/customer/:id', updateUser);
 userRouter.delete('/customer/:id', deleteUser);
 userRouter.post('/add-feedback',feedbackSubmission);
-userRouter.get('/feedback', getfeedbacks);
+userRouter.get('/feedback', getFeedbacks);
 userRouter.post('/feedback',feedbackSubmission);
+userRouter.get('/feedback/:id', getFeedbacksById);
 userRouter.delete('/feedback', deletefeedback);
 
 
