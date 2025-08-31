@@ -2,10 +2,11 @@ import React, { useContext, useState, useEffect } from "react";
 import { AppContent } from "../context/AppContext";
 import axios from 'axios';
 import { toast } from "react-toastify";
-import CustomerHomeNavbar from '../components/CustomerHomeNavbar';
+import { useNavigate } from "react-router-dom";
 
 function CustomerFeedbackDisplay() {
   const { userData } = useContext(AppContent);
+  const navigate = useNavigate();
   if (!userData) {
     return (
       <div className="text-center mt-10">
@@ -13,7 +14,6 @@ function CustomerFeedbackDisplay() {
       </div>
     );
   }
-  const username = userData.name;
   const email = userData.email;
   const [feedbacks, setFeedbacks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,11 +22,8 @@ function CustomerFeedbackDisplay() {
     (async () => {
       try {
         setLoading(true);
-        const data = await axios.get(`http://localhost:4000/api/user/feedback?email=${email}`);
-        if (data.status=="200") {
-          setFeedbacks(Array.isArray(data) ? data :Array.isArray(data.data) ? data.data : data.data.data || []);
-        }
-        toast.error(data.message);
+        // fetch user's previous feedback
+        loadData();
       } catch (e) {
         toast.error("Error occurred "+ e);
       } finally {
@@ -34,6 +31,30 @@ function CustomerFeedbackDisplay() {
       }
     })();
   }, [email]);
+
+  const loadData = async () => {
+    const data = await axios.get(`http://localhost:4000/api/user/feedback?email=${email}`);
+    if (data.status=="200") {
+      let feedbackList = Array.isArray(data) ? data :Array.isArray(data.data) ? data.data : data.data.data || [];
+      feedbackList.reverse();
+      setFeedbacks(feedbackList);
+    }
+    toast.error(data.message);
+  }
+
+  const deleteFeedback = async (id) => { // update feedback list after deleting a feedback
+    if (!window.confirm("Delete this feedback")) return;
+    try {
+      const data = await axios.delete(`http://localhost:4000/api/user/feedback?id=${id}`);
+      if (data.status=="200") {
+         toast.success("Successfully deleted the feedback");
+         loadData();
+      }
+      toast.error(data.message);
+    } catch (e) {
+      toast.error("Error occurred: " + e);
+    }
+  };
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
@@ -73,7 +94,7 @@ function CustomerFeedbackDisplay() {
                     <button  onClick={() => onEdit(fb)}
                       className="cursor-pointer rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">
                       Edit </button>
-                    <button onClick={() => onDelete(fb._id)}
+                    <button onClick={() => deleteFeedback(fb._id)}
                       className="cursor-pointer rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700">
                       Delete </button>
                   </div>
