@@ -6,6 +6,7 @@ import connectDB from "./config/mongodb.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import adminRouter from './routes/Admin.route.js'
+import packageRoutes from './routes/packageRoutes.js'
 
 const app = express();
 
@@ -19,13 +20,15 @@ app.use(cookieParser());
 app.use(cors({origin:allowedOrigins,credentials:true}));
 
 // API Endpoint 
-app.get("/",(req,res)=>res.send("API working"));
+//app.get("/",(req,res)=>res.send("API working"));
 app.use('/api/auth',authRouter);
 app.use('/api/user',userRouter);
 app.use('/api/admin',adminRouter);
+app.use('/api/packages',packageRoutes);
 
 app.listen(port,()=>console.log(`Server started on PORT:${port}
 `));
+
 
 //greatstack123
 
