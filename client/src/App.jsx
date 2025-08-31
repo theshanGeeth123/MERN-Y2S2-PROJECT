@@ -23,7 +23,7 @@ import StaffHome from "./staff/staffHome.jsx";
 import StaffLogin from "./staff/StaffLogin.jsx";
 
 
-
+import StaffProfile from "./staff/StaffProfile";
 
 function App() {
   return (
@@ -49,6 +49,8 @@ function App() {
         <Route path="/admin/staff" element={<StaffList />} />
   <Route path="/admin/staff/create" element={<StaffCreate />} />
   <Route path="/admin/staff/:id" element={<StaffDetail />} />
+
+<Route path="/staff/profile" element={<StaffProfile />} />
 
       </Routes>
     </div>
