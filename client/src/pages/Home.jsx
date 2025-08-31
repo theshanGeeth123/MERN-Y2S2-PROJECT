@@ -5,7 +5,6 @@ import Header from '../components/Header'
 function Home() {
   return (
     <div >
-      <Navbar/>
       <Header/>
     </div>
   )
