@@ -1,25 +1,31 @@
+// src/staff/StaffLogin.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function AdminLogin() {
+function StaffLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
-      const res = await axios.post("http://localhost:4000/api/admin/login", {
+      const res = await axios.post("http://localhost:4000/api/staff/login", {
         email,
         password,
       });
 
-      if (res.status === 200) {
-        navigate("/admin/home");
+      if (res?.data?.success) {
+        // Optional: keep staff session locally if you wish
+        localStorage.setItem("staff", JSON.stringify(res.data.staff));
+        navigate("/staff/home");
       } else {
-        setError("Invalid credentials");
+        setError(res?.data?.message || "Invalid credentials");
       }
     } catch (err) {
       setError("Login failed. Check your credentials.");
@@ -29,8 +35,8 @@ function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-blue-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-center mb-6">Admin Login</h2>
-        
+        <h2 className="text-2xl font-semibold text-center mb-6">Staff Login</h2>
+
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
@@ -40,18 +46,29 @@ function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="username"
             />
           </div>
 
           <div className="mb-6">
             <label className="block text-gray-700">Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPwd ? "text" : "password"}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="current-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPwd((s) => !s)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500"
+              >
+                {showPwd ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
           {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
@@ -60,25 +77,12 @@ function AdminLogin() {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
           >
-            Login as Admin
+            Login
           </button>
         </form>
-
-        {/* Redirect to Staff Login */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            Are you a staff member?
-            <button
-              onClick={() => navigate("/staff/login")}
-              className="ml-1 text-blue-600 hover:text-blue-800 font-medium"
-            >
-              Login here
-            </button>
-          </p>
-        </div>
       </div>
     </div>
   );
 }
 
-export default AdminLogin;
+export default StaffLogin;

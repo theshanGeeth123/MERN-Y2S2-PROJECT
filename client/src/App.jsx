@@ -19,6 +19,9 @@ import StaffList from "./admin/members/StaffList";
 import StaffCreate from "./admin/members/StaffCreate";
 import StaffDetail from "./admin/members/StaffDetail";
 
+import StaffHome from "./staff/staffHome.jsx";
+import StaffLogin from "./staff/StaffLogin.jsx";
+
 function App() {
   return (
     <div>
@@ -36,6 +39,9 @@ function App() {
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+
+           <Route path="/staff/login" element={<StaffLogin />} />
+        <Route path="/staff/home" element={<StaffHome />} />
 
         <Route path="/admin/staff" element={<StaffList />} />
   <Route path="/admin/staff/create" element={<StaffCreate />} />
