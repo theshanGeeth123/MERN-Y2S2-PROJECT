@@ -13,7 +13,7 @@ function AdminLogin() {
     try {
       const res = await axios.post("http://localhost:4000/api/admin/login", {
         email,
-        password
+        password,
       });
 
       if (res.status === 200) {
@@ -30,6 +30,7 @@ function AdminLogin() {
     <div className="min-h-screen flex items-center justify-center bg-blue-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-2xl font-semibold text-center mb-6">Admin Login</h2>
+        
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
@@ -59,9 +60,22 @@ function AdminLogin() {
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
           >
-            Login
+            Login as Admin
           </button>
         </form>
+
+        {/* Redirect to Staff Login */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Are you a staff member?
+            <button
+              onClick={() => navigate("/staff/login")}
+              className="ml-1 text-blue-600 hover:text-blue-800 font-medium"
+            >
+              Login here
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

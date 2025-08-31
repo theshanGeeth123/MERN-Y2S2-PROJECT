@@ -1,6 +1,48 @@
 import Staff from "../models/Staff.model.js";
 import bcrypt from "bcryptjs";
 
+// Staff Login
+export const staffLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: "Email and password are required" });
+    }
+
+    const staff = await Staff.findOne({ email });
+    if (!staff) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    if (!staff.isActive) {
+      return res.status(403).json({ success: false, message: "Account is inactive" });
+    }
+
+    const isMatch = await bcrypt.compare(password, staff.password);
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+    }
+
+    // Exclude password from response
+    const { password: pwd, __v, ...staffData } = staff.toObject();
+
+    return res.json({
+      success: true,
+      message: "Login successful",
+      staff: staffData,
+    });
+  } catch (err) {
+    console.error("staffLogin error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Staff Logout (dummy since no JWT)
+export const staffLogout = (req, res) => {
+  return res.json({ success: true, message: "Logged out" });
+};
+
 // ➕ Create staff
 export const createStaff = async (req, res) => {
   try {
