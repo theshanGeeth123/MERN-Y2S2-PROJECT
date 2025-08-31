@@ -38,6 +38,7 @@ function CustomerFeedback() {
       if (data.success) {
         toast.success("Successfully added a feedback");
         setInitial();
+        loadData();
       } else {
         toast.error(data.message);
       }
@@ -45,12 +46,14 @@ function CustomerFeedback() {
       toast.error(error.message || "An error occurred");
     }
   };
-  if (!userData) {
-    return (
-      <div className="text-center mt-10">
-        <h1 className="text-2xl">Loading user data...</h1>
-      </div>
-    );
+  const loadData = async () => { // update feedback list after adding a new feedback
+    const data = await axios.get(`http://localhost:4000/api/user/feedback?email=${email}`);
+    if (data.status=="200") {
+      let feedbackList = Array.isArray(data) ? data :Array.isArray(data.data) ? data.data : data.data.data || [];
+      feedbackList.reverse();
+      setFeedbacks(feedbackList);
+    }
+    toast.error(data.message);
   }
 
   return (
