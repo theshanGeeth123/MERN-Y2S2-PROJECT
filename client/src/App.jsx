@@ -15,6 +15,7 @@ import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
 import MRental from './pages/MRental'
+import MRentPage from "./pages/MRentPage";
 
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         <Route path='/my-profile' element={<MyProfile/>}/>
         <Route path='/customer-home' element={<CustomerHome/>}/>
         <Route path='/Rental' element={<MRental/>}/>
+        <Route path="/all-rentals" element={<MRentPage />} />
         
 
         {/* admin */}
@@ -36,6 +38,7 @@ function App() {
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
         <Route path='/admin/Rental' element={<MRental/>}/>
+        <Route path="/admin/all-rentals" element={<MRentPage />} />
 
       </Routes>
     </div>
