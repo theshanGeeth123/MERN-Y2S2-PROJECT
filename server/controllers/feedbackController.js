@@ -12,7 +12,7 @@ export const feedbackSubmission = async (req, res) => {
       username, email,  selectedPhotographer, rate, comment
     });
     await feedback.save();
-    return res.json({ success: true });
+    return res.json({ success: true, data: feedback });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
@@ -33,7 +33,7 @@ export const getFeedbacksById = async (req, res) => {
   const { email } = req.query;
   console.log("Email received:", email);
   if (!email) {
-    return res.status(400).json({ success: false, message: 'Email is required' });
+    return res.status(400).json({ success: false, message: 'Email is required', data: feedback });
   }
   try {
     const feedback = await feedbackModel.find({ email });
@@ -53,7 +53,7 @@ export const deletefeedback = async (req, res) => {
     if (!feedback) {
       return res.status(404).json({ success: false, message: "Feedback not found" });
     }
-    res.json({ success: true, message: "Deleted feedback" });
+    res.json({ success: true, message: "Deleted feedback", data: feedback });
   } catch (err) {
     res.status(500).json({ success: false, message: "Server error" });
   }

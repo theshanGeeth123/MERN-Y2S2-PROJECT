@@ -4,43 +4,8 @@ import axios from 'axios';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function CustomerFeedbackDisplay() {
-  const { userData } = useContext(AppContent);
+function CustomerFeedbackDisplay({ loading, feedbacks}) {
   const navigate = useNavigate();
-  if (!userData) {
-    return (
-      <div className="text-center mt-10">
-        <h1 className="text-2xl">Loading user data...</h1>
-      </div>
-    );
-  }
-  const email = userData.email;
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        // fetch user's previous feedback
-        loadData();
-      } catch (e) {
-        toast.error("Error occurred "+ e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [email]);
-
-  const loadData = async () => {
-    const data = await axios.get(`http://localhost:4000/api/user/feedback?email=${email}`);
-    if (data.status=="200") {
-      let feedbackList = Array.isArray(data) ? data :Array.isArray(data.data) ? data.data : data.data.data || [];
-      feedbackList.reverse();
-      setFeedbacks(feedbackList);
-    }
-    toast.error(data.message);
-  }
 
   const deleteFeedback = async (id) => { // update feedback list after deleting a feedback
     if (!window.confirm("Delete this feedback")) return;
@@ -48,7 +13,6 @@ function CustomerFeedbackDisplay() {
       const data = await axios.delete(`http://localhost:4000/api/user/feedback?id=${id}`);
       if (data.status=="200") {
          toast.success("Successfully deleted the feedback");
-         loadData();
       }
       toast.error(data.message);
     } catch (e) {
