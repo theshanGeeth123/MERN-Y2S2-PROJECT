@@ -1,17 +1,31 @@
-// controllers/report.controller.js
+// controllers/UserReport.controller.js
 import userModel from "../models/userModel.js";
 
 /**
  * Helpers
  */
 const parseDateRange = (req) => {
-  // Optional ?start=YYYY-MM-DD&end=YYYY-MM-DD
+  // Optional ?start=YYYY-MM-DD&end=YYYY-MM-DD (used by several endpoints)
   const { start, end } = req.query || {};
   const match = {};
   if (start || end) {
     match.createdAt = {};
-    if (start) match.createdAt.$gte = new Date(start);
-    if (end)   match.createdAt.$lte = new Date(end);
+    if (start) match.createdAt.$gte = new Date(`${start}T00:00:00.000Z`);
+    if (end)   match.createdAt.$lte = new Date(`${end}T23:59:59.999Z`);
+  }
+  return match;
+};
+
+/**
+ * When grouping by day/month, we first ensure a reliable timestamp (createdAtSafe)
+ * and then match an inclusive date range on that field.
+ */
+const buildCreatedAtSafeMatch = (start, end) => {
+  const match = {};
+  if (start || end) {
+    match.createdAtSafe = {};
+    if (start) match.createdAtSafe.$gte = new Date(`${start}T00:00:00.000Z`);
+    if (end)   match.createdAtSafe.$lte = new Date(`${end}T23:59:59.999Z`);
   }
   return match;
 };
@@ -44,7 +58,7 @@ export const getUserSummary = async (req, res) => {
 
 /**
  * 2) Age distribution (bucketed & cast from string)
- *    Buckets: <18, 18–24, 25–34, 35–44, 45–54, 55+
+ *    Buckets: 0–17, 18–24, 25–34, 35–44, 45–54, 55–64, 65+
  *    Optional date range
  */
 export const getAgeDistribution = async (req, res) => {
@@ -54,7 +68,7 @@ export const getAgeDistribution = async (req, res) => {
     const match = {};
     if (start || end) {
       match.createdAt = {};
-      if (start) match.createdAt.$gte = new Date(start);
+      if (start) match.createdAt.$gte = new Date(`${start}T00:00:00.000Z`);
       if (end) match.createdAt.$lte = new Date(`${end}T23:59:59.999Z`);
     }
 
@@ -117,7 +131,6 @@ export const getAgeDistribution = async (req, res) => {
   }
 };
 
-
 /**
  * 3) Email domains (normalized)
  *    Optional ?limit=N (default 10), optional date range
@@ -154,22 +167,24 @@ export const getEmailDomainReport = async (req, res) => {
 };
 
 /**
- * 4) Registrations by month (great for line chart)
+ * 4) Registrations by month (line chart)
  *    Optional date range
  *    Output: [{ _id: 'YYYY-MM', registrations: N }]
  */
 export const getUsersByMonth = async (req, res) => {
   try {
+    const { start, end } = req.query;
+
     const data = await userModel.aggregate([
       // Create a safe date: use createdAt if present, else ObjectId timestamp
       {
         $addFields: {
-          createdAtSafe: {
-            $ifNull: ["$createdAt", { $toDate: "$_id" }]
-          }
+          createdAtSafe: { $ifNull: ["$createdAt", { $toDate: "$_id" }] }
         }
       },
-      // Now group by YYYY-MM
+      // Respect inclusive date range on createdAtSafe
+      { $match: buildCreatedAtSafeMatch(start, end) },
+      // Group by YYYY-MM
       {
         $group: {
           _id: { $dateToString: { format: "%Y-%m", date: "$createdAtSafe" } },
@@ -187,9 +202,41 @@ export const getUsersByMonth = async (req, res) => {
 };
 
 /**
+ * 4b) Registrations by day (line chart)
+ *     Optional date range
+ *     Output: [{ _id: 'YYYY-MM-DD', registrations: N }]
+ */
+export const getUsersByDay = async (req, res) => {
+  try {
+    const { start, end } = req.query;
+
+    const data = await userModel.aggregate([
+      {
+        $addFields: {
+          createdAtSafe: { $ifNull: ["$createdAt", { $toDate: "$_id" }] }
+        }
+      },
+      { $match: buildCreatedAtSafeMatch(start, end) },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAtSafe" } },
+          registrations: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    res.json({ success: true, data });
+  } catch (err) {
+    console.error("by-day report error:", err);
+    res.status(500).json({ success: false, message: "By-day report failed" });
+  }
+};
+
+/**
  * 5) Verified split (pie chart)
  *    Optional date range
- *    Output: [{ _id: true/false, count: N }]
+ *    Returns { verified, unverified }
  */
 export const getVerifiedSplit = async (req, res) => {
   try {
@@ -198,7 +245,7 @@ export const getVerifiedSplit = async (req, res) => {
     const match = {};
     if (start || end) {
       match.createdAt = {};
-      if (start) match.createdAt.$gte = new Date(start);
+      if (start) match.createdAt.$gte = new Date(`${start}T00:00:00.000Z`);
       if (end) match.createdAt.$lte = new Date(`${end}T23:59:59.999Z`);
     }
 
@@ -243,3 +290,9 @@ export const getTopAddresses = async (req, res) => {
     return res.status(500).json({ success: false, message: "Top addresses failed" });
   }
 };
+
+/**
+ * (Optional but recommended)
+ * Add this in your user schema file to speed up date queries:
+ * userSchema.index({ createdAt: 1 });
+ */
