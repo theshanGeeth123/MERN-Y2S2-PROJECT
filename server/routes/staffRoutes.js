@@ -4,7 +4,7 @@ import {
   getAllStaff,
   getStaffById,
   updateStaff,
-  deleteStaff,staffLogin, staffLogout
+  deleteStaff,staffLogin, staffLogout, getStaffByEmail
 } from "../controllers/staffController.js";
 
 const router = Router();
@@ -20,6 +20,8 @@ router.post("/login", staffLogin);
 
 // POST /api/staff/auth/logout
 router.post("/logout", staffLogout);
+
+router.post("/profile-by-email", getStaffByEmail);
 
 
 export default router;

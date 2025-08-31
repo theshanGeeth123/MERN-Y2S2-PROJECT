@@ -118,3 +118,25 @@ export const deleteStaff = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+
+export const getStaffByEmail = async (req, res) => {
+  try {
+    const { email } = req.body; // safer than query for PII
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email is required" });
+    }
+
+    const staff = await Staff.findOne({ email }).lean();
+    if (!staff) {
+      return res.status(404).json({ success: false, message: "Staff not found" });
+    }
+
+    // never send password
+    const { password, __v, ...safe } = staff;
+    return res.json({ success: true, data: safe });
+  } catch (err) {
+    console.error("getStaffByEmail error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
