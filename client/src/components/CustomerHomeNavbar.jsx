@@ -30,7 +30,7 @@ function CustomerHomeNavbar() {
             const {data} = await axios.post('http://localhost:4000/api/auth/logout');
             data.success && setIsLoggedin(false);
             data.success && setUserData(false);
-            navigate('/');
+            navigate('/login');
         } catch (error) {
             toast.error(error.message)
         }
