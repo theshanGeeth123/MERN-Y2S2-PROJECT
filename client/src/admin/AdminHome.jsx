@@ -40,6 +40,13 @@ export default function AdminHome() {
             Notification Management
           </button>
 
+          <button
+            onClick={() => navigate("/customerManagement")}
+            className="w-full py-3 px-4 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition"
+          >
+            Customer Details
+          </button>
+
         </div>
       </div>
     </div>

@@ -24,7 +24,7 @@ import NotificationCreate from './admin/T_Notifications/NotificationCreate';
 
 import CustomerNotifications from "./T_Customer/T_Cus_notifications/CustomerNotifications";
 
-
+import CustomerManagement from './admin/T_Customer/CustomerManage.jsx';
 
 
 function App() {
@@ -53,7 +53,13 @@ function App() {
         <Route path='/admin/notifications/:id' element={<NotificationDetail />} />
 
         <Route path="/notifications" element={<CustomerNotifications />} />
-  
+
+
+        {/*Admin Cusomer Management routes */}
+
+
+         <Route path="/customerManagement" element={<CustomerManagement />} />
+
 
   
 
