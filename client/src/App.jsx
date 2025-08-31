@@ -29,15 +29,13 @@ function App() {
         <Route path='/reset-password' element={<ResetPassword/>}/>
         <Route path='/my-profile' element={<MyProfile/>}/>
         <Route path='/customer-home' element={<CustomerHome/>}/>
-        <Route path='/Rental' element={<MRental/>}/>
-        <Route path="/all-rentals" element={<MRentPage />} />
+
         
 
         {/* admin */}
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
-        <Route path='/admin/Rental' element={<MRental/>}/>
         <Route path="/admin/all-rentals" element={<MRentPage />} />
 
       </Routes>
