@@ -31,6 +31,15 @@ export default function AdminHome() {
           >
             👥 User Reports
           </button>
+
+
+          <button
+            onClick={() => navigate("/admin/notifications")}
+            className="w-full py-3 px-4 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition"
+          >
+            Notification Management
+          </button>
+
         </div>
       </div>
     </div>
