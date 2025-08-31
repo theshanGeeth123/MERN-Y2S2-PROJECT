@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRentItemsStore } from "../mstore/mrentItems";
+import { useNavigate } from "react-router-dom";
 
 function MRental() {
   const [newRntal, setnewRental] = useState({
@@ -12,12 +13,16 @@ function MRental() {
 
 
   const {addItem} = useRentItemsStore();
+  const navigate = useNavigate();
 
 const handleAddRental = async () => {
   const { success, message } = await addItem(newRntal); 
   console.log("Success:", success);
   console.log("Message:", message);
   alert(message);
+  if (success) {
+      navigate("/all-rentals"); 
+    }
 };
 
 
