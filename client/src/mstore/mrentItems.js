@@ -42,6 +42,7 @@ export const useRentItemsStore = create((set) => ({
         rentItems: [...state.rentItems, data.data],
       }));
 
+
       return { success: true, message: "Rental Item was added successfully" };
     } catch (error) {
       return { success: false, message: error.message || "Network error" };
@@ -56,12 +57,36 @@ export const useRentItemsStore = create((set) => ({
 
       const data = await res.json();
 
-      // Store data in rentItems
-      // If backend returns array directly, use: set({ rentItems: data || [] })
+
       set({ rentItems: data.data || [] });
     } catch (error) {
       console.error("Error fetching rental items:", error.message);
       set({ rentItems: [] });
     }
   },
+
+
+ // Delete an item
+  deleteItem: async (rid) => {
+    try {
+      const res = await fetch(`/api/rentalItems/${rid}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        return { success: false, message: data.message };
+      }
+
+      set((state) => ({
+        rentItems: state.rentItems.filter((item) => item._id !== rid),
+      }));
+
+      return { success: true, message: "Item deleted successfully" };
+    } catch (error) {
+      return { success: false, message: error.message || "Delete failed" };
+    }
+  },
+
 }));
