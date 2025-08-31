@@ -81,12 +81,12 @@ function Navbar() {
                   Verify email
                 </li>
               )}
-              <li onClick={viewHome} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
+              {userData.isAccountVerified && <li onClick={viewHome} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
                 Home
-              </li>
-              <li onClick={viewProfile} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
+              </li>}
+              {userData.isAccountVerified && <li onClick={viewProfile} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
                 My Profile
-              </li>
+              </li>}
               <li onClick={logout} className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10">
                 Logout
               </li>
