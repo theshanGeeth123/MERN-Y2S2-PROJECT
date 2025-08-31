@@ -15,6 +15,10 @@ import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
 
+import StaffList from "./admin/members/StaffList";
+import StaffCreate from "./admin/members/StaffCreate";
+import StaffDetail from "./admin/members/StaffDetail";
+
 function App() {
   return (
     <div>
@@ -32,6 +36,10 @@ function App() {
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+
+        <Route path="/admin/staff" element={<StaffList />} />
+  <Route path="/admin/staff/create" element={<StaffCreate />} />
+  <Route path="/admin/staff/:id" element={<StaffDetail />} />
 
       </Routes>
     </div>
