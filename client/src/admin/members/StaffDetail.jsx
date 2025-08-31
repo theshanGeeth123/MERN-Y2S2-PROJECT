@@ -3,9 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_BACKEND_URL
-  ? `${import.meta.env.VITE_BACKEND_URL}/api/staff`
-  : "http://localhost:4000/api/staff";
+const API_BASE = "http://localhost:4000/api/staff";
 
 function StaffDetail() {
   const { id } = useParams();
@@ -16,11 +14,11 @@ function StaffDetail() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // form for profile edit
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    // password not shown/required here; use separate flow if you need reset
     role: "photographer",
     imageUrl: "",
     phone: "",
@@ -29,6 +27,12 @@ function StaffDetail() {
     dateHired: "",
     isActive: true,
   });
+
+  // password modal state
+  const [pwOpen, setPwOpen] = useState(false);
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [savingPw, setSavingPw] = useState(false);
 
   const fetchOne = async () => {
     setLoading(true);
@@ -84,6 +88,48 @@ function StaffDetail() {
     }
   };
 
+  // ---- Password change helpers ----
+  const openPwModal = () => {
+    setNewPw("");
+    setConfirmPw("");
+    setPwOpen(true);
+  };
+  const closePwModal = () => {
+    if (savingPw) return;
+    setPwOpen(false);
+    setNewPw("");
+    setConfirmPw("");
+  };
+  const submitPassword = async () => {
+    if (!newPw || !confirmPw) {
+      toast.error("Please enter and confirm the new password");
+      return;
+    }
+    if (newPw !== confirmPw) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (newPw.length < 6) {
+      toast.error("Password should be at least 6 characters");
+      return;
+    }
+    try {
+      setSavingPw(true);
+      await axios.put(
+        `${API_BASE}/${id}`,
+        { password: newPw },
+        { withCredentials: true }
+      );
+      toast.success("Password updated");
+      closePwModal();
+    } catch {
+      toast.error("Failed to update password");
+    } finally {
+      setSavingPw(false);
+    }
+  };
+  // ----------------------------------
+
   if (loading) {
     return (
       <div className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -121,18 +167,26 @@ function StaffDetail() {
               {editing ? "Edit Staff" : "Staff Details"}
             </h1>
             <p className="text-sm text-neutral-500">
-              {editing ? "Update fields and save changes." : "View details and edit if needed."}
+              {editing ? "Update fields and save changes." : "View details, edit, or change password."}
             </p>
           </div>
 
           <div className="flex gap-2">
             {!editing ? (
-              <button
-                onClick={() => setEditing(true)}
-                className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400"
-              >
-                Edit
-              </button>
+              <>
+                <button
+                  onClick={openPwModal}
+                  className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
+                >
+                  Change Password
+                </button>
+                <button
+                  onClick={() => setEditing(true)}
+                  className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400"
+                >
+                  Edit
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => setEditing(false)}
@@ -374,6 +428,59 @@ function StaffDetail() {
           </form>
         )}
       </div>
+
+      {/* Change Password Modal */}
+      {pwOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white shadow-lg">
+            <div className="border-b border-neutral-200 px-5 py-4">
+              <h3 className="text-base font-semibold text-neutral-900">Change Password</h3>
+              <p className="mt-1 text-xs text-neutral-500">
+                {row.firstName} {row.lastName} · {row.email}
+              </p>
+            </div>
+
+            <div className="px-5 py-4">
+              <label className="block text-sm text-neutral-700">New password</label>
+              <input
+                type="password"
+                value={newPw}
+                onChange={(e) => setNewPw(e.target.value)}
+                className="mt-1 w-full rounded-md border border-neutral-200 px-3 py-2 text-sm outline-none focus:border-neutral-400"
+                placeholder="Enter new password"
+              />
+
+              <label className="mt-4 block text-sm text-neutral-700">
+                Confirm password
+              </label>
+              <input
+                type="password"
+                value={confirmPw}
+                onChange={(e) => setConfirmPw(e.target.value)}
+                className="mt-1 w-full rounded-md border border-neutral-200 px-3 py-2 text-sm outline-none focus:border-neutral-400"
+                placeholder="Re-enter password"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-neutral-200 px-5 py-3">
+              <button
+                onClick={closePwModal}
+                disabled={savingPw}
+                className="rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100 disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitPassword}
+                disabled={savingPw}
+                className="rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:opacity-60"
+              >
+                {savingPw ? "Saving…" : "Save Password"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
