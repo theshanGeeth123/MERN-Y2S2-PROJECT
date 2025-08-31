@@ -14,6 +14,8 @@ import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
+import MRental from './pages/MRental'
+
 
 function App() {
   return (
@@ -26,12 +28,14 @@ function App() {
         <Route path='/reset-password' element={<ResetPassword/>}/>
         <Route path='/my-profile' element={<MyProfile/>}/>
         <Route path='/customer-home' element={<CustomerHome/>}/>
+        <Route path='/Rental' element={<MRental/>}/>
         
 
         {/* admin */}
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+        <Route path='/admin/Rental' element={<MRental/>}/>
 
       </Routes>
     </div>
