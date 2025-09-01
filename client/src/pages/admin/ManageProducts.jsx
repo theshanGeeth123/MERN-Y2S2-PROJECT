@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FaEdit, FaTrash, FaBox, FaImage, FaTimes, FaSave, FaPlus, FaSearch, FaFilter } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
@@ -17,6 +18,8 @@ const ManageProducts = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     try {
@@ -104,7 +107,7 @@ const ManageProducts = () => {
             <h1 className="text-3xl font-bold text-gray-900 flex items-center">
               <FaBox className="mr-3 text-blue-500" /> Product Management
             </h1>
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+            <button  onClick={() => navigate("/admin/add-product")} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
               <FaPlus className="mr-2" /> Add New Product
             </button>
           </div>
