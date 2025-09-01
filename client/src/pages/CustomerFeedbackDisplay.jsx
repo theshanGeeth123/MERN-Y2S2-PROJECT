@@ -4,7 +4,7 @@ import axios from 'axios';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-function CustomerFeedbackDisplay({ loading, feedbacks}) {
+function CustomerFeedbackDisplay({ loading, feedbacks, deletedFb}) {
   const navigate = useNavigate();
 
   const deleteFeedback = async (id) => { // update feedback list after deleting a feedback
@@ -13,8 +13,10 @@ function CustomerFeedbackDisplay({ loading, feedbacks}) {
       const data = await axios.delete(`http://localhost:4000/api/user/feedback?id=${id}`);
       if (data.status=="200") {
          toast.success("Successfully deleted the feedback");
+         deletedFb?.(id);
+      } else {
+         toast.error(data.message);
       }
-      toast.error(data.message);
     } catch (e) {
       toast.error("Error occurred: " + e);
     }
@@ -45,9 +47,6 @@ function CustomerFeedbackDisplay({ loading, feedbacks}) {
                     <div className="mb-3 flex flex-wrap items-center gap-2">
                       <span className="inline-flex items-center rounded-full bg-yellow-50 px-3 py-1 text-sm font-medium text-yellow-700">
                         {fb.rate} </span>
-                      {fb.email && (
-                        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-700"> {fb.email} </span>
-                      )}
                     </div>
                     <p className="whitespace-pre-wrap text-gray-800">
                       {fb.comment}

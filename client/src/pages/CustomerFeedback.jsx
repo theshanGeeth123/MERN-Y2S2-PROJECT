@@ -37,11 +37,15 @@ function CustomerFeedback() {
     setFeedbacks(prev => [newFb, ...prev]); // in order to update list when creating a new feedback
   }
 
+  const handleDeleted = (id) => {
+    setFeedbacks(prev => prev.filter(fb => fb._id !== id));
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-green-100">
       <CustomerHomeNavbar />
       <CustomerFeedbackCreation userData={userData} createdFb={handleCreated}/>
-      <CustomerFeedbackDisplay loading={loading} feedbacks={feedbacks}/>
+      <CustomerFeedbackDisplay loading={loading} feedbacks={feedbacks} deletedFb={handleDeleted}/>
       <br/>
     </div>
   );
