@@ -11,6 +11,25 @@ export const getPackages = async (req,res) => {
     }
 } 
 
+export const getPackageById = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).json({ success: false, message: "Invalid Package ID" });
+  }
+
+  try {
+    const pkg = await Package.findById(id);
+    if (!pkg) {
+      return res.status(404).json({ success: false, message: "Package not found" });
+    }
+    res.status(200).json({ success: true, data: pkg });
+  } catch (error) {
+    console.error("Error fetching package:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 
 export const createPackage = async (req,res) => {
     const packages = req.body;
