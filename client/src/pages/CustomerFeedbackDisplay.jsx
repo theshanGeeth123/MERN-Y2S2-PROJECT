@@ -54,7 +54,7 @@ function CustomerFeedbackDisplay({ loading, feedbacks, deletedFb}) {
                   </div>
 
                   <div className="mt-4 pt-3 flex justify-end gap-2">
-                    <button  onClick={() => onEdit(fb)}
+                    <button  onClick={() => navigate("/customer-feedback/edit", { state: { id: fb._id, feedback: fb } })}
                       className="cursor-pointer rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">
                       Edit </button>
                     <button onClick={() => deleteFeedback(fb._id)}
