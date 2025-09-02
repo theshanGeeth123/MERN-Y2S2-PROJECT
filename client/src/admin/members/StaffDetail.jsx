@@ -14,7 +14,6 @@ function StaffDetail() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // form for profile edit
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -28,18 +27,10 @@ function StaffDetail() {
     isActive: true,
   });
 
-  // password modal state
-  const [pwOpen, setPwOpen] = useState(false);
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [savingPw, setSavingPw] = useState(false);
-
   const fetchOne = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${API_BASE}/${id}`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(`${API_BASE}/${id}`, { withCredentials: true });
       const s = data?.staff || data;
       setRow(s);
       setForm({
@@ -63,7 +54,6 @@ function StaffDetail() {
 
   useEffect(() => {
     fetchOne();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const handleChange = (e) => {
@@ -88,54 +78,12 @@ function StaffDetail() {
     }
   };
 
-  // ---- Password change helpers ----
-  const openPwModal = () => {
-    setNewPw("");
-    setConfirmPw("");
-    setPwOpen(true);
-  };
-  const closePwModal = () => {
-    if (savingPw) return;
-    setPwOpen(false);
-    setNewPw("");
-    setConfirmPw("");
-  };
-  const submitPassword = async () => {
-    if (!newPw || !confirmPw) {
-      toast.error("Please enter and confirm the new password");
-      return;
-    }
-    if (newPw !== confirmPw) {
-      toast.error("Passwords do not match");
-      return;
-    }
-    if (newPw.length < 6) {
-      toast.error("Password should be at least 6 characters");
-      return;
-    }
-    try {
-      setSavingPw(true);
-      await axios.put(
-        `${API_BASE}/${id}`,
-        { password: newPw },
-        { withCredentials: true }
-      );
-      toast.success("Password updated");
-      closePwModal();
-    } catch {
-      toast.error("Failed to update password");
-    } finally {
-      setSavingPw(false);
-    }
-  };
-  // ----------------------------------
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-50 text-neutral-900">
-        <div className="mx-auto max-w-5xl px-4 py-6">
-          <div className="h-8 w-40 animate-pulse rounded bg-neutral-200" />
-          <div className="mt-6 h-40 animate-pulse rounded-lg border border-neutral-200 bg-white" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="space-y-4 w-full max-w-3xl animate-pulse">
+          <div className="h-6 w-48 rounded bg-gray-200"></div>
+          <div className="h-64 rounded-lg bg-white shadow-md"></div>
         </div>
       </div>
     );
@@ -143,138 +91,117 @@ function StaffDetail() {
 
   if (!row) {
     return (
-      <div className="min-h-screen bg-neutral-50 text-neutral-900">
-        <div className="mx-auto max-w-5xl px-4 py-6">
-          <p className="text-sm text-neutral-500">Staff not found.</p>
-          <button
-            onClick={() => navigate("/admin/staff")}
-            className="mt-4 rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
-          >
-            Back to list
-          </button>
-        </div>
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center">
+        <p className="text-gray-500 text-sm">Staff not found.</p>
+        <button
+          onClick={() => navigate("/admin/staff")}
+          className="mt-4 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 shadow-sm hover:bg-gray-100"
+        >
+          Back to list
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-900">
-      <div className="mx-auto max-w-5xl px-4 py-6">
-        {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="min-h-screen bg-gray-50 text-gray-900 py-6">
+      <div className="mx-auto max-w-5xl px-4">
+        
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              {editing ? "Edit Staff" : "Staff Details"}
-            </h1>
-            <p className="text-sm text-neutral-500">
-              {editing ? "Update fields and save changes." : "View details, edit, or change password."}
+            <h1 className="mt-8 text-3xl font-bold text-green-800">{editing ? "Edit Staff" : "Staff Details"}</h1>
+            <p className="mt-3 text-sm text-gray-500">
+              {editing ? "Update fields and save changes." : "View details of staff member."}
             </p>
           </div>
-
-          <div className="flex gap-2">
-            {!editing ? (
-              <>
-                <button
-                  onClick={openPwModal}
-                  className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
-                >
-                  Change Password
-                </button>
-                <button
-                  onClick={() => setEditing(true)}
-                  className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400"
-                >
-                  Edit
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setEditing(false)}
-                className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
-              >
-                Cancel
-              </button>
-            )}
-            <button
-              onClick={() => navigate("/admin/staff")}
-              className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
-            >
-              Back
-            </button>
-          </div>
+          <button
+            onClick={() => navigate("/admin/staff")}
+            className="mt-8 rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm text-white shadow-sm hover:bg-black transition"
+          >
+            Back
+          </button>
         </div>
 
-        {/* Content */}
+        
         {!editing ? (
-          <div className="mt-6 rounded-lg border border-neutral-200 bg-white p-5">
-            <div className="flex items-start gap-4">
-              {row.imageUrl ? (
-                <img
-                  src={row.imageUrl}
-                  alt={`${row.firstName} ${row.lastName}`}
-                  className="h-20 w-20 rounded-lg object-cover ring-1 ring-neutral-200"
-                />
-              ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-lg bg-neutral-100 text-lg font-semibold">
-                  {row.firstName?.[0]}
-                  {row.lastName?.[0]}
+          <>
+            <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+              <div className="flex items-center gap-4">
+                {row.imageUrl ? (
+                  <img
+                    src={row.imageUrl}
+                    alt={`${row.firstName} ${row.lastName}`}
+                    className="h-24 w-24 rounded-lg object-cover ring-1 ring-gray-200"
+                  />
+                ) : (
+                  <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-gray-100 text-xl font-semibold">
+                    {row.firstName?.[0]}
+                    {row.lastName?.[0]}
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <h2 className="text-lg font-semibold text-black">{row.firstName} {row.lastName}</h2>
+                  <div className="text-sm text-gray-700">{row.email}</div>
+                  <div className="text-sm capitalize text-gray-700">{row.role}</div>
                 </div>
-              )}
+              </div>
 
-              <div className="space-y-1">
-                <h2 className="text-lg font-medium">
-                  {row.firstName} {row.lastName}
-                </h2>
-                <div className="text-sm text-neutral-600">{row.email}</div>
-                <div className="text-sm capitalize">{row.role}</div>
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <div className="text-black font-semibold">Phone</div>
+                  <div className="mt-1 text-gray-700">{row.phone || "-"}</div>
+                </div>
+                <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <div className="text-black font-semibold">Status</div>
+                  <div className="mt-1">
+                    {row.isActive ? (
+                      <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-green-200">
+                        Active
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700 ring-1 ring-gray-200">
+                        Inactive
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="rounded-lg border border-gray-200 p-4 sm:col-span-2 shadow-sm">
+                  <div className="text-black font-semibold">Address</div>
+                  <div className="mt-1 text-gray-700">{row.address || "-"}</div>
+                </div>
+                <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <div className="text-black font-semibold">Date of birth</div>
+                  <div className="mt-1 text-gray-700">
+                    {row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString() : "-"}
+                  </div>
+                </div>
+                <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
+                  <div className="text-black font-semibold">Date hired</div>
+                  <div className="mt-1 text-gray-700">
+                    {row.dateHired ? new Date(row.dateHired).toLocaleDateString() : "-"}
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
-              <div className="rounded-lg border border-neutral-200 p-4">
-                <div className="text-neutral-500">Phone</div>
-                <div className="mt-1 text-neutral-900">{row.phone || "-"}</div>
-              </div>
-              <div className="rounded-lg border border-neutral-200 p-4">
-                <div className="text-neutral-500">Status</div>
-                <div className="mt-1">
-                  {row.isActive ? (
-                    <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
-                      Active
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-0.5 text-xs font-medium text-neutral-700 ring-1 ring-inset ring-neutral-200">
-                      Inactive
-                    </span>
-                  )}
-                </div>
-              </div>
-              <div className="rounded-lg border border-neutral-200 p-4 sm:col-span-2">
-                <div className="text-neutral-500">Address</div>
-                <div className="mt-1 text-neutral-900">{row.address || "-"}</div>
-              </div>
-              <div className="rounded-lg border border-neutral-200 p-4">
-                <div className="text-neutral-500">Date of birth</div>
-                <div className="mt-1 text-neutral-900">
-                  {row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString() : "-"}
-                </div>
-              </div>
-              <div className="rounded-lg border border-neutral-200 p-4">
-                <div className="text-neutral-500">Date hired</div>
-                <div className="mt-1 text-neutral-900">
-                  {row.dateHired ? new Date(row.dateHired).toLocaleDateString() : "-"}
-                </div>
-              </div>
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => setEditing(true)}
+                className="rounded-md bg-blue-600 px-10 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 transition"
+              >
+                Edit
+              </button>
             </div>
-          </div>
+          </>
         ) : (
           <form
             onSubmit={handleSave}
-            className="mt-6 space-y-4 rounded-lg border border-neutral-200 bg-white p-5"
+            className="mt-6 space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-md"
           >
             <div className="grid gap-4 sm:grid-cols-2">
+              
               <div>
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   First name
                 </label>
                 <input
@@ -285,8 +212,10 @@ function StaffDetail() {
                   required
                 />
               </div>
+
+              
               <div>
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Last name
                 </label>
                 <input
@@ -298,8 +227,9 @@ function StaffDetail() {
                 />
               </div>
 
+             
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Email
                 </label>
                 <input
@@ -312,8 +242,9 @@ function StaffDetail() {
                 />
               </div>
 
+             
               <div>
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Role
                 </label>
                 <select
@@ -329,8 +260,9 @@ function StaffDetail() {
                 </select>
               </div>
 
+              
               <div>
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Phone
                 </label>
                 <input
@@ -342,8 +274,9 @@ function StaffDetail() {
                 />
               </div>
 
+              
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Address
                 </label>
                 <input
@@ -355,8 +288,9 @@ function StaffDetail() {
                 />
               </div>
 
+              
               <div>
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Date of birth
                 </label>
                 <input
@@ -369,8 +303,9 @@ function StaffDetail() {
                 />
               </div>
 
+              
               <div>
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Date hired (optional)
                 </label>
                 <input
@@ -382,8 +317,9 @@ function StaffDetail() {
                 />
               </div>
 
+              
               <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
                   Profile image URL (optional)
                 </label>
                 <input
@@ -394,6 +330,7 @@ function StaffDetail() {
                 />
               </div>
 
+              
               <div className="sm:col-span-2">
                 <label className="inline-flex items-center gap-2 text-sm text-neutral-800">
                   <input
@@ -408,10 +345,25 @@ function StaffDetail() {
               </div>
             </div>
 
+           
             <div className="flex justify-end gap-2">
               <button
                 type="button"
-                onClick={() => setEditing(false)}
+                onClick={() => {
+                  setEditing(false);
+                  setForm({
+                    firstName: row.firstName || "",
+                    lastName: row.lastName || "",
+                    email: row.email || "",
+                    role: row.role || "photographer",
+                    imageUrl: row.imageUrl || "",
+                    phone: row.phone || "",
+                    address: row.address || "",
+                    dateOfBirth: row.dateOfBirth ? row.dateOfBirth.slice(0, 10) : "",
+                    dateHired: row.dateHired ? row.dateHired.slice(0, 10) : "",
+                    isActive: !!row.isActive,
+                  });
+                }}
                 className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
                 disabled={saving}
               >
@@ -419,7 +371,7 @@ function StaffDetail() {
               </button>
               <button
                 type="submit"
-                className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400 disabled:opacity-60"
+                className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
                 disabled={saving}
               >
                 {saving ? "Saving…" : "Save Changes"}
@@ -428,59 +380,6 @@ function StaffDetail() {
           </form>
         )}
       </div>
-
-      {/* Change Password Modal */}
-      {pwOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white shadow-lg">
-            <div className="border-b border-neutral-200 px-5 py-4">
-              <h3 className="text-base font-semibold text-neutral-900">Change Password</h3>
-              <p className="mt-1 text-xs text-neutral-500">
-                {row.firstName} {row.lastName} · {row.email}
-              </p>
-            </div>
-
-            <div className="px-5 py-4">
-              <label className="block text-sm text-neutral-700">New password</label>
-              <input
-                type="password"
-                value={newPw}
-                onChange={(e) => setNewPw(e.target.value)}
-                className="mt-1 w-full rounded-md border border-neutral-200 px-3 py-2 text-sm outline-none focus:border-neutral-400"
-                placeholder="Enter new password"
-              />
-
-              <label className="mt-4 block text-sm text-neutral-700">
-                Confirm password
-              </label>
-              <input
-                type="password"
-                value={confirmPw}
-                onChange={(e) => setConfirmPw(e.target.value)}
-                className="mt-1 w-full rounded-md border border-neutral-200 px-3 py-2 text-sm outline-none focus:border-neutral-400"
-                placeholder="Re-enter password"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-2 border-t border-neutral-200 px-5 py-3">
-              <button
-                onClick={closePwModal}
-                disabled={savingPw}
-                className="rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100 disabled:opacity-60"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitPassword}
-                disabled={savingPw}
-                className="rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:opacity-60"
-              >
-                {savingPw ? "Saving…" : "Save Password"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
