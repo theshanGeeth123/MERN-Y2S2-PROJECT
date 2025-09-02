@@ -13,11 +13,11 @@ const initial = {
   email: "",
   password: "",
   role: "photographer",
-  imageUrl: "",
   phone: "",
   address: "",
   dateOfBirth: "",
   dateHired: "",
+  imageUrl: "",
   isActive: true,
 };
 
@@ -33,10 +33,38 @@ function StaffCreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    
+    if (!form.firstName.trim() || !form.lastName.trim()) {
+      toast.error("First and last name are required");
+      return;
+    }
+
+    if (!form.email.includes("@") || !form.email.includes(".")) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    if (form.password.length < 4) {
+      toast.error("Password must be at least 4 characters");
+      return;
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(form.phone)) {
+      toast.error("Phone number must be exactly 10 digits");
+      return;
+    }
+
+    if (form.dateOfBirth && new Date(form.dateOfBirth) > new Date()) {
+      toast.error("Date of birth cannot be in the future");
+      return;
+    }
+
     setSaving(true);
     try {
       const payload = { ...form };
-      if (!payload.dateHired) delete payload.dateHired; // optional
+      if (!payload.dateHired) delete payload.dateHired;
       await axios.post(API_BASE, payload, { withCredentials: true });
       toast.success("Staff member created");
       navigate("/admin/staff");
@@ -52,12 +80,14 @@ function StaffCreate() {
       <div className="mx-auto max-w-4xl px-4 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">New Staff</h1>
-            <p className="text-sm text-neutral-500">Add a new staff member.</p>
+            <h1 className="text-3xl font-semibold tracking-tight text-blue-900">
+              New Staff
+            </h1>
+            <p className="mt-3 text-l text-neutral-500">Add a new staff member.</p>
           </div>
           <button
             onClick={() => navigate(-1)}
-            className="rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
+            className="rounded-md border border-neutral-200 bg-gray-300 px-3 py-2 text-sm text-neutral-800 transition hover:bg-neutral-300"
           >
             Back
           </button>
@@ -65,36 +95,37 @@ function StaffCreate() {
 
         <form
           onSubmit={handleSubmit}
-          className="mt-6 space-y-4 rounded-lg border border-neutral-200 bg-white p-5"
+          className="mt-6 space-y-6 rounded-xl border border-neutral-200 bg-white p-8 shadow-lg"
         >
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 First name
               </label>
               <input
                 name="firstName"
                 value={form.firstName}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
+
             <div>
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Last name
               </label>
               <input
                 name="lastName"
                 value={form.lastName}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Email
               </label>
               <input
@@ -102,13 +133,13 @@ function StaffCreate() {
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Password
               </label>
               <input
@@ -116,20 +147,20 @@ function StaffCreate() {
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Role
               </label>
               <select
                 name="role"
                 value={form.role}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               >
                 <option value="photographer">Photographer</option>
                 <option value="manager">Manager</option>
@@ -139,33 +170,33 @@ function StaffCreate() {
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Phone
               </label>
               <input
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Address
               </label>
               <input
                 name="address"
                 value={form.address}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Date of birth
               </label>
               <input
@@ -173,13 +204,13 @@ function StaffCreate() {
                 name="dateOfBirth"
                 value={form.dateOfBirth}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Date hired (optional)
               </label>
               <input
@@ -187,12 +218,13 @@ function StaffCreate() {
                 name="dateHired"
                 value={form.dateHired}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               />
             </div>
 
+           
             <div className="sm:col-span-2">
-              <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-neutral-500">
+              <label className="mb-2 block text-xm font-semibold text-black">
                 Profile image URL (optional)
               </label>
               <input
@@ -200,7 +232,7 @@ function StaffCreate() {
                 value={form.imageUrl}
                 onChange={handleChange}
                 placeholder="https://…"
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               />
             </div>
 
@@ -218,18 +250,18 @@ function StaffCreate() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-3">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
+              className="rounded-lg border border-neutral-300 bg-white px-5 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
               disabled={saving}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-neutral-400 disabled:opacity-60"
+              className="rounded-lg bg-green-500 px-5 py-2 text-sm font-medium text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-neutral-400 disabled:opacity-60"
               disabled={saving}
             >
               {saving ? "Saving…" : "Create"}
