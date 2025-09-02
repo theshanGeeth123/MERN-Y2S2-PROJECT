@@ -1,4 +1,3 @@
-// src/staff/StaffProfile.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useStaffAuth } from "./StaffAuthContext";
@@ -23,7 +22,7 @@ export default function StaffProfile() {
   const navigate = useNavigate();
 
   if (!staff) {
-    // Not logged in: send to staff login
+    
     navigate("/staff/login");
     return null;
   }
@@ -32,7 +31,7 @@ export default function StaffProfile() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* Header */}
+      
       <div className="flex items-center justify-between mb-6">
         <button
           onClick={() => navigate(-1)}
@@ -44,7 +43,7 @@ export default function StaffProfile() {
         <div />
       </div>
 
-      {/* Card */}
+     
       <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
         <div className="flex items-center gap-4 mb-6">
           {staff.imageUrl ? (
@@ -64,15 +63,10 @@ export default function StaffProfile() {
             <div className="text-sm text-neutral-600 capitalize">{staff.role || "-"}</div>
           </div>
 
-          {/* <button
-            onClick={() => alert(" TODO: hook up edit ")}
-            className="px-4 py-2 rounded-md border border-gray-300 text-sm hover:bg-gray-50"
-          >
-            Edit
-          </button> */}
+          
         </div>
 
-        {/* Details */}
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <Row label="ID" value={staff._id} mono />
           <Row label="Email" value={staff.email} />
