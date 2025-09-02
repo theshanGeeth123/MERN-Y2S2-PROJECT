@@ -7,12 +7,11 @@ function AdminHome() {
   return (
     <div className="min-h-screen bg-neutral-50">
       <div className="max-w-5xl mx-auto px-4 py-10">
-        {/* Heading at top center */}
         <h1 className="text-3xl font-semibold text-center text-neutral-900 mb-8">
           Admin Dashboard
         </h1>
 
-        {/* Button box at top left */}
+        
         <div className="grid gap-4 max-w-sm">
           <button
             onClick={() => navigate("/admin/packages")}
