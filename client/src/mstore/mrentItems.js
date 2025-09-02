@@ -1,7 +1,8 @@
 import { create } from "zustand";
 
-export const useRentItemsStore = create((set) => ({
+export const useRentItemsStore = create((set, get) => ({
   rentItems: [],
+  rentalCart: [],
 
   addItem: async (newRental) => {
     if (!newRental.name || !newRental.category || !newRental.price || !newRental.description || !newRental.image)
@@ -69,4 +70,27 @@ export const useRentItemsStore = create((set) => ({
       return { success: false, message: error.message };
     }
   },
+
+  addToCart: (item) =>
+  set((state) => {
+    const exists = state.rentalCart.find((i) => i._id === item._id);
+    if (exists) return state;
+    return { rentalCart: [...state.rentalCart, item] };
+  }),
+
+  removeFromCart: (id) =>
+    set((state) => ({
+      rentalCart: state.rentalCart.filter((item) => item._id !== id),
+    })),
+
+  clearCart: () => set({ rentalCart: [] }),
+
+  getTotalDeposit: () =>
+  get().rentalCart.reduce(
+    (acc) => acc + 500, 
+    0
+  ),
+
+
+
 }));

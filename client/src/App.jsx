@@ -16,6 +16,10 @@ import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
 import MRental from './pages/MRental'
 import MRentPage from "./pages/MRentPage";
+import MRentalCus from "./pages/MRentalsCus";
+import MRentalCart from "./pages/MRentalCart";
+import MPaymentPage from "./pages/MRentalPayment";
+import MItemCardCus from "./components/MItemCardCus";
 
 
 function App() {
@@ -30,12 +34,17 @@ function App() {
         <Route path='/my-profile' element={<MyProfile/>}/>
         <Route path='/customer-home' element={<CustomerHome/>}/>
 
+        <Route path='/all-rentals' element={<MRentalCus/>}/>
+        <Route path="/item" element={<MItemCardCus />} />
+        <Route path="/cart" element={<MRentalCart />} />
+        <Route path="/payment" element={<MPaymentPage />} />
+
         
 
         {/* admin */}
-
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+        <Route path='/rental' element={<MRental/>}/>
         <Route path="/admin/all-rentals" element={<MRentPage />} />
 
       </Routes>
