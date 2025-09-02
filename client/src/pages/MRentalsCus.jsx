@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRentItemsStore } from "../mstore/mrentItems";
-import ItemCard from "../components/ItemCard";
-import AdminNavbar from "../components/AdminNavbar";
+import ItemCardCus from "../components/MItemCardCus";
+import Navbar from "../components/Navbar";
+import { ShoppingBag } from "lucide-react";
 
-function MRentPage() {
-  const { fetchRItems, rentItems } = useRentItemsStore();
+function MRentalCus() {
+  const fetchRItems = useRentItemsStore((state) => state.fetchRItems); 
+  const rentItems = useRentItemsStore((state) => state.rentItems);     
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
@@ -20,16 +22,18 @@ function MRentPage() {
 
   return (
     <div>
-      <AdminNavbar />
+      <Navbar />
 
-      
+      {/* Top Add Rental Item Button */}
       <div className="w-full flex justify-end mt-5 pr-6">
-        <Link to="/rental">
-          <button className="px-6 py-2 rounded-full border-2 border-transparent bg-[#333A5C66] bg-origin-border text-gradient-to-r from-slate-900 to-indigo-800 font-semibold hover:scale-105 hover:bg-[#333A5CA0] transition mr-15 ">
-            Add Rental Item
-          </button>
-        </Link>
+      <Link to="/cart">
+        <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-transparent bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] text-white font-semibold hover:scale-105 hover:opacity-90 transition mr-15">
+          <ShoppingBag size={18}/>
+          Rental Cart
+        </button>
+      </Link>
       </div>
+
 
       <div className="flex flex-col items-center min-h-screen mt-10 mb-20">
         <h2 className="text-5xl font-bold bg-gradient-to-r from-slate-900 to-indigo-800 bg-clip-text text-transparent mb-8">
@@ -57,17 +61,17 @@ function MRentPage() {
         <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-11/12 text-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems && filteredItems.length > 0 ? (
-              filteredItems.map((item) => <ItemCard key={item._id} item={item} />)
+              filteredItems.map((item) => <ItemCardCus key={item._id} item={item} />)
             ) : (
-              <div className="w-full flex flex-col items-center py-20">
-                <p className="text-xl font-semibold text-gray-300 mb-4 text-center">
-                  No Items Found
+              <div className="w-full flex flex-col items-center justify-center py-20">
+                <p className="text-xl font-semibold text-gray-300 mb-4">
+                  No Items Found{" "}
                 </p>
                 <Link
                   to="/rental"
                   className="text-blue-500 hover:underline font-bold"
                 >
-                    Add a new Item
+                  Add a new Item
                 </Link>
               </div>
             )}
@@ -78,4 +82,4 @@ function MRentPage() {
   );
 }
 
-export default MRentPage;
+export default MRentalCus;

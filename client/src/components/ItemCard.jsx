@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRentItemsStore } from "../mstore/mrentItems";
+import { toast } from "react-toastify";
 
 function ItemCard({ item }) {
   const { deleteItem, updatedItem } = useRentItemsStore();
@@ -16,13 +17,19 @@ function ItemCard({ item }) {
   const handleDeletePost = async (rid) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     const { success, message } = await deleteItem(rid);
-    alert(success ? "Success: " + message : "Error: " + message);
+    toast.success(`${item?.name} Deleted Successfully`, {
+          position: "top-center",
+          autoClose: 3000,
+        });
   };
 
   // Update
   const handleUpdate = async () => {
     const { success, message } = await updatedItem(item._id, editData);
-    alert(success ? "Success: " + message : "Error: " + message);
+    toast.success(`${item?.name} Updated Successfully`, {
+          position: "top-center",
+          autoClose: 3000,
+        });
     if (success) setIsEditing(false);
   };
 
