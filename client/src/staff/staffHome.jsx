@@ -13,7 +13,7 @@ const StaffHome = () => {
     navigate("/staff/login");
   };
 
-  // Sample data for dashboard
+  
   const statsData = [
     { title: "Pending Tasks", value: 12, trend: "down", change: 2 },
     { title: "Appointments", value: 8, trend: "up", change: 3 },
@@ -30,7 +30,7 @@ const StaffHome = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Overlay for mobile when sidebar is open */}
+      
       {sidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 z-20 md:hidden"
@@ -38,16 +38,16 @@ const StaffHome = () => {
         />
       )}
 
-      {/* Sidebar */}
+      
       <div
         className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-900 shadow-xl transform transition-transform duration-300 ease-in-out
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
           md:translate-x-0 md:static`}
       >
-        {/* Sidebar Header */}
+        
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-800">
           <h2 className="text-xl font-bold text-white">Staff Portal</h2>
-          {/* Close button only visible on mobile */}
+          
           <button
             className="md:hidden text-gray-400 hover:text-white text-xl"
             onClick={() => setSidebarOpen(false)}
@@ -56,7 +56,7 @@ const StaffHome = () => {
           </button>
         </div>
 
-        {/* User Profile Summary */}
+        
         <div className="px-6 py-5 border-b border-gray-800">
           <div className="flex items-center">
             <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
@@ -69,7 +69,7 @@ const StaffHome = () => {
           </div>
         </div>
 
-        {/* Navigation Links */}
+        
         <nav className="px-4 py-6 space-y-1">
           <button
             onClick={() => {
@@ -120,9 +120,9 @@ const StaffHome = () => {
         </nav>
       </div>
 
-      {/* Main Section */}
+      
       <div className="flex flex-col flex-1 overflow-hidden">
-        {/* Navbar */}
+        
         <header className="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
           <div className="flex items-center">
             <button
@@ -152,15 +152,15 @@ const StaffHome = () => {
           </div>
         </header>
 
-        {/* Dashboard Content */}
+        
         <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
-          {/* Welcome Header */}
+          
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800">Welcome back, {staffUser?.name || "Staff Member"}!</h2>
             <p className="text-gray-600">Here's what's happening with your account today.</p>
           </div>
 
-          {/* Stats Grid */}
+          
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
             {statsData.map((stat, index) => (
               <div key={index} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition-shadow duration-200">
@@ -184,7 +184,7 @@ const StaffHome = () => {
             ))}
           </div>
 
-          {/* Recent Activity */}
+          
           <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-semibold text-gray-800">Recent Activity</h3>
