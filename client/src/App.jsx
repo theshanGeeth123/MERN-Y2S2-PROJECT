@@ -43,12 +43,12 @@ function App() {
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
 
-           <Route path="/staff/login" element={<StaffLogin />} />
+        <Route path="/staff/login" element={<StaffLogin />} />
         <Route path="/staff/home" element={<StaffHome />} />
 
         <Route path="/admin/staff" element={<StaffList />} />
-  <Route path="/admin/staff/create" element={<StaffCreate />} />
-  <Route path="/admin/staff/:id" element={<StaffDetail />} />
+        <Route path="/admin/staff/create" element={<StaffCreate />} />
+        <Route path="/admin/staff/:id" element={<StaffDetail />} />
 
 <Route path="/staff/profile" element={<StaffProfile />} />
 
