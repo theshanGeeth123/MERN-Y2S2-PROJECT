@@ -9,7 +9,7 @@ function AdminNavbar() {
 
   const logout = () => {
     localStorage.removeItem("admin");
-    navigate("/admin-login");
+    navigate("/admin/login");
   };
 
   const viewProfile = () => {
