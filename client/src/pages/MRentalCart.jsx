@@ -22,7 +22,7 @@ const navigate = useNavigate();
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Your Rental Cart</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center mt-20 mb-10">Your Rental Cart</h2>
       <ul className="space-y-4">
         {rentalCart.map((item) => (
           <li key={item._id} className="flex justify-between items-center border p-4 rounded">
@@ -41,13 +41,13 @@ const navigate = useNavigate();
           </li>
         ))}
       </ul>
-      <div className="mt-6 font-semibold text-lg">
+      <div className="mt-6 font-semibold text-lg text-center mt-10">
         Total Deposit: Rs. {getTotalDeposit()}
       </div>
 
-      <div className="mt-4 flex justify-right">
+      <div className="mt-4 w=full flex justify-end mr-10">
         <button
-        className="mt-4 px-6 py-2 bg-blue-500 text-white rounded"
+        className="mt-4 px-6 py-2 border border-black bg-white-500 text-black font-bold rounded-md hover:bg-blue-600 transition-colors"
         onClick={clearCart}
       >
         Clear Cart
@@ -55,7 +55,7 @@ const navigate = useNavigate();
       <button
         type="button"
         onClick={handleRentAll}
-        className="mt-4 px-6 py-2 bg-blue-500 text-white rounded ml-10"
+        className="mt-4 px-6 py-2 border border-black bg-white-500 text-black font-bold rounded-md ml-10 hover:bg-green-600 transition-colors"
       >
           Rent Items
         </button>
