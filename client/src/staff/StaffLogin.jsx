@@ -16,7 +16,7 @@ const StaffLogin = () => {
 
     try {
       await loginStaff({ email, password });
-      navigate("/staff/home"); // your staff home route
+      navigate("/staff/home"); 
     } catch (err) {
       setError(err.message || "Login failed");
     } finally {
