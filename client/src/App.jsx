@@ -50,7 +50,7 @@ function App() {
         <Route path="/admin/staff/create" element={<StaffCreate />} />
         <Route path="/admin/staff/:id" element={<StaffDetail />} />
 
-<Route path="/staff/profile" element={<StaffProfile />} />
+        <Route path="/staff/profile" element={<StaffProfile />} />
 
       </Routes>
     </div>
