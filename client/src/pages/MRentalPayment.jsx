@@ -16,7 +16,7 @@ function PaymentPage() {
 
       
         <div className="text-xl mb-4 text-gray-700 flex justify-center text-center mt-20 mb-10">
-        <div className="w-fullflex text-center text-red-700 font-bold">Important Message: </div>
+        <div className="text-red-700 font-bold">Important Message: </div>
         You can edit your requirements even after completing the payment.<br/>  
         However, we do not accept any refunds for your requests. <br/> 
         If the store rejects your request, a refund may be allowed at the store’s discretion.
