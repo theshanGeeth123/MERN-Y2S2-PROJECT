@@ -12,7 +12,7 @@ function MRentPage() {
     fetchRItems();
   }, [fetchRItems]);
 
-  // Filter function
+
   const filteredItems =
     selectedCategory === "All"
       ? rentItems
@@ -22,7 +22,7 @@ function MRentPage() {
     <div>
       <AdminNavbar />
 
-      {/* Top Add Rental Item Button */}
+      
       <div className="w-full flex justify-end mt-5 pr-6">
         <Link to="/rental">
           <button className="px-6 py-2 rounded-full border-2 border-transparent bg-[#333A5C66] bg-origin-border text-gradient-to-r from-slate-900 to-indigo-800 font-semibold hover:scale-105 hover:bg-[#333A5CA0] transition mr-15 ">
@@ -59,15 +59,15 @@ function MRentPage() {
             {filteredItems && filteredItems.length > 0 ? (
               filteredItems.map((item) => <ItemCard key={item._id} item={item} />)
             ) : (
-              <div className="w-full flex flex-col items-center justify-center py-20">
-                <p className="text-xl font-semibold text-gray-300 mb-4">
-                  No Items Found{" "}
+              <div className="w-full flex flex-col items-center py-20">
+                <p className="text-xl font-semibold text-gray-300 mb-4 text-center">
+                  No Items Found
                 </p>
                 <Link
                   to="/rental"
                   className="text-blue-500 hover:underline font-bold"
                 >
-                  Add a new Item
+                    Add a new Item
                 </Link>
               </div>
             )}
