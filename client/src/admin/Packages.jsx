@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE = "http://localhost:4000/api/packages";
 
-// Images for each package
+
 const packageImages = {
   "Portrait Photography Package": "https://i.postimg.cc/d1Zzc7vD/Whats-App-Image-2025-09-02-at-09-55-18.jpg",
   "Engagement Photoshoot Package": "https://i.postimg.cc/3NMz8KJ1/Whats-App-Image-2025-09-02-at-09-55-18-2.jpg",
@@ -75,7 +75,7 @@ function Packages() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 py-10 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
+        
         <div className="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
           <button
             onClick={fetchPackages}
@@ -96,7 +96,7 @@ function Packages() {
           </button>
         </div>
 
-        {/* Search */}
+        
         <div className="flex justify-center mb-14">
           <div className="flex gap-2 w-full max-w-md">
             <input
@@ -115,7 +115,7 @@ function Packages() {
           </div>
         </div>
 
-        {/* Packages Grid */}
+        
         {loading ? (
           <div className="text-center text-gray-500">Loading packages...</div>
         ) : displayPackages.length === 0 ? (
@@ -134,13 +134,13 @@ function Packages() {
                 className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between package-item transition transform hover:-translate-y-2 hover:shadow-2xl cursor-pointer space-y-4 w-full max-w-sm hover:bg-black hover:text-white"
               >
                 <div className="space-y-2 flex flex-col items-center">
-                  {/* Package Image */}
+                  
                   <img
                     src={packageImages[p.title] || "https://via.placeholder.com/150"}
                     alt={p.title || "Package Image"}
                     className="h-36 w-36 object-cover rounded-lg mb-2"
                   />
-                  {/* Package Title & Description */}
+                  
                   <h2 className="text-xl font-bold text-center">{p.title || "Untitled Package"}</h2>
                   <p className="font-bold line-clamp-3 text-center">{p.description || "No description"}</p>
 
@@ -157,7 +157,7 @@ function Packages() {
                     )}
                   </div>
 
-                  {/* Features displayed safely with commas */}
+                  
                   {p.features && (
                     <p className="text-sm font-bold">
                       {Array.isArray(p.features)
