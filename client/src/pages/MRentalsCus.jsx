@@ -42,7 +42,7 @@ function MRentalCus() {
 
         {/* Category Filter */}
         <div className="flex flex-wrap gap-4 mb-10">
-          {["All", "Photography Camera", "Video Camera", "Drone","Camera Lens"].map((category) => (
+          {["All", "Photography Camera", "Video Camera", "Drone","Camera Lens", "Lighting"].map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -67,12 +67,7 @@ function MRentalCus() {
                 <p className="text-xl font-semibold text-gray-300 mb-4">
                   No Items Found{" "}
                 </p>
-                <Link
-                  to="/rental"
-                  className="text-blue-500 hover:underline font-bold"
-                >
-                  Add a new Item
-                </Link>
+                
               </div>
             )}
           </div>

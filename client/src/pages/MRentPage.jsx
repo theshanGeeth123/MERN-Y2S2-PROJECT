@@ -38,7 +38,7 @@ function MRentPage() {
 
         {/* Category Filter */}
         <div className="flex flex-wrap gap-4 mb-10">
-          {["All", "Photography Camera", "Video Camera", "Drone","Camera Lens"].map((category) => (
+          {["All", "Photography Camera", "Video Camera", "Drone","Camera Lens", "Lighting"].map((category) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
