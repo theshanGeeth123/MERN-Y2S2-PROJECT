@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useRentItemsStore } from "../mstore/mrentItems";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function MRental() {
   const [newRntal, setnewRental] = useState({
@@ -19,9 +20,12 @@ const handleAddRental = async () => {
   const { success, message } = await addItem(newRntal); 
   console.log("Success:", success);
   console.log("Message:", message);
-  alert(message);
+  toast.success(message, {
+            position: "top-center",
+            autoClose: 3000,
+          });
   if (success) {
-      navigate("/all-rentals"); 
+      navigate("/admin/all-rentals"); 
     }
 };
 
