@@ -15,7 +15,7 @@ function CustomerQuestionsAnswers() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-green-100">
       <CustomerHomeNavbar />
       <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
         <h1 className="text-4xl font-bold text-center mb-6">Ask a question</h1>

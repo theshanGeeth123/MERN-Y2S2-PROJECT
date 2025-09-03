@@ -14,9 +14,9 @@ function CustomerHome() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-green-100">
       <CustomerHomeNavbar />
-      <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
+      <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
         <h1 className="text-4xl font-bold text-center mb-6">Customer Home</h1>
 
         <div className="space-y-4">
