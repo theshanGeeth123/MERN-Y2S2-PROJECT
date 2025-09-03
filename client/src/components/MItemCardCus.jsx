@@ -7,13 +7,15 @@ function MItemCardCus({ item }) {
   const addToCart = useRentItemsStore((state) => state.addToCart);
   const navigate = useNavigate();
 
-const handleRentNow = () => {
-  navigate("/payment", { state: { items: [item], total: 500 } });
-};
+  const FIXED_DEPOSIT = 500; // Fixed deposit for all items
 
+  const handleRentNow = () => {
+    navigate("/payment", {
+      state: { items: [item], totalDeposit: FIXED_DEPOSIT },
+    });
+  };
 
   const handleAddToCart = () => {
-    console.log("Item to add:", item);
     addToCart(item);
     toast.success(`${item?.name} added to rental cart!`, {
       position: "top-center",
@@ -32,25 +34,25 @@ const handleRentNow = () => {
       <div>
         <h3 className="text-xl font-semibold">{item.name}</h3>
         <p className="text-gray-300">{item.category}</p>
-        <p className="text-indigo-300 font-bold">Rs. {item.price}</p>
+        <p className="text-indigo-300 font-bold">Deposit: Rs. {FIXED_DEPOSIT}</p>
         <p className="mt-2 text-gray-200 line-clamp-3">{item.description}</p>
       </div>
 
-      <div className="mt-4 flex justify-center">
+      <div className="mt-4 flex justify-center gap-2">
         <button
           type="button"
           onClick={handleRentNow}
-          className="px-4 py-2 bg-blue-500 rounded-full hover:bg-blue-600 transition-colors mr-2"
+          className="px-4 py-2 bg-blue-500 rounded-full hover:bg-blue-600 transition-colors"
         >
-          Rent Item
+          Rent Now
         </button>
 
         <button
           type="button"
           onClick={handleAddToCart}
-          className="px-4 py-2 bg-green-500 rounded-full hover:bg-green-600 transition-colors mr-2"
+          className="px-4 py-2 bg-green-500 rounded-full hover:bg-green-600 transition-colors"
         >
-          Add to Rental Cart
+          Add to Cart
         </button>
       </div>
     </div>
