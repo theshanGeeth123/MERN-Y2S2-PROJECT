@@ -82,9 +82,9 @@ function MyProfile() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-green-100">
       <CustomerHomeNavbar />
-      <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-20">
+      <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">My Profile</h2>
 
         {loading ? (
