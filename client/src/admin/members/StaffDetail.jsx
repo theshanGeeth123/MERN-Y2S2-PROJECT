@@ -14,6 +14,12 @@ function StaffDetail() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  
+  const [pwOpen, setPwOpen] = useState(false);
+  const [newPw, setNewPw] = useState("");
+  const [confirmPw, setConfirmPw] = useState("");
+  const [savingPw, setSavingPw] = useState(false);
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -30,7 +36,9 @@ function StaffDetail() {
   const fetchOne = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${API_BASE}/${id}`, { withCredentials: true });
+      const { data } = await axios.get(`${API_BASE}/${id}`, {
+        withCredentials: true,
+      });
       const s = data?.staff || data;
       setRow(s);
       setForm({
@@ -45,7 +53,7 @@ function StaffDetail() {
         dateHired: s.dateHired ? s.dateHired.slice(0, 10) : "",
         isActive: !!s.isActive,
       });
-    } catch {
+    } catch (err) {
       toast.error("Failed to load staff");
     } finally {
       setLoading(false);
@@ -71,10 +79,53 @@ function StaffDetail() {
       toast.success("Saved changes");
       setEditing(false);
       setRow({ ...row, ...payload });
-    } catch {
+    } catch (err) {
       toast.error("Update failed");
     } finally {
       setSaving(false);
+    }
+  };
+
+ 
+  const openPwModal = () => {
+    setNewPw("");
+    setConfirmPw("");
+    setPwOpen(true);
+  };
+
+  const closePwModal = () => {
+    if (savingPw) return;
+    setPwOpen(false);
+    setNewPw("");
+    setConfirmPw("");
+  };
+
+  const submitPassword = async () => {
+    if (!newPw || !confirmPw) {
+      toast.error("Please enter and confirm the new password");
+      return;
+    }
+    if (newPw !== confirmPw) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    if (newPw.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    try {
+      setSavingPw(true);
+      await axios.put(
+        `${API_BASE}/${id}`,
+        { password: newPw },
+        { withCredentials: true }
+      );
+      toast.success("Password updated");
+      closePwModal();
+    } catch {
+      toast.error("Failed to update password");
+    } finally {
+      setSavingPw(false);
     }
   };
 
@@ -109,17 +160,31 @@ function StaffDetail() {
         
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="mt-8 text-3xl font-bold text-green-800">{editing ? "Edit Staff" : "Staff Details"}</h1>
+            <h1 className="mt-8 text-3xl font-bold text-green-800">
+              {editing ? "Edit Staff" : "Staff Details"}
+            </h1>
             <p className="mt-3 text-sm text-gray-500">
-              {editing ? "Update fields and save changes." : "View details of staff member."}
+              {editing
+                ? "Update fields and save changes."
+                : "View details of staff member."}
             </p>
           </div>
-          <button
-            onClick={() => navigate("/admin/staff")}
-            className="mt-8 rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm text-white shadow-sm hover:bg-black transition"
-          >
-            Back
-          </button>
+          <div className="flex gap-2">
+            {!editing && (
+              <button
+                onClick={openPwModal}
+                className="mt-8 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 shadow-sm hover:bg-gray-100 transition"
+              >
+                Change Password
+              </button>
+            )}
+            <button
+              onClick={() => navigate("/admin/staff")}
+              className="mt-8 rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm text-white shadow-sm hover:bg-black transition"
+            >
+              Back
+            </button>
+          </div>
         </div>
 
         
@@ -140,9 +205,13 @@ function StaffDetail() {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <h2 className="text-lg font-semibold text-black">{row.firstName} {row.lastName}</h2>
+                  <h2 className="text-lg font-semibold text-black">
+                    {row.firstName} {row.lastName}
+                  </h2>
                   <div className="text-sm text-gray-700">{row.email}</div>
-                  <div className="text-sm capitalize text-gray-700">{row.role}</div>
+                  <div className="text-sm capitalize text-gray-700">
+                    {row.role}
+                  </div>
                 </div>
               </div>
 
@@ -172,13 +241,17 @@ function StaffDetail() {
                 <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
                   <div className="text-black font-semibold">Date of birth</div>
                   <div className="mt-1 text-gray-700">
-                    {row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString() : "-"}
+                    {row.dateOfBirth
+                      ? new Date(row.dateOfBirth).toLocaleDateString()
+                      : "-"}
                   </div>
                 </div>
                 <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
                   <div className="text-black font-semibold">Date hired</div>
                   <div className="mt-1 text-gray-700">
-                    {row.dateHired ? new Date(row.dateHired).toLocaleDateString() : "-"}
+                    {row.dateHired
+                      ? new Date(row.dateHired).toLocaleDateString()
+                      : "-"}
                   </div>
                 </div>
               </div>
@@ -198,188 +271,177 @@ function StaffDetail() {
             onSubmit={handleSave}
             className="mt-6 space-y-4 rounded-lg border border-gray-200 bg-white p-6 shadow-md"
           >
-            <div className="grid gap-4 sm:grid-cols-2">
-              
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  First name
+                <label className="block text-sm text-gray-700">
+                  First Name
                 </label>
                 <input
                   name="firstName"
                   value={form.firstName}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-                  required
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-
-              
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Last name
-                </label>
+                <label className="block text-sm text-gray-700">Last Name</label>
                 <input
                   name="lastName"
                   value={form.lastName}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-                  required
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-
-             
-              <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Email
-                </label>
+              <div>
+                <label className="block text-sm text-gray-700">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-                  required
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-
-             
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Role
-                </label>
+                <label className="block text-sm text-gray-700">Role</label>
                 <select
                   name="role"
                   value={form.role}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 >
                   <option value="photographer">Photographer</option>
-                  <option value="manager">Manager</option>
                   <option value="editor">Editor</option>
-                  <option value="other">Other</option>
+                  <option value="admin">Admin</option>
                 </select>
               </div>
-
-              
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Phone
-                </label>
+                <label className="block text-sm text-gray-700">Phone</label>
                 <input
                   name="phone"
                   value={form.phone}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-                  required
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-
-              
-              <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Address
-                </label>
+              <div>
+                <label className="block text-sm text-gray-700">Address</label>
                 <input
                   name="address"
                   value={form.address}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-                  required
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-
-              
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Date of birth
+                <label className="block text-sm text-gray-700">
+                  Date of Birth
                 </label>
                 <input
                   type="date"
                   name="dateOfBirth"
                   value={form.dateOfBirth}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-                  required
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-
-              
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Date hired (optional)
+                <label className="block text-sm text-gray-700">
+                  Date Hired
                 </label>
                 <input
                   type="date"
                   name="dateHired"
                   value={form.dateHired}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                  className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
                 />
               </div>
-
-              
-              <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-bold uppercase tracking-wide text-black">
-                  Profile image URL (optional)
-                </label>
+              <div className="flex items-center gap-2">
                 <input
-                  name="imageUrl"
-                  value={form.imageUrl}
+                  type="checkbox"
+                  name="isActive"
+                  checked={form.isActive}
                   onChange={handleChange}
-                  className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
                 />
-              </div>
-
-              
-              <div className="sm:col-span-2">
-                <label className="inline-flex items-center gap-2 text-sm text-neutral-800">
-                  <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={form.isActive}
-                    onChange={handleChange}
-                    className="h-4 w-4 accent-neutral-900"
-                  />
-                  Active
-                </label>
+                <label className="text-sm text-gray-700">Active</label>
               </div>
             </div>
 
-           
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => {
-                  setEditing(false);
-                  setForm({
-                    firstName: row.firstName || "",
-                    lastName: row.lastName || "",
-                    email: row.email || "",
-                    role: row.role || "photographer",
-                    imageUrl: row.imageUrl || "",
-                    phone: row.phone || "",
-                    address: row.address || "",
-                    dateOfBirth: row.dateOfBirth ? row.dateOfBirth.slice(0, 10) : "",
-                    dateHired: row.dateHired ? row.dateHired.slice(0, 10) : "",
-                    isActive: !!row.isActive,
-                  });
-                }}
-                className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
-                disabled={saving}
-              >
-                Cancel
-              </button>
+            <div className="flex gap-3">
               <button
                 type="submit"
-                className="rounded-md bg-blue-700 px-4 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
                 disabled={saving}
+                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 disabled:opacity-60"
               >
-                {saving ? "Saving…" : "Save Changes"}
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 shadow-sm hover:bg-gray-100"
+              >
+                Cancel
               </button>
             </div>
           </form>
         )}
       </div>
+
+      
+      {pwOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white shadow-lg">
+            <div className="border-b border-gray-200 px-5 py-4">
+              <h3 className="text-base font-semibold text-gray-900">
+                Change Password
+              </h3>
+              <p className="mt-1 text-xs text-gray-500">
+                {row.firstName} {row.lastName} · {row.email}
+              </p>
+            </div>
+
+            <div className="px-5 py-4">
+              <label className="block text-sm text-gray-700">New password</label>
+              <input
+                type="password"
+                value={newPw}
+                onChange={(e) => setNewPw(e.target.value)}
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-400"
+                placeholder="Enter new password"
+              />
+
+              <label className="mt-4 block text-sm text-gray-700">
+                Confirm password
+              </label>
+              <input
+                type="password"
+                value={confirmPw}
+                onChange={(e) => setConfirmPw(e.target.value)}
+                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-400"
+                placeholder="Re-enter password"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 border-t border-gray-200 px-5 py-3">
+              <button
+                onClick={closePwModal}
+                disabled={savingPw}
+                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-60"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitPassword}
+                disabled={savingPw}
+                className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
+              >
+                {savingPw ? "Saving…" : "Save Password"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
