@@ -137,45 +137,45 @@ function Packages() {
             {displayPackages.map((p) => (
               <div
                 key={p._id}
-                className="bg-white rounded-lg shadow-lg p-6 flex flex-col h-full min-h-[600px] transition transform hover:-translate-y-2 hover:shadow-2xl cursor-pointer w-full max-w-sm hover:bg-black hover:text-white"
+                className="group bg-white rounded-lg shadow-lg p-6 flex flex-col h-full min-h-[600px] transition transform hover:-translate-y-2 hover:shadow-2xl cursor-pointer w-full max-w-sm hover:bg-black"
               >
-                
+               
                 <div className="min-h-[200px] flex items-center justify-center">
                   <img
                     src={
                       packageImages[p.title] || "https://via.placeholder.com/150"
                     }
                     alt={p.title || "Package Image"}
-                    className="h-50 w-40 object-cover rounded-lg"
+                    className="h-40 w-40 object-cover rounded-lg"
                   />
                 </div>
 
                 
-                <h2 className="text-xl font-bold text-center mt-4 min-h-[60px] flex items-center justify-center">
+                <h2 className="text-2xl font-bold text-center mt-4 min-h-[60px] flex items-center justify-center group-hover:text-white">
                   {p.title || "Untitled Package"}
                 </h2>
 
                 
-                <p className="mt-2  font-semibold text-center line-clamp-4 min-h-[100px]">
+                <p className="mt-2 font-semibold text-center line-clamp-4 min-h-[100px] group-hover:text-white">
                   {p.description || "No description"}
                 </p>
 
                 
-                <div className="flex gap-2 flex-wrap justify-center min-h-[20px]">
+                <div className="flex gap-2 flex-wrap justify-center min-h-[30px]">
                   {p.price != null && (
-                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm hover:bg-yellow-700 hover:text-white">
+                    <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-sm group-hover:bg-yellow-600 group-hover:text-white transition">
                       Rs. {p.price}
                     </span>
                   )}
                   {p.duration && (
-                    <span className="bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-sm hover:bg-teal-700 hover:text-white">
+                    <span className="bg-teal-100 text-teal-800 px-2 py-1 rounded-full text-sm group-hover:bg-teal-600 group-hover:text-white transition">
                       {p.duration} Hours
                     </span>
                   )}
                 </div>
 
                 
-                <div className="mt-2 min-h-[70px] flex items-center justify-center text-sm text-center text-black">
+                <div className="mt-2 min-h-[70px] flex items-center justify-center text-sm text-center group-hover:text-white">
                   {p.features
                     ? Array.isArray(p.features)
                       ? p.features.join(", ")
