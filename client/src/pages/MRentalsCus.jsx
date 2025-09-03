@@ -65,7 +65,7 @@ function MRentalCus() {
             ) : (
               <div className="w-full flex flex-col items-center justify-center py-20">
                 <p className="text-xl font-semibold text-gray-300 mb-4">
-                  No Items Found{" "}
+                  😔 No Items Founded {" "}
                 </p>
                 
               </div>
