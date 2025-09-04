@@ -40,7 +40,7 @@ function MRentalCus() {
           Rental Items
         </h2>
 
-        {/* Category */}
+        {/* Category Filter */}
         <div className="flex flex-wrap gap-4 mb-10">
           {["All", "Photography Camera", "Video Camera", "Drone","Camera Lens", "Lighting"].map((category) => (
             <button
@@ -57,7 +57,7 @@ function MRentalCus() {
           ))}
         </div>
 
-        {/* show items */}
+        {/* Items Grid */}
         <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-11/12 text-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems && filteredItems.length > 0 ? (

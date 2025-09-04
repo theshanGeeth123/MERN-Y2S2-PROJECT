@@ -8,7 +8,6 @@ import userRouter from "./routes/userRoutes.js";
 import adminRouter from './routes/Admin.route.js';
 import rentalRoutes from "./routes/mRental.route.js";
 import paymentRoutes from "./routes/mPayment.route.js";
-import requestRoutes from "./routes/mRequest.route.js";
 
 
 
@@ -23,7 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({origin:allowedOrigins,credentials:true}));
 
-// APIs
+// API Endpoint 
 app.get("/",(req,res)=>res.send("API working"));
 app.use('/api/auth',authRouter);
 app.use('/api/user',userRouter);
@@ -31,7 +30,6 @@ app.use('/api/admin',adminRouter);
 
 app.use("/api/rentalItems",rentalRoutes)
 app.use("/api/payment", paymentRoutes);
-app.use("/api/requests", requestRoutes);
 
 app.listen(port,()=>console.log(`Server started on PORT:${port}
 `));

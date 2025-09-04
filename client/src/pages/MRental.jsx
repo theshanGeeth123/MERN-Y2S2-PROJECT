@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useRentItemsStore } from "../mstore/mrentItems";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { X  } from "lucide-react";
 
 function MRental() {
   const [newRntal, setnewRental] = useState({
@@ -29,15 +28,11 @@ const handleAddRental = async () => {
       navigate("/admin/all-rentals"); 
     }
 };
-const handleClose = async () =>{
-  navigate("/admin/all-rentals"); 
-}
 
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-1/3 text-indigo-300 h-[75vh]">
-      <div className="w-full flex justify-end"><X className="w-6 h-6 text-gray-700 cursor-pointer flex justify-end" onClick={handleClose} /></div>
         <h2 className="text-3xl font-semibold text-white text-center mb-6">
           Add New Rental
         </h2>
@@ -92,7 +87,7 @@ const handleClose = async () =>{
             />
           </div>
 
-          {/* Image */}
+          {/* Image URL */}
           <div className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#333A5C66]">
             <input
               type="text"
@@ -104,7 +99,7 @@ const handleClose = async () =>{
             />
           </div>
 
-          {/* Submit */}
+          {/* Submit Button */}
           <div className="flex justify-center">
             <button
             type="submit"
