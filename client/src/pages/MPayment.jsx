@@ -88,9 +88,9 @@ function CheckoutForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6 space-y-6"
+      className="max-w-md mx-auto bg-slate-900 shadow-lg rounded-2xl p-6 space-y-6"
     >
-      <h2 className="text-xl font-bold text-gray-700 text-center">
+      <h2 className="text-xl font-bold text-white text-center">
         Complete Your Payment
       </h2>
 
@@ -103,7 +103,7 @@ function CheckoutForm() {
           onChange={handleChange}
           required
           placeholder="Full Name"
-          className="w-full p-2 border rounded-lg"
+          className="w-full p-2 border rounded-xl bg-white"
         />
         <input
           type="email"
@@ -112,23 +112,27 @@ function CheckoutForm() {
           onChange={handleChange}
           required
           placeholder="Email"
-          className="w-full p-2 border rounded-lg"
+          className="w-full p-2 border rounded-xl bg-white"
         />
         <input
           type="number"
           name="amount"
           value={formData.amount}
           readOnly
-          className="w-full p-2 border rounded-lg bg-gray-100"
+          className="w-full p-2 border rounded-xl bg-gray-100"
         />
       </div>
 
+      <h2 className="text-md font-bold text-white text-center mt-10">
+        Add Your Payment Details
+      </h2>
+
       {/* Card Info */}
       <div className="space-y-4">
-        <CardNumberElement options={ELEMENT_OPTIONS} className="w-full p-3 border rounded-lg" />
+        <CardNumberElement options={ELEMENT_OPTIONS} className="w-full p-3 border rounded-xl bg-white" />
         <div className="grid grid-cols-2 gap-4">
-          <CardExpiryElement options={ELEMENT_OPTIONS} className="w-full p-3 border rounded-lg" />
-          <CardCvcElement options={ELEMENT_OPTIONS} className="w-full p-3 border rounded-lg" />
+          <CardExpiryElement options={ELEMENT_OPTIONS} className="w-full p-3 border rounded-xl bg-white" />
+          <CardCvcElement options={ELEMENT_OPTIONS} className="w-full p-3 border rounded-xl bg-white" />
         </div>
       </div>
 
