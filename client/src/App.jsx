@@ -21,6 +21,7 @@ import MRentalCart from "./pages/MRentalCart";
 import MPaymentPage from "./pages/MRentalPayment";
 import MItemCardCus from "./components/MItemCardCus";
 import MPayment from "./pages/MPayment";
+import MSuccess from "./pages/mPaySuccess";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
         <Route path="/cart" element={<MRentalCart />} />
         <Route path="/payment" element={<MPaymentPage />} />
         <Route path="/payment/create-payment-intent" element={<MPayment />} />
+        <Route path="/payment/success" element={<MSuccess />} />
 
         
 
