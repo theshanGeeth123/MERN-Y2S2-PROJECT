@@ -1,6 +1,9 @@
 import React from "react";
 import { useRentItemsStore } from "../mstore/mrentItems";
 import { useNavigate, useLocation } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
+
 
 const MRentalCart = () => {
   const rentalCart = useRentItemsStore((state) => state.rentalCart);
@@ -12,9 +15,9 @@ const MRentalCart = () => {
 
   const navigate = useNavigate();
 
-  const FIXED_DEPOSIT = 500; // Fixed deposit per item
+  const FIXED_DEPOSIT = 500; // Fixed deposit
 
-  // Calculate total deposit: number of items × fixed deposit
+  // Calculate total
   const getTotalDeposit = (itemsList) => {
     return itemsList.length * FIXED_DEPOSIT;
   };
@@ -31,7 +34,8 @@ const MRentalCart = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4 text-center mt-20 mb-10">
+      <Navbar/>
+      <h2 className="text-2xl font-bold mb-4 text-center mt-10 mb-10">
         Confirm Your Payment
       </h2>
 
@@ -58,14 +62,22 @@ const MRentalCart = () => {
       <div className="mt-6 font-semibold text-lg text-center">
         Total Deposit: Rs. {getTotalDeposit(rentedItems)}.00
       </div>
-
+      
       <div className="w-full flex justify-center">
         <button
-          className="px-6 py-2 bg-green-500 rounded-full hover:bg-green-600 mt-10"
+          className="px-6 py-2 bg-green-500 rounded-full hover:bg-green-600 mt-5"
           onClick={handleProceedToPay}
         >
           Proceed to Pay
         </button>
+      </div>
+      <div className="w-full flex justify-center mt-1">
+        <Link
+          to="/cart"
+          className="text-blue-500 hover:underline"
+        >
+           Back to Rental Cart
+        </Link>
       </div>
     </div>
   );
