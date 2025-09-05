@@ -61,7 +61,7 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to bg-purple-400">
+    <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-100 to bg-white">
       <img
         onClick={() => navigate('/')}
         src={assets.pic2}
