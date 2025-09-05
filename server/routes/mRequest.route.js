@@ -9,19 +9,10 @@ import {
 
 const router = express.Router();
 
-// create
 router.post("/", createRequest);
-
-// all requests
 router.get("/", getRequests);
-
-// single request by id
 router.get("/:id", getRequestById);
-
-// update
 router.put("/:id", updateRequest);
-
-// remove
 router.delete("/:id", deleteRequest);
 
 export default router;

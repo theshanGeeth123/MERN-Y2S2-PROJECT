@@ -1,5 +1,10 @@
 import express from "express";
-import { deleteRentItems, getRentItems, postRentItems, updateRentItems } from "../controllers/mRental.controller.js";
+import { 
+    deleteRentItems, 
+    getRentItems, 
+    postRentItems, 
+    updateRentItems 
+} from "../controllers/mRental.controller.js";
 
 
 const router = express.Router();
