@@ -8,7 +8,7 @@ export const useRentItemsStore = create((set, get) => ({
     if (!newRental.name || !newRental.category || !newRental.price || !newRental.description || !newRental.image)
       return { success: false, message: "Please fill in all the fields" };
     if (newRental.price==0)
-      return { success: false, message: "Price has not changed" };
+      return { error: true, message: "Price has not changed" };
     try {
       const res = await fetch("/api/rentalItems", {
         method: "POST",

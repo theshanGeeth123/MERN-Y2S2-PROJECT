@@ -21,10 +21,18 @@ const handleAddRental = async () => {
   const { success, message } = await addItem(newRntal); 
   console.log("Success:", success);
   console.log("Message:", message);
-  toast.success(message, {
+  if(success){
+      toast.success(message, {
             position: "top-center",
             autoClose: 3000,
           });
+  } else{
+      toast.error(message, {
+            position: "top-center",
+            autoClose: 3000,
+          });
+  }
+
   if (success) {
       navigate("/admin/all-rentals"); 
     }
