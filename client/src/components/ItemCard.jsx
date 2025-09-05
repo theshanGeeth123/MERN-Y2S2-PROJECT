@@ -7,7 +7,7 @@ function ItemCard({ item }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ ...item });
 
-  // Lock background scroll
+  // Lock background
   useEffect(() => {
     document.body.style.overflow = isEditing ? "hidden" : "auto";
     return () => { document.body.style.overflow = "auto"; };
