@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom"; 
 
-const API_BASE = "http://localhost:4000/api/packages"; 
+const API_BASE = "http://localhost:4000/api/packages";
 
 const packageImages = {
   "Portrait Photography Package":
@@ -12,16 +13,17 @@ const packageImages = {
   "Baby Photoshoot Package":
     "https://i.postimg.cc/Jh29FNf9/Whats-App-Image-2025-09-02-at-09-55-14.jpg",
   "Gold Wedding Package":
-    "https://i.postimg.cc/d01bnHx2/Whats-App-Image-2025-09-55-18-1.jpg",
+    "https://i.postimg.cc/d01bnHx2/Whats-App-Image-2025-09-02-at-09-55-18-1.jpg",
   "Standard Event Photography Package":
-    "https://i.postimg.cc/BnMWT9MZ/Whats-App-Image-2025-09-55-19.jpg",
+    "https://i.postimg.cc/BnMWT9MZ/Whats-App-Image-2025-09-02-at-09-55-19.jpg",
 };
 
 function UserPackages() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  
+  const navigate = useNavigate(); 
+
   const fetchPackages = async () => {
     setLoading(true);
     try {
@@ -42,23 +44,24 @@ function UserPackages() {
 
   
   const handleBooking = (packageItem) => {
-    
-    toast.success(`You booked: ${packageItem.title}`);
+    const pkgWithImage = { ...packageItem, image: packageImages[packageItem.title] };
+    navigate("/booking-request", { state: { package: pkgWithImage } });
   };
 
   if (loading)
     return (
       <p className="text-center mt-10 text-gray-500">Loading packages...</p>
     );
+
   if (!packages.length)
     return (
       <p className="text-center mt-10 text-gray-400">No packages found.</p>
     );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
+    <div className="min-h-screen bg-gray-200 py-10 px-4">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-extrabold text-center text-black mb-12">
+        <h1 className="text-3xl font-bold text-center text-black mb-12">
           Explore Packages
         </h1>
 
@@ -66,40 +69,53 @@ function UserPackages() {
           {packages.map((p) => (
             <div
               key={p._id || p.title}
-              className="bg-gray-100 rounded-xl shadow-md flex flex-col hover:shadow-lg hover:bg-gray-200 transform hover:-translate-y-1 transition w-60 md:w-80"
+              className="bg-white rounded-xl shadow-md flex flex-col transform transition hover:-translate-y-1 hover:shadow-lg hover:bg-green-50 w-72 md:w-96"
             >
-              <div className="w-full h-55 overflow-hidden rounded-t-xl bg-gray-200">
+              <div className="w-full overflow-hidden rounded-xl bg-white flex items-center justify-center p-4">
                 <img
-                  src={packageImages[p.title] || "https://via.placeholder.com/300x200"}
+                  src={
+                    packageImages[p.title] ||
+                    "https://via.placeholder.com/300x200"
+                  }
                   alt={p.title}
-                  className="w-full h-full object-contain rounded-t-xl"
+                  className="max-h-48 object-contain rounded-xl mx-auto"
                 />
               </div>
 
               <div className="p-4 flex flex-col flex-grow justify-between">
                 <div className="space-y-2 flex-grow">
                   <h2 className="text-lg font-bold text-black">{p.title}</h2>
-                  <p className="text-gray-800 text-sm line-clamp-3">{p.description}</p>
+                  <p className="text-gray-800 text-sm line-clamp-3">
+                    {p.description}
+                  </p>
 
                   {p.price != null && (
                     <div>
-                      <label className="font-bold text-black-700 text-sm">Price:</label>
+                      <label className="font-bold text-black text-sm">
+                        Price:
+                      </label>
                       <p className="text-gray-800 text-sm">Rs. {p.price}</p>
                     </div>
                   )}
 
                   {p.duration && (
                     <div>
-                      <label className="font-bold text-black-700 text-sm">Duration:</label>
+                      <label className="font-bold text-black text-sm">
+                        Duration:
+                      </label>
                       <p className="text-gray-800 text-sm">{p.duration} hrs</p>
                     </div>
                   )}
 
                   {p.features && (
                     <div>
-                      <label className="font-bold text-black-700 text-sm">Features:</label>
+                      <label className="font-bold text-black text-sm">
+                        Features:
+                      </label>
                       <p className="text-gray-800 text-sm">
-                        {Array.isArray(p.features) ? p.features.join(", ") : p.features}
+                        {Array.isArray(p.features)
+                          ? p.features.join(", ")
+                          : p.features}
                       </p>
                     </div>
                   )}
@@ -107,7 +123,7 @@ function UserPackages() {
 
                 <div className="mt-4">
                   <button
-                    onClick={() => handleBooking(p)}
+                    onClick={() => handleBooking(p)} 
                     className="w-full py-2 bg-green-600 text-white text-sm font-semibold rounded-lg hover:bg-green-700 transition"
                   >
                     Book Now
