@@ -51,7 +51,7 @@ const handleClose = async () =>{
         </h2>
 
         <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleAddRental(); }}>
-          {/* Item Name */}
+          
           <div className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#333A5C66]">
             <input
               type="text"
@@ -63,7 +63,7 @@ const handleClose = async () =>{
             />
           </div>
 
-          {/* Category */}
+          
           <div className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#333A5C66]">
             <input
               type="text"
@@ -75,7 +75,7 @@ const handleClose = async () =>{
             />
           </div>
 
-          {/* Price */}
+          
           <div className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#333A5C66]">
             <input
               type="number"
@@ -88,7 +88,7 @@ const handleClose = async () =>{
             />
           </div>
 
-          {/* Description */}
+          
           <div className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#333A5C66]">
             <input
               type="text"
@@ -100,7 +100,7 @@ const handleClose = async () =>{
             />
           </div>
 
-          {/* Image */}
+          
           <div className="flex items-center gap-3 w-full px-5 py-3.5 rounded-full bg-[#333A5C66]">
             <input
               type="text"
@@ -112,7 +112,7 @@ const handleClose = async () =>{
             />
           </div>
 
-          {/* Submit */}
+          
           <div className="flex justify-center">
             <button
             type="submit"
