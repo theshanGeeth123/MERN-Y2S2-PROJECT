@@ -9,8 +9,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PackageCreate from './admin/PackageCreate';
 import Packages from './admin/Packages'; 
-import PackageDetail from './admin/PackageDetail'
-import UserPackages from './pages/UserPackages'
+import PackageDetail from './admin/PackageDetail';
+import UserPackages from './pages/UserPackages';
+import BookingForm from './pages/BookingForm';
+import Bookings from './pages/Bookings';
 
 // Admin section
 
@@ -18,6 +20,8 @@ import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
+import BookingReport from './admin/BookingReport'
+import UserBookings from './pages/UserBookings'
 
 function App() {
   return (
@@ -31,6 +35,8 @@ function App() {
         <Route path='/my-profile' element={<MyProfile/>}/>
         <Route path='/customer-home' element={<CustomerHome/>}/>
         <Route path="/userpackages" element={<UserPackages />} />
+        <Route path="/booking-request" element={<BookingForm />} />
+        <Route path="/my-bookings" element={<UserBookings />} />
         
 
         {/* admin */}
@@ -40,6 +46,8 @@ function App() {
         <Route path="/packageCreate" element={<PackageCreate />} /> 
         <Route path="/admin/packages" element={<Packages />} />
         <Route path="/packageDetail/:id" element={<PackageDetail />} />
+        <Route path="/admin/bookings" element={<Bookings />} />
+        <Route path="/admin/booking-report" element={<BookingReport />} />
 
       </Routes>
     </div>
