@@ -45,13 +45,20 @@ function CustomerHome() {
         </div>
       </div>
 
-      
-      <div className="mt-6 text-center">
+      <div className="mt-6 flex justify-center gap-4">
         <button
           onClick={() => navigate("/userpackages")}
           className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
         >
           View Packages
+        </button>
+
+       
+        <button
+          onClick={() => navigate("/my-bookings")}
+          className="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+        >
+          My Booking Requests
         </button>
       </div>
     </div>
