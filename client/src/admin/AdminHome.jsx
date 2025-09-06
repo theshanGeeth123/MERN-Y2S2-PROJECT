@@ -11,8 +11,8 @@ function AdminHome() {
           Admin Dashboard
         </h1>
 
-        
         <div className="grid gap-4 max-w-sm">
+          
           <button
             onClick={() => navigate("/admin/packages")}
             className="w-full rounded-xl border border-neutral-200 bg-white p-6 text-left shadow-sm transition hover:shadow-md hover:bg-neutral-50"
@@ -23,6 +23,20 @@ function AdminHome() {
             </p>
             <span className="mt-4 inline-flex items-center rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white">
               Package List
+            </span>
+          </button>
+
+          
+          <button
+            onClick={() => navigate("/admin/bookings")}
+            className="w-full rounded-xl border border-neutral-200 bg-white p-6 text-left shadow-sm transition hover:shadow-md hover:bg-neutral-50"
+          >
+            <div className="text-lg font-medium text-neutral-900">Bookings</div>
+            <p className="mt-1 text-sm text-neutral-600">
+              View all booking requests submitted by users.
+            </p>
+            <span className="mt-4 inline-flex items-center rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white">
+              Booking List
             </span>
           </button>
         </div>
