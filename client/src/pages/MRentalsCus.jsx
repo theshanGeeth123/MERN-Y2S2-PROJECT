@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useRentItemsStore } from "../mstore/mrentItems";
 import ItemCardCus from "../components/MItemCardCus";
 import Navbar from "../components/Navbar";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Inbox } from "lucide-react";
 
 function MRentalCus() {
   const fetchRItems = useRentItemsStore((state) => state.fetchRItems); 
@@ -24,10 +24,16 @@ function MRentalCus() {
     <div>
       <Navbar />
 
-      {/* Top Add Rental Item Button */}
+
       <div className="w-full flex justify-end mt-5 pr-6">
+      <Link to="/my-requests">
+        <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-2">
+          <Inbox size={18}/>
+          My Rental Requests
+        </button>
+      </Link>
       <Link to="/cart">
-        <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-transparent bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] text-white font-semibold hover:scale-105 hover:opacity-90 transition mr-15">
+        <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-15">
           <ShoppingBag size={18}/>
           Rental Cart
         </button>

@@ -22,6 +22,10 @@ import MPaymentPage from "./pages/MRentalPayment";
 import MItemCardCus from "./components/MItemCardCus";
 import MPayment from "./pages/MPayment";
 import MSuccess from "./pages/mPaySuccess";
+import MRequestCus from "./pages/MRequestCus";
+
+const loggedInUser = JSON.parse(localStorage.getItem("user"));
+const authToken = localStorage.getItem("token");
 
 
 function App() {
@@ -42,7 +46,7 @@ function App() {
         <Route path="/payment" element={<MPaymentPage />} />
         <Route path="/payment/create-payment-intent" element={<MPayment />} />
         <Route path="/payment/success" element={<MSuccess />} />
-
+        <Route path="/my-requests" element={<MRequestCus />} />
         
 
         {/* admin */}
