@@ -1,22 +1,35 @@
 import mongoose from "mongoose";
 import Request from "../models/mRequest.model.js";
+import userModel from "../models/userModel.js";
 
 export const createRequest = async (req, res) => {
   try {
-    const newRequest = new Request(req.body);
+    const { amount, description, account, startDate, endDate, items, name, email } = req.body;
+
+    const user = await userModel.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const newRequest = new Request({
+      user: req.userId,
+      email: email,
+      amount,
+      description,
+      account,
+      startDate,
+      endDate,
+      items,
+    });
+
     await newRequest.save();
-    res.status(201).json({
-      success: true,
-      data: newRequest,
-    });
+
+    res.status(201).json({ success: true, data: newRequest });
   } catch (error) {
-    console.error("Error in Create Request:", error.message);
-    res.status(400).json({
-      error: true,
-      message: error.message, 
-    });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
+
 
 export const getRequests = async (req, res) => {
   try {
@@ -29,24 +42,6 @@ export const getRequests = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error",
-      error: error.message,
-    });
-  }
-};
-
-export const getRequestById = async (req, res) => {
-  try {
-    const request = await Request.findById(req.params.id);
-    if (!request) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Request not found" });
-    }
-    res.json({ success: true, data: request }); // ✅ consistent key: data
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch request",
       error: error.message,
     });
   }
@@ -109,29 +104,22 @@ export const deleteRequest = async (req, res) => {
 };
 
 
-// export const deleteRequest = async (req, res) => {
-//   const { id } = req.params;
-//   if (!mongoose.Types.ObjectId.isValid(id)) {
-//     return res.status(400).json({ success: false, message: "Invalid Request ID" });
-//   }
+export const getRequestsByUser = async (req, res) => {
+  try {
+    const userId = req.userId;
 
-//   try {
-//     const result = await Request.deleteOne({ _id: id });
+    const requests = await Request.find({ user: userId }).sort({ createdAt: -1 });
 
-//     if (result.deletedCount === 0) {
-//       return res.status(404).json({ success: false, message: "Request not found" });
-//     }
-//     return res.status(200).json({
-//       success: true,
-//       message: "Request deleted successfully",
-//       meta: { deletedCount: result.deletedCount, id }
-//     });
-//   } catch (err) {
-//     console.error("Delete error:", err);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Failed to delete request",
-//       error: err.message
-//     });
-//   }
-// };
+    if (!requests || requests.length === 0) {
+      return res.status(404).json({ success: false, message: "No requests found" });
+    }
+
+    res.json({ success: true, data: requests });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch user requests",
+      error: error.message,
+    });
+  }
+};
