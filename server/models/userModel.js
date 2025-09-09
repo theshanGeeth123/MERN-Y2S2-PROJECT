@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   age:{type:String,required:true},
   phone:{type:String,required:true},
   address:{type:String,required:true}
-});
+},{ timestamps: true });
 
 const userModel = mongoose.model.user ||  mongoose.model('user',userSchema);
 
