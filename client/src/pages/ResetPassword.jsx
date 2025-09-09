@@ -79,7 +79,9 @@ function ResetPassword() {
 
         data.success ? toast.success(data.message) : toast.error(data.message);
 
-        data.success && navigate('/login')
+        data.success ? navigate('/login'): navigate('/')
+
+
         
     } catch (error) {
         toast.error(error.message)
