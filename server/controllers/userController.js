@@ -111,3 +111,28 @@
     }
   };
 
+
+ 
+  export const deleteUserByAdmin = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+      const user = await userModel.findByIdAndDelete(id);
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+      res.json({ success: true, message: "User deleted" });
+    } catch (err) {
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
+
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await userModel.find(); // return all user documents as-is
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -14,6 +14,18 @@ import AdminLogin from './admin/AdminLogin'
 import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
+import UsersReport from "./pages/admin/UsersReport.jsx";
+
+
+// Admin Notifications pages
+import Notifications from './admin/T_Notifications/Notifications';
+import NotificationDetail from './admin/T_Notifications/NotificationDetail';
+import NotificationCreate from './admin/T_Notifications/NotificationCreate';
+
+import CustomerNotifications from "./T_Customer/T_Cus_notifications/CustomerNotifications";
+
+import CustomerManagement from './admin/T_Customer/CustomerManage.jsx';
+
 
 function App() {
   return (
@@ -32,6 +44,24 @@ function App() {
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+        <Route path="/admin/user-reports" element={<UsersReport />} />
+
+
+         {/*Admin Notifications routes */}
+        <Route path='/admin/notifications' element={<Notifications />} />
+        <Route path='/admin/notifications/create' element={<NotificationCreate />} />
+        <Route path='/admin/notifications/:id' element={<NotificationDetail />} />
+
+        <Route path="/notifications" element={<CustomerNotifications />} />
+
+
+        {/*Admin Cusomer Management routes */}
+
+
+         <Route path="/customerManagement" element={<CustomerManagement />} />
+
+
+  
 
       </Routes>
     </div>
