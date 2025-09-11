@@ -1,12 +1,10 @@
 import React, { useContext } from 'react'
 import { assets } from '../assets/assets'
 import { AppContent } from '../context/AppContext'
-import { useNavigate } from "react-router-dom";
 
 function Header() {
 
-  const {userData} = useContext(AppContent);
-  const navigate = useNavigate();
+    const {userData} = useContext(AppContent);
 
   return (
     <div className='flex flex-col items-center mt-20 px-4 text-center
@@ -18,7 +16,7 @@ function Header() {
 
       <p className='mb-8 max-w-md'>Let's start with quick product and we will have you up and running in no time .</p>
 
-        <button onClick={() => navigate("/customer-home")} className='border border-gray-500 cursor-pointer rounded-full px-8 py-2.5 hover:bg-gray-100 transition-all'>Get Started</button>
+        <button className='border border-gray-500 rounded-full px-8 py-2.5 hover:bg-gray-100 transition-all'>Get Started</button>
     </div>
   )
 }
