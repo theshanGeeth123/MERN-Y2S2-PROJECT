@@ -3,17 +3,20 @@ import { AppContent } from "../context/AppContext";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Star } from "lucide-react";
+import CustomerFeedbackModal from "./CustomerFeedbackModal";
 
-function CustomerFeedbackDisplay({ loading, feedbacks, deletedFb}) {
-  const navigate = useNavigate();
+function CustomerFeedbackDisplay({ loading, feedbacks, updatedFb, deletedFb}) {
+  const [feedback, setFeedback] = useState(null);
+  const [open, setOpen] = useState(false);
 
-  const deleteFeedback = async (id) => { // update feedback list after deleting a feedback
+  const deleteFeedback = async (id) => { // delete the selected feedback
     if (!window.confirm("Delete this feedback")) return;
     try {
       const data = await axios.delete(`http://localhost:4000/api/user/feedback?id=${id}`);
       if (data.status=="200") {
          toast.success("Successfully deleted the feedback");
-         deletedFb?.(id);
+         deletedFb?.(id); // pass updated feedback to UI after deleting feedback
       } else {
          toast.error(data.message);
       }
@@ -45,8 +48,13 @@ function CustomerFeedbackDisplay({ loading, feedbacks, deletedFb}) {
                       <h3 className="text-lg font-semibold"> {fb.selectedPhotographer} </h3>
                     </div>
                     <div className="mb-3 flex flex-wrap items-center gap-2">
-                      <span className="inline-flex items-center rounded-full bg-yellow-50 px-3 py-1 text-sm font-medium text-yellow-700">
-                        {fb.rate} </span>
+                      <span className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium text-yellow-700">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <button type="button"  key={index} onClick={() => handleRating(index)} className="focus:outline-none">
+                            <Star className={`w-5 h-5 transition-colors duration-200 ${ index < fb.rate ? "fill-yellow-400 text-yellow-400" : "text-gray-300" }`}/>
+                          </button>
+                        ))}
+                      </span>
                     </div>
                     <p className="whitespace-pre-wrap text-gray-800">
                       {fb.comment}
@@ -54,18 +62,19 @@ function CustomerFeedbackDisplay({ loading, feedbacks, deletedFb}) {
                   </div>
 
                   <div className="mt-4 pt-3 flex justify-end gap-2">
-                    <button  onClick={() => navigate("/customer-feedback/edit", { state: { id: fb._id, feedback: fb } })}
+                    <button  onClick={() => { setOpen(true); setFeedback(fb)}} // Open modal to update selected feedback
                       className="cursor-pointer rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700">
                       Edit </button>
-                    <button onClick={() => deleteFeedback(fb._id)}
+                    <button onClick={() => deleteFeedback(fb._id)} // delete selected feedback
                       className="cursor-pointer rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700">
                       Delete </button>
                   </div>
-
               </li>
             ))}
           </ul>
         )}
+        <CustomerFeedbackModal open={open} onClose={() => setOpen(false)} 
+          feedback={feedback} updatedFb={updatedFb}></CustomerFeedbackModal>
     </div>
   );
 }
