@@ -2,10 +2,11 @@ import React, { useContext, useState } from "react";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Star } from "lucide-react";
 
 function CustomerFeedbackCreation({ userData, createdFb }) {
   const [selectedPhotographer, setSelectedPhotographer] = useState('');
-  const [rate, setRate] = useState('Excellent'); // Set Excellent since it is the default value in rating
+  const [rate, setRate] = useState(0); // Set Excellent since it is the default value in rating
   const [comment, setComment] = useState('');
   const navigate = useNavigate();
   const username = userData.name;
@@ -13,7 +14,7 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
 
   const setInitial = () => {
     setSelectedPhotographer("");
-    setRate("Excellent");
+    setRate(0);
     setComment("");
   }
 
@@ -35,6 +36,10 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
     }
   };
 
+  const handleRating = (index) => {
+    setRate(index + 1);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
       <h3 className="text-4xl font-bold text-left mb-6">Submit Feedback</h3>
@@ -45,15 +50,12 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
               className="w-full rounded-xl border border-gray-500 px-3 py-2 outline-none ring-1 ring-transparent focus:border-gray-900 focus:ring-gray-900/10"/>
         </div>
         <label className="mb-1 block text-sm text-gray-700"> Rating </label>
-        <div class="mt-2">
-            <select name="rate" defaultValue="Excellent" value={rate} required onChange={(e) => setRate(e.target.value)}
-                className="w-full rounded-xl border border-gray-500 px-3 py-2 outline-none ring-1 ring-transparent focus:border-gray-900 focus:ring-gray-900/10">
-              <option value="Excellent">Excellent</option>
-              <option value="Good">Good</option>
-              <option value="Average">Average</option>
-              <option value="Okay">Okay</option>
-              <option value="Poor">Poor</option>
-            </select>
+        <div className="flex space-x-4 mt-2">
+            {Array.from({ length: 5 }).map((_, index) => (
+            <button type="button"  key={index} onClick={() => handleRating(index)} className="focus:outline-none">
+              <Star className={`w-12 h-12 transition-colors duration-200 ${ index < rate ? "fill-yellow-400 text-yellow-400" : "text-gray-300" }`}/>
+            </button>
+          ))}
         </div>
         <label lassName="mb-1 block text-sm text-gray-700"> Comment </label>
         <div class="mt-2">
