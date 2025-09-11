@@ -41,11 +41,15 @@ function CustomerFeedback() {
     setFeedbacks(prev => prev.filter(fb => fb._id !== id));
   };
 
+  const handleUpdated = (updated) => {
+    setFeedbacks((prev) => prev.map((fb) => (fb._id === updated._id ? updated : fb)));
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-green-100">
       <CustomerHomeNavbar />
       <CustomerFeedbackCreation userData={userData} createdFb={handleCreated}/>
-      <CustomerFeedbackDisplay loading={loading} feedbacks={feedbacks} deletedFb={handleDeleted}/>
+      <CustomerFeedbackDisplay loading={loading} feedbacks={feedbacks} updatedFb={handleUpdated} deletedFb={handleDeleted}/>
       <br/>
     </div>
   );

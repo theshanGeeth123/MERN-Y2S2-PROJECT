@@ -8,7 +8,6 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
   const [selectedPhotographer, setSelectedPhotographer] = useState('');
   const [rate, setRate] = useState(0); // Set Excellent since it is the default value in rating
   const [comment, setComment] = useState('');
-  const navigate = useNavigate();
   const username = userData.name;
   const email = userData.email;
 
@@ -18,7 +17,7 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
     setComment("");
   }
 
-  const onSubmitFeedbackHandler = async (e) => {
+  const onSubmitFeedbackHandler = async (e) => { // create new feedback
     e.preventDefault();
     try {
       const { data } = await axios.post('http://localhost:4000/api/user/feedback', {
@@ -26,7 +25,7 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
       });
       if (data.success) {
         toast.success("Successfully added a feedback");
-        createdFb?.(data.data || data); // pass created fb to fetching list in UI
+        createdFb?.(data.data || data); // pass created feedback to fetching list in UI
         setInitial();
       } else {
         toast.error(data.message);
@@ -52,10 +51,10 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
         <label className="mb-1 block text-sm text-gray-700"> Rating </label>
         <div className="flex space-x-4 mt-2">
             {Array.from({ length: 5 }).map((_, index) => (
-            <button type="button"  key={index} onClick={() => handleRating(index)} className="focus:outline-none">
-              <Star className={`w-12 h-12 transition-colors duration-200 ${ index < rate ? "fill-yellow-400 text-yellow-400" : "text-gray-300" }`}/>
-            </button>
-          ))}
+              <button type="button"  key={index} onClick={() => handleRating(index)} className="focus:outline-none">
+                <Star className={`w-12 h-12 transition-colors duration-200 ${ index < rate ? "fill-yellow-400 text-yellow-400" : "text-gray-300" }`}/>
+              </button>
+            ))}
         </div>
         <label lassName="mb-1 block text-sm text-gray-700"> Comment </label>
         <div class="mt-2">
