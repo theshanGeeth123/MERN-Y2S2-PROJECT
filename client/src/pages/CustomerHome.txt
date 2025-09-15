@@ -1,0 +1,32 @@
+import React, { useContext, useEffect } from 'react';
+import { AppContent } from "../context/AppContext";
+
+function CustomerHome() {
+  const { getUserData, userData } = useContext(AppContent);
+
+  useEffect(() => {
+    getUserData(); // Ensures fresh data if needed
+  }, []);
+
+  return (
+    <div>
+      <h1 className='text-4xl text-center mt-10'>Customer Home</h1>
+
+      {userData ? (
+        <div className="text-center mt-6 space-y-2">
+          <p><strong>ID:</strong> {userData.id}</p>
+          <p><strong>Name:</strong> {userData.name}</p>
+          <p><strong>Email:</strong> {userData.email}</p>
+          <p><strong>Phone:</strong> {userData.phone}</p>
+          <p><strong>Age:</strong> {userData.age}</p>
+          <p><strong>Address:</strong> {userData.address}</p>
+          
+        </div>
+      ) : (
+        <p className='text-center mt-4 text-gray-600'>Loading user data...</p>
+      )}
+    </div>
+  );
+}
+
+export default CustomerHome;

@@ -1,71 +1,84 @@
-import React from 'react'
+// src/App.jsx
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import {Routes,Route} from 'react-router-dom'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import EmailVerify from './pages/EmailVerify'
-import ResetPassword from './pages/ResetPassword'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+// Public pages
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import EmailVerify from "./pages/EmailVerify";
+import ResetPassword from "./pages/ResetPassword";
+import MyProfile from "./pages/MyProfile";
+import CustomerHome from "./pages/customer/CustomerHome";
+import ProductList from "./pages/product/ProductList";
+import CartPage from "./pages/cart/CartPage";
+import Checkout from "./pages/cart/Checkout";
+import PaymentSuccess from "./pages/cart/PaymentSuccess";
+import MyOrders from "./pages/order/MyOrders";
+import ManageCards from "./pages/payments/ManageCards";
 
-// Admin section
-
-import AdminLogin from './admin/AdminLogin'
-import AdminHome from './admin/AdminHome'
-import MyProfile from './pages/MyProfile'
-import CustomerHome from './pages/CustomerHome'
+// Admin pages
+import AdminLogin from "./admin/AdminLogin";
+import AdminHome from "./admin/AdminHome";
+import AdminOrders from "./pages/admin/AdminOrders";
+import AdminReports from "./pages/admin/AdminReports";
+import AddProduct from "./pages/admin/AddProduct";
+import ManageProducts from "./pages/admin/ManageProducts";
 import UsersReport from "./pages/admin/UsersReport.jsx";
+import CustomerManagement from "./admin/T_Customer/CustomerManage.jsx";
 
+// Admin Notifications
+import Notifications from "./admin/T_Notifications/Notifications";
+import NotificationDetail from "./admin/T_Notifications/NotificationDetail";
+import NotificationCreate from "./admin/T_Notifications/NotificationCreate";
 
-// Admin Notifications pages
-import Notifications from './admin/T_Notifications/Notifications';
-import NotificationDetail from './admin/T_Notifications/NotificationDetail';
-import NotificationCreate from './admin/T_Notifications/NotificationCreate';
-
+// Customer Notifications
 import CustomerNotifications from "./T_Customer/T_Cus_notifications/CustomerNotifications";
-
-import CustomerManagement from './admin/T_Customer/CustomerManage.jsx';
-
 
 function App() {
   return (
     <div>
-      <ToastContainer/>
+      <ToastContainer />
       <Routes>
-        <Route path='/' element={<Home/>}/>
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/email-verify' element={<EmailVerify/>}/>
-        <Route path='/reset-password' element={<ResetPassword/>}/>
-        <Route path='/my-profile' element={<MyProfile/>}/>
-        <Route path='/customer-home' element={<CustomerHome/>}/>
-        
-
-        {/* admin */}
-
-        <Route path='/admin/login' element={<AdminLogin/>}/>
-        <Route path='/admin/home' element={<AdminHome/>}/>
-        <Route path="/admin/user-reports" element={<UsersReport />} />
-
-
-         {/*Admin Notifications routes */}
-        <Route path='/admin/notifications' element={<Notifications />} />
-        <Route path='/admin/notifications/create' element={<NotificationCreate />} />
-        <Route path='/admin/notifications/:id' element={<NotificationDetail />} />
-
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/email-verify" element={<EmailVerify />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/my-profile" element={<MyProfile />} />
+        <Route path="/customer-home" element={<CustomerHome />} />
+        <Route path="/products" element={<ProductList />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/my-orders" element={<MyOrders />} />
+        <Route path="/cards" element={<ManageCards />} />
         <Route path="/notifications" element={<CustomerNotifications />} />
 
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/home" element={<AdminHome />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
+        <Route path="/admin/add-product" element={<AddProduct />} />
+        <Route path="/admin/products" element={<ManageProducts />} />
+        <Route path="/admin/user-reports" element={<UsersReport />} />
+        <Route path="/customerManagement" element={<CustomerManagement />} />
 
-        {/*Admin Cusomer Management routes */}
-
-
-         <Route path="/customerManagement" element={<CustomerManagement />} />
-
-
-  
-
+        {/* Admin Notifications */}
+        <Route path="/admin/notifications" element={<Notifications />} />
+        <Route
+          path="/admin/notifications/create"
+          element={<NotificationCreate />}
+        />
+        <Route
+          path="/admin/notifications/:id"
+          element={<NotificationDetail />}
+        />
       </Routes>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
