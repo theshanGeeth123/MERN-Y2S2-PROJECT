@@ -10,7 +10,7 @@ function BookingForm() {
   const pkg = location.state?.package || {};
 
   const [formData, setFormData] = useState({
-    userEmail: "",        
+    userEmail: "",
     packageName: pkg.title || "",
     date: "",
     time: "",
@@ -45,17 +45,15 @@ function BookingForm() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4">
-      <div className="w-full max-w-lg bg-white p-8 rounded-2xl shadow-xl">
-        <h1 className="text-3xl font-bold mb-8 text-center text-black">
+      <div className="w-full max-w-md bg-blue-950 p-8 rounded-2xl shadow-xl">
+        <h1 className="text-3xl font-bold mb-8 text-center text-white">
           Booking Request
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5 text-lg">
+
           
           <div>
-            <label className="block text-lg font-semibold text-black mb-1">
-              Email
-            </label>
             <input
               type="email"
               name="userEmail"
@@ -63,15 +61,12 @@ function BookingForm() {
               onChange={handleChange}
               required
               readOnly
-              className="w-full p-3 border border-gray-300 rounded-xl bg-gray-100 text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full p-3 border border-gray-300 rounded-xl bg-gray-100 text-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
           </div>
 
-         
+          
           <div>
-            <label className="block text-lg font-semibold text-black mb-1">
-              Package
-            </label>
             <input
               type="text"
               name="packageName"
@@ -83,9 +78,6 @@ function BookingForm() {
 
           
           <div>
-            <label className="block text-lg font-semibold text-black mb-1">
-              Venue
-            </label>
             <input
               type="text"
               name="venue"
@@ -93,38 +85,44 @@ function BookingForm() {
               onChange={handleChange}
               placeholder="Enter venue/location"
               required
-              className="w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className="w-full p-3 border border-gray-300 rounded-xl bg-white text-gray-900 text-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
             />
           </div>
 
           
-          <div>
-            <label className="block text-lg font-semibold text-black mb-1">
-              Date
-            </label>
+          <div className="relative">
             <input
               type="date"
               name="date"
               value={formData.date}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className={`w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500
+                ${formData.date ? "text-gray-900" : "text-transparent"}`}
             />
+            {!formData.date && (
+              <span className="absolute left-3 top-3 text-gray-400 pointer-events-none text-lg">
+                mm/dd/yyyy
+              </span>
+            )}
           </div>
 
           
-          <div>
-            <label className="block text-lg font-semibold text-black mb-1">
-              Time
-            </label>
+          <div className="relative">
             <input
               type="time"
               name="time"
               value={formData.time}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              className={`w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500
+                ${formData.time ? "text-gray-900" : "text-transparent"}`}
             />
+            {!formData.time && (
+              <span className="absolute left-3 top-3 text-gray-400 pointer-events-none text-lg">
+                6:30 PM
+              </span>
+            )}
           </div>
 
           
