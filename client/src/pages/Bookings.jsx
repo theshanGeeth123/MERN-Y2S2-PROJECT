@@ -12,6 +12,8 @@ function Bookings() {
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -59,14 +61,22 @@ function Bookings() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const confirmDelete = (id) => {
+    setDeleteId(id);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
     try {
-      await axios.delete(`${BOOKING_API}/${id}`, { withCredentials: true });
+      await axios.delete(`${BOOKING_API}/${deleteId}`, { withCredentials: true });
       toast.success("Booking deleted!");
       fetchBookings();
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete booking.");
+    } finally {
+      setDeleteModalOpen(false);
+      setDeleteId(null);
     }
   };
 
@@ -81,7 +91,7 @@ function Bookings() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
+      <div className="w-full max-w-full mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-2 text-center">
           Booking Requests
         </h1>
@@ -89,7 +99,6 @@ function Bookings() {
           Manage all user bookings in one place
         </p>
 
-        
         <div className="flex justify-center mb-6">
           <button
             onClick={() => navigate("/admin/booking-report")}
@@ -105,68 +114,71 @@ function Bookings() {
         )}
 
         {!loading && bookings.length > 0 && (
-          <div className="mt-10 overflow-x-auto shadow-lg rounded-lg bg-white">
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead className="bg-gray-700">
-                <tr>
-                  {["Email", "Package", "Venue", "Date", "Time", "Status", "Actions"].map((col) => (
-                    <th
-                      key={col}
-                      className="px-6 py-3 text-left text-lg font-semibold text-white tracking-normal"
-                    >
-                      {col}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {bookings.map((booking, index) => (
-                  <tr
-                    key={booking._id}
-                    className={`hover:bg-gray-100 transition ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-black">{booking.userEmail}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-black">{booking.packageName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-black">{booking.venue}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-black">{booking.date}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-base text-black">{formatTime(booking.time)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-4 py-2 rounded-full text-white text-sm font-semibold ${
-                          booking.status.toLowerCase() === "approved"
-                            ? "bg-green-600"
-                            : booking.status.toLowerCase() === "pending"
-                            ? "bg-yellow-500"
-                            : "bg-red-600"
-                        }`}
+          <div className="mt-10 flex justify-center">
+            <div className="overflow-x-auto shadow-lg rounded-lg bg-white inline-block">
+              <table className="table-auto border-separate border-spacing-y-3">
+                <thead className="bg-gray-700">
+                  <tr>
+                    {["Email", "Package", "Venue", "Date", "Time", "Status", "Actions"].map((col) => (
+                      <th
+                        key={col}
+                        className="px-4 py-3 text-left text-lg font-semibold text-white tracking-normal"
                       >
-                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                      <button
-                        onClick={() => openModal(booking)}
-                        className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-base font-medium"
-                      >
-                        Update
-                      </button>
-                      {booking.status.toLowerCase() === "cancelled" && (
-                        <button
-                          onClick={() => handleDelete(booking._id)}
-                          className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition text-base font-medium"
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </td>
+                        {col}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {bookings.map((booking) => (
+                    <tr
+                      key={booking._id}
+                      className="bg-white hover:bg-gray-100 transition"
+                    >
+                      <td className="px-5 py-4 text-base text-black">{booking.userEmail}</td>
+                      <td className="px-5 py-4 text-base text-black">{booking.packageName}</td>
+                      <td className="px-5 py-4 text-base text-black">{booking.venue}</td>
+                      <td className="px-5 py-4 text-base text-black">{booking.date}</td>
+                      <td className="px-5 py-4 text-base text-black">{formatTime(booking.time)}</td>
+                      <td className="px-5 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-white text-sm font-semibold ${
+                            booking.status.toLowerCase() === "approved"
+                              ? "bg-green-600"
+                              : booking.status.toLowerCase() === "pending"
+                              ? "bg-yellow-500"
+                              : "bg-red-600"
+                          }`}
+                        >
+                          {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 space-x-2">
+                        <button
+                          onClick={() => openModal(booking)}
+                          className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                        >
+                          Update
+                        </button>
+                        {booking.status.toLowerCase() === "cancelled" && (
+                          <button
+                            onClick={() => confirmDelete(booking._id)}
+                            className="px-3 py-1 bg-black text-white rounded-lg hover:bg-gray-700 transition text-sm font-medium"
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
 
+      
       {modalOpen && selectedBooking && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl w-96 p-6">
@@ -202,6 +214,32 @@ function Bookings() {
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+
+      
+      {deleteModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl shadow-xl w-96 p-6">
+            <h2 className="text-2xl font-bold mb-4 text-black">Confirm Delete</h2>
+            <p className="text-lg text-gray-800 mb-6">
+              Are you sure you want to delete this booking? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDeleteConfirmed}
+                className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium text-base"
+              >
+                Yes, Delete
+              </button>
+              <button
+                onClick={() => setDeleteModalOpen(false)}
+                className="flex-1 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition font-medium text-base"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
