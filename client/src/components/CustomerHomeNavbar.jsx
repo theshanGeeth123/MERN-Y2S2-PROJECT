@@ -50,7 +50,7 @@ function CustomerHomeNavbar() {
     home: "/customer-home",
     profile: "/my-profile",
     Feedback: "/customer-feedback",
-    qa: "/customer-questions-answers",
+    qa: "/customer-questions",
   };
 
   return (

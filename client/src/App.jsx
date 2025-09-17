@@ -15,7 +15,7 @@ import AdminHome from './admin/AdminHome'
 import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
 import CustomerFeedback from './pages/CustomerFeedback'
-import CustomerQuestionsAnswers from './pages/CustomerQuestionsAnswers'
+import CustomerQuestion from './pages/CustomerQuestion'
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
         <Route path='/my-profile' element={<MyProfile/>}/>
         <Route path='/customer-home' element={<CustomerHome/>}/>
         <Route path='/customer-feedback' element={<CustomerFeedback/>}/>
-        <Route path='/customer-questions-answers' element={<CustomerQuestionsAnswers/>}/>
+        <Route path='/customer-questions' element={<CustomerQuestion/>}/>
 
         {/* admin */}
 
