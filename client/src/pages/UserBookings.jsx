@@ -45,51 +45,64 @@ function UserBookings() {
   if (loading) return <p className="text-center mt-10">Loading your bookings...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="mt-5 text-4xl font-bold mb-8 text-center text-gray-600">
+    <div className="min-h-screen bg-white py-12">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-center text-purple-900">
           My Booking Requests
         </h1>
 
-        {bookings.length === 0 ? (
-          <p className="text-center text-gray-500 text-lg">No bookings found.</p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-            {bookings.map((b) => (
-              <div
-                key={b._id}
-                className="mt-6 bg-white rounded-2xl shadow-lg p-6 border border-orange-300 hover:shadow-xl transform hover:-translate-y-1 transition w-full max-w-sm mx-auto"
-              >
-                <h2 className="text-xl font-bold text-black mb-4">{b.packageName}</h2>
+        <div className="mt-12 bg-gray-700 border border-gray-300 rounded-lg p-8 shadow-md max-w-3xl mx-auto">
+          {bookings.length === 0 ? (
+            <p className="text-center text-gray-200 text-lg">
+              No bookings found.
+            </p>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
+              {bookings.map((b) => (
+                <div
+                  key={b._id}
+                  className="border border-white rounded-2xl p-5 bg-white
+                             shadow-sm transform transition duration-300
+                             hover:-translate-y-2 hover:shadow-lg hover:bg-gray-100
+                             max-w-sm w-full mx-auto flex flex-col justify-between"
+                >
+                  <h2 className="text-xl font-bold text-center text-gray-800 mb-4">
+                    {b.packageName}
+                  </h2>
 
-                <p className="flex items-center text-gray-800 mb-2">
-                  <FaCalendarAlt className="mr-4 text-indigo-800" />{" "}
-                  {new Date(b.date).toLocaleDateString()}
-                </p>
-                <p className="flex items-center text-gray-800 mb-2">
-                  <FaClock className="mr-4 text-indigo-800" /> {formatTime(b.time)}
-                </p>
-                <p className="flex items-center text-gray-800 mb-4">
-                  <FaMapMarkerAlt className="mr-4 text-indigo-800" /> {b.venue}
-                </p>
+                  <div className="flex flex-col space-y-3">
+                    <p className="flex items-center text-gray-700 text-base">
+                      <FaCalendarAlt className="mr-3 text-blue-800" />
+                      {new Date(b.date).toLocaleDateString()}
+                    </p>
+                    <p className="flex items-center text-gray-700 text-base">
+                      <FaClock className="mr-3 text-blue-800" />
+                      {formatTime(b.time)}
+                    </p>
+                    <p className="flex items-center text-gray-700 text-base">
+                      <FaMapMarkerAlt className="mr-3 text-blue-800" />
+                      {b.venue}
+                    </p>
+                  </div>
 
-                <div className="flex justify-center mt-4">
-                  <span
-                    className={`inline-block px-4 py-1 rounded-full text-white font-semibold ${
-                      b.status.toLowerCase() === "approved"
-                        ? "bg-green-500"
-                        : b.status.toLowerCase() === "pending"
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
-                    }`}
-                  >
-                    {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
-                  </span>
+                  <div className="flex justify-center mt-4">
+                    <span
+                      className={`inline-block px-4 py-1 rounded-full text-sm font-medium ${
+                        b.status.toLowerCase() === "approved"
+                          ? "bg-green-600 text-white"
+                          : b.status.toLowerCase() === "pending"
+                          ? "bg-yellow-500 text-black"
+                          : "bg-red-600 text-white"
+                      }`}
+                    >
+                      {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
