@@ -15,7 +15,7 @@ const packageImages = {
     "https://i.postimg.cc/Jh29FNf9/Whats-App-Image-2025-09-02-at-09-55-14.jpg",
   "Gold Wedding Package":
     "https://i.postimg.cc/d01bnHx2/Whats-App-Image-2025-09-02-at-09-55-18-1.jpg",
-  "Standard Event Photography Package":
+  "Event Photography Package":
     "https://i.postimg.cc/BnMWT9MZ/Whats-App-Image-2025-09-02-at-09-55-19.jpg",
 };
 
