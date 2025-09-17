@@ -1,8 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
-import { AppContent } from "../context/AppContext";
 import axios from 'axios';
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 import CustomerFeedbackModal from "./CustomerFeedbackModal";
 
