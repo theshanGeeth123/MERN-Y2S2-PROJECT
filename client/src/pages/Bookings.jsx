@@ -116,7 +116,7 @@ function Bookings() {
         {!loading && bookings.length > 0 && (
           <div className="mt-10 flex justify-center">
             <div className="overflow-x-auto shadow-lg rounded-lg bg-white inline-block">
-              <table className="table-auto border-separate border-spacing-y-3">
+              <table className="table-auto border-separate">
                 <thead className="bg-gray-700">
                   <tr>
                     {["Email", "Package", "Venue", "Date", "Time", "Status", "Actions"].map((col) => (
@@ -131,10 +131,7 @@ function Bookings() {
                 </thead>
                 <tbody>
                   {bookings.map((booking) => (
-                    <tr
-                      key={booking._id}
-                      className="bg-white hover:bg-gray-100 transition"
-                    >
+                    <tr key={booking._id} className="bg-white hover:bg-gray-100 transition">
                       <td className="px-5 py-4 text-base text-black">{booking.userEmail}</td>
                       <td className="px-5 py-4 text-base text-black">{booking.packageName}</td>
                       <td className="px-5 py-4 text-base text-black">{booking.venue}</td>
@@ -142,7 +139,7 @@ function Bookings() {
                       <td className="px-5 py-4 text-base text-black">{formatTime(booking.time)}</td>
                       <td className="px-5 py-4">
                         <span
-                          className={`px-3 py-1 rounded-full text-white text-sm font-semibold ${
+                          className={`inline-block w-25 text-center py-1 rounded-full text-white text-sm font-semibold ${
                             booking.status.toLowerCase() === "approved"
                               ? "bg-green-600"
                               : booking.status.toLowerCase() === "pending"
@@ -155,11 +152,12 @@ function Bookings() {
                       </td>
                       <td className="px-4 py-4 space-x-2">
                         <button
-                          onClick={() => openModal(booking)}
-                          className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
-                        >
+                             onClick={() => openModal(booking)}
+                             style={{ backgroundColor: "rgba(59, 176, 197, 1)" }}
+                             className="px-3 py-1 text-white rounded-lg hover:opacity-90 transition text-sm font-medium">
                           Update
                         </button>
+
                         {booking.status.toLowerCase() === "cancelled" && (
                           <button
                             onClick={() => confirmDelete(booking._id)}
@@ -189,25 +187,24 @@ function Bookings() {
             </p>
 
             <div className="flex gap-3">
-              <button
-                onClick={() => handleStatusUpdate("approved")}
-                className="flex-1 py-2 bg-green-400 text-white rounded-lg hover:bg-green-700 transition font-medium text-base"
-              >
-                Approve
-              </button>
-              <button
-                onClick={() => handleStatusUpdate("pending")}
-                className="flex-1 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition font-medium text-base"
-              >
-                Pending
-              </button>
-              <button
-                onClick={() => handleStatusUpdate("cancelled")}
-                className="flex-1 py-2 bg-red-400 text-white rounded-lg hover:bg-red-700 transition font-medium text-base"
-              >
-                Cancel
-              </button>
+              {["approved", "pending", "cancelled"].map((status) => {
+                const colors = {
+                  approved: "bg-green-400 hover:bg-green-700",
+                  pending: "bg-yellow-400 hover:bg-yellow-500",
+                  cancelled: "bg-red-400 hover:bg-red-700",
+                };
+                return (
+                  <button
+                    key={status}
+                    onClick={() => handleStatusUpdate(status)}
+                    className={`w-1/3 py-2 text-white rounded-lg transition font-medium text-base ${colors[status]}`}
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </button>
+                );
+              })}
             </div>
+
             <button
               onClick={closeModal}
               className="mt-4 w-full py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition font-medium text-base"
@@ -218,7 +215,7 @@ function Bookings() {
         </div>
       )}
 
-      
+    
       {deleteModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-xl w-96 p-6">
