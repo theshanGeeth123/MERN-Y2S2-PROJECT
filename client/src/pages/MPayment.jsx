@@ -14,6 +14,10 @@ import {
 } from "@stripe/react-stripe-js";
 import axios from "axios";
 
+ import { useRentItemsStore } from "../mstore/mrentItems";
+ 
+
+
 const stripePromise = loadStripe(
   "pk_test_51S2w2vGe7HqxWKZyj6lw9cLpoZInhlmUFbwsBWlWHvQ9PV6zcgEw4vssigko1AR0B8gHf6eIcqSy0MPXcYctPXzQ00mNnCmHU8"
 );
@@ -50,6 +54,23 @@ function CheckoutForm() {
     items: items,
     account: "",
   });
+
+const clearCart =  useRentItemsStore((state) => state.clearCart);
+  // Load user from localStorage
+  useEffect(() => {
+    const customer = JSON.parse(localStorage.getItem("customer"));
+    if (!customer || !customer.email) {
+      toast.error("You must be logged in!");
+      navigate("/login");
+      return;
+    }
+    setFormData((prev) => ({
+      ...prev,
+      name: customer.name || "",
+      email: customer.email,
+    }));
+  }, [navigate]);
+
 
   // Fetch Stripe client secret
   useEffect(() => {
@@ -147,6 +168,7 @@ function CheckoutForm() {
           navigate("/payment/success", {
             state: { items: formData.items, totalPaid: formData.amount },
           });
+          clearCart();
         } catch (dbError) {
           toast.error("Payment done but failed to save request!");
           console.error(dbError);
@@ -166,8 +188,9 @@ function CheckoutForm() {
     await handlePaymentAndSave();
   };
 
-  const handleClose = () => navigate("/payment");
-
+  const handleClose = () => {
+    navigate("/payment");
+  }
   return (
     <div className="max-w-6xl mx-auto bg-slate-900 shadow-lg rounded-2xl">
       <div className="w-full flex justify-end mt-6">
@@ -183,8 +206,8 @@ function CheckoutForm() {
           <h2 className="text-2xl font-bold text-white text-center">Rental Information</h2>
           <div className="space-y-4">
             <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="w-full p-2 border rounded-xl bg-white" />
-            <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" className="w-full p-2 border rounded-xl bg-white" />
-            <input type="number" name="amount" value={formData.amount} readOnly className="w-full p-2 border rounded-xl bg-gray-100" />
+            <input type="email" name="email" value={formData.email} readOnly className="w-full p-2 rounded-xl bg-gray-100" />
+            <input type="number" name="amount" value={formData.amount} readOnly className="w-full p-2 border rounded-xl bg-gray-100"/>
             <input type="text" name="description" value={formData.description} onChange={handleChange} placeholder="Description" className="w-full p-2 border rounded-xl bg-white" />
             <input type="text" name="account" value={formData.account} onChange={(e) => setFormData({ ...formData, account: e.target.value.replace(/\D/g, "") })} placeholder="Add Your Account Number for Refund" className="w-full p-2 border rounded-xl bg-white" />
             <input type="date" name="startDate" value={formData.startDate} min={todayStr} onChange={handleDateChange} className="w-full p-2 border rounded-xl bg-white" />

@@ -7,13 +7,12 @@ export const createRequest = async (req, res) => {
     const { name, email, amount, description, account, startDate, endDate, items, paymentStatus, stripePaymentId } = req.body;
 
     // Ensure user is authenticated
-    const user = await User.findById(req.userId);
-    if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+    // const user = await User.findById(req.userId);
+    // if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
 
     const newRequest = new Request({
-      user: req.userId,
-      name: name || user.name,
-      email: email || user.email,
+      name,
+      email,
       amount,
       description,
       account,
@@ -44,8 +43,13 @@ export const getRequests = async (req, res) => {
 // Get requests by user
 export const getRequestsByUser = async (req, res) => {
   try {
-    const userId = req.userId;
-    const requests = await Request.find({ user: userId }).sort({ createdAt: -1 });
+    const email = req.email; // assume middleware attaches email
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email missing in request" });
+    }
+
+    const requests = await Request.find({ email }).sort({ createdAt: -1 });
+
     res.json({ success: true, data: requests || [] });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
