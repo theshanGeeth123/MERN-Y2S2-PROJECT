@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useStaffAuth } from "./StaffAuthContext";
 
 const StaffHome = () => {
-  const { logoutStaff, staffUser } = useStaffAuth();
+  const { logoutStaff, staff } = useStaffAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -60,11 +60,14 @@ const StaffHome = () => {
         <div className="px-6 py-5 border-b border-gray-800">
           <div className="flex items-center">
             <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-lg">
-              {staffUser?.name ? staffUser.name.charAt(0).toUpperCase() : 'U'}
+              {/* {staff?.name ? staff.name.charAt(0).toUpperCase() : 'U'} */}
+              {staff?.firstName ? staff.firstName.charAt(0).toUpperCase() : 'S'}
             </div>
+
+           
             <div className="ml-4">
-              <h3 className="text-white font-medium">{staffUser?.name || "Staff User"}</h3>
-              <p className="text-gray-400 text-sm">{staffUser?.role || "Staff Member"}</p>
+              <h3 className="text-white font-medium">{staff.firstName}</h3>
+              <p className="text-gray-400 text-sm">{staff?.role || "Staff Member"}</p>
             </div>
           </div>
         </div>
@@ -117,46 +120,30 @@ const StaffHome = () => {
             </svg>
             Logout
           </button>
+
+          { staff.role === 'photographer' &&
+          <button
+            onClick={handleLogout}
+            className="flex items-center w-full text-left px-4 py-3 rounded-md text-red-400 hover:bg-red-900 hover:text-white transition-colors duration-200"
+          >
+            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            Logouttt
+          </button>}
         </nav>
       </div>
 
       
       <div className="flex flex-col flex-1 overflow-hidden">
         
-        <header className="flex items-center justify-between px-6 py-4 bg-white shadow-sm">
-          <div className="flex items-center">
-            <button
-              className="md:hidden text-gray-600 hover:text-gray-800 mr-4"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
-            </button>
-            <h1 className="text-xl font-semibold text-gray-800">Dashboard</h1>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <button className="relative p-2 text-gray-500 hover:text-gray-700">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
-              </svg>
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                {staffUser?.name ? staffUser.name.charAt(0).toUpperCase() : 'U'}
-              </div>
-            </div>
-          </div>
-        </header>
+      
 
         
         <main className="flex-1 overflow-y-auto p-6 bg-gray-50">
           
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">Welcome back, {staffUser?.name || "Staff Member"}!</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Welcome back, {staff?.name || "Staff Member"}!</h2>
             <p className="text-gray-600">Here's what's happening with your account today.</p>
           </div>
 
