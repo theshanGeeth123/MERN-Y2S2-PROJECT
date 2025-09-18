@@ -18,8 +18,11 @@ const MRentalCart = () => {
   const FIXED_DEPOSIT = 500; // Fixed deposit
 
   // Calculate total
-  const getTotalDeposit = (itemsList) => {
-    return itemsList.length * FIXED_DEPOSIT;
+ const getTotalDeposit = (itemsList) => {
+    return itemsList.reduce(
+      (total, item) => total + (item.quantity || 1) * FIXED_DEPOSIT,
+      0
+    );
   };
 
   const handleProceedToPay = () => {
@@ -49,11 +52,13 @@ const MRentalCart = () => {
       <div className="w-full flex justify-center">
         <ul className="space-y-3 mb-6 w-3/4">
           {rentedItems.map((item) => (
-            <li
+             <li
               key={item._id}
               className="bg-[#333A5C66] p-3 rounded-lg text-center"
             >
-              {item.name} - Deposit: Rs. {FIXED_DEPOSIT}.00
+              <span>
+                {item.name} - Deposit: Rs.{" "}{(item.quantity || 1) * FIXED_DEPOSIT}.00 - Quantity: {item.quantity || 1}
+              </span>
             </li>
           ))}
         </ul>
