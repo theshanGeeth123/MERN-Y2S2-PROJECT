@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRequestStore } from "../mstore/mRequestStore";
-import { FileText, Trash2, Edit } from "lucide-react";
+import {Link} from "react-router-dom";
+import { FileText, Trash2, Edit} from "lucide-react";
+import Navbar from "../components/Navbar";
 
 const MRequestCus = () => {
   const {
@@ -11,27 +13,67 @@ const MRequestCus = () => {
     error,
   } = useRequestStore();
 
+  const [filteredRequests, setFilteredRequests] = useState([]);
+  const [userEmail, setUserEmail] = useState(null);
+
+  // ✅ Get logged-in user email from localStorage 'customer'
+  useEffect(() => {
+    const customerData = localStorage.getItem("customer");
+    if (customerData) {
+      try {
+        const email = JSON.parse(customerData).email;
+        setUserEmail(email);
+      } catch (err) {
+        console.error("Failed to parse customer data:", err);
+      }
+    }
+  }, []);
+
+  // ✅ Load all requests once
   useEffect(() => {
     fetchRequests();
   }, [fetchRequests]);
 
+  // ✅ Filter requests by logged-in email
+  useEffect(() => {
+    if (requests && userEmail) {
+      const userRequests = requests.filter(
+        (req) =>
+          req.email &&
+          userEmail &&
+          req.email.trim().toLowerCase() === userEmail.trim().toLowerCase()
+      );
+      setFilteredRequests(userRequests);
+    }
+  }, [requests, userEmail]);
+
+  // Delete request
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this request?")) return;
     const result = await deleteRequest(id);
     if (!result.success) alert("Failed: " + result.message);
   };
 
+  // Edit request
+  const handleEdit = (id) => {
+    // navigate to edit page or open modal
+    alert("Edit request with ID: " + id);
+  };
+
   if (loading) return <p>Loading your requests...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
+  if (!userEmail) return <p>Loading your account...</p>;
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">My Requests</h2>
-      {requests.length === 0 ? (
-        <p>No requests found.</p>
+      <Navbar/>
+      <h2 className="text-xl font-bold mb-8 mt-15 text-center ">My Requests</h2>
+
+      {filteredRequests.length === 0 ? (
+        <p>No requests found for your account.</p>
       ) : (
         <ul className="space-y-2">
-          {requests.map((req) => (
+          {filteredRequests.map((req) => (
             <li
               key={req._id}
               className="flex items-center justify-between p-3 border rounded shadow-sm"
@@ -39,33 +81,40 @@ const MRequestCus = () => {
               <div className="flex items-center">
                 <FileText className="mr-3 text-blue-500" />
                 <div>
-                  {/* adding all items names */}
+                  {/* Items list */}
                   <div className="font-semibold">
                     {Array.isArray(req.items) ? (
                       req.items.map((item, idx) => (
                         <span key={idx}>
-                          {item.name}{item.qty ? ` (x${item.qty})` : ""}
+                          {item.name}
+                          {item.qty ? ` (x${item.qty})` : ""}
                           {idx < req.items.length - 1 && ", "}
                         </span>
                       ))
                     ) : (
-                      <span>{req.items}</span> // fallback if items is just a string
+                      <span>{req.items}</span>
                     )}
                   </div>
 
                   <p className="text-sm text-gray-500">
-                    Amount: {req.amount} | Status: {req.paymentStatus ?? "pending"}
+                    Amount: {req.amount} | Status:{" "}
+                    {req.paymentStatus ?? "pending"}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {req.startDate ? new Date(req.startDate).toLocaleString() : ""} —
-                    {req.endDate ? " " + new Date(req.endDate).toLocaleString() : ""}
+                    {req.startDate
+                      ? new Date(req.startDate).toLocaleString()
+                      : ""}{" "}
+                    —{" "}
+                    {req.endDate
+                      ? " " + new Date(req.endDate).toLocaleString()
+                      : ""}
                   </p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleEdit(req._id)} // <-- create this function
+                  onClick={() => handleEdit(req._id)}
                   className="p-2 rounded hover:bg-gray-100"
                   title="Edit request"
                 >
@@ -80,62 +129,21 @@ const MRequestCus = () => {
                   <Trash2 />
                 </button>
               </div>
-
             </li>
           ))}
         </ul>
       )}
+      <div className="mt-2 font-light mt-10 text-center">
+          <Link
+          to="/all-rentals"
+          className="text-blue-500 hover:underline"
+          >
+            Back to Rentals
+          </Link>
+         </div>
+      
     </div>
   );
 };
 
 export default MRequestCus;
-
-
-
-
-
-/*
-import React, { useEffect } from "react";
-import { useRequestStore } from "../mstore/mRequestStore";
-import { FileText } from "lucide-react";
-
-const MRequestCus = () => {
-  const { requests, fetchRequests, loading, error } = useRequestStore();
-
-  useEffect(() => {
-    fetchRequests();
-  }, [fetchRequests]);
-
-  if (loading) return <p>Loading your requests...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
-
-  return (
-    <div className="p-4">
-      <h2 className="text-xl font-bold mb-4">My Requests</h2>
-      {requests.length === 0 ? (
-        <p>No requests found.</p>
-      ) : (
-        <ul className="space-y-2">
-          {requests.map((req) => (
-            <li
-              key={req._id}
-              className="flex items-center p-3 border rounded shadow-sm"
-            >
-              <FileText className="mr-3 text-blue-500" />
-              <div>
-                <p className="font-semibold">{req.description}</p>
-                <p className="text-sm text-gray-500">
-                  Amount: {req.amount} | Status: {req.status}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-};
-
-export default MRequestCus;
-*/
