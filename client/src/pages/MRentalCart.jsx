@@ -56,6 +56,21 @@ const MRentalCart = () => {
                 <h3 className="font-semibold">{item.name}</h3>
                 <p>Category: {item.category}</p>
                 <p>Price: Rs. {item.price}</p>
+                <p>
+                  Quantity: 
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.quantity || 1}
+                    onChange={(e) =>
+                      useRentItemsStore.getState().updateQuantity(
+                        item._id,
+                        parseInt(e.target.value)
+                      )
+                    }
+                    className="ml-2 w-16 border rounded p-1"
+                  />
+                </p>
               </div>
 
               <button

@@ -71,26 +71,69 @@ export const useRentItemsStore = create((set, get) => ({
     }
   },
 
-  addToCart: (item) =>
-  set((state) => {
-    const exists = state.rentalCart.find((i) => i._id === item._id);
-    if (exists) return state;
-    return { rentalCart: [...state.rentalCart, item] };
-  }),
 
-  removeFromCart: (id) =>
-    set((state) => ({
-      rentalCart: state.rentalCart.filter((item) => item._id !== id),
-    })),
+  
+   rentalCart: JSON.parse(localStorage.getItem("rentalCart")) || [],
 
-  clearCart: () => set({ rentalCart: [] }),
+  // Add item with quantity support
+  addToCart: (item, quantity = 1) => {
+    set((state) => {
+      const existingItemIndex = state.rentalCart.findIndex(
+        (cartItem) => cartItem._id === item._id
+      );
 
+      let updatedCart;
+
+      if (existingItemIndex >= 0) {
+        // Item exists → increase quantity
+        updatedCart = [...state.rentalCart];
+        updatedCart[existingItemIndex].quantity += quantity;
+      } else {
+        // Item does not exist → add new item with quantity
+        updatedCart = [...state.rentalCart, { ...item, quantity }];
+      }
+
+      localStorage.setItem("rentalCart", JSON.stringify(updatedCart));
+      return { rentalCart: updatedCart };
+    });
+  },
+
+  removeFromCart: (id) => {
+    set((state) => {
+      const updatedCart = state.rentalCart.filter((item) => item._id !== id);
+      localStorage.setItem("rentalCart", JSON.stringify(updatedCart));
+      return { rentalCart: updatedCart };
+    });
+  },
+
+  clearCart: () => {
+    set({ rentalCart: [] });
+    localStorage.removeItem("rentalCart");
+  },
+
+  updateQuantity: (id, quantity) => {
+    set((state) => {
+      const updatedCart = state.rentalCart.map((item) =>
+        item._id === id ? { ...item, quantity: quantity } : item
+      );
+      localStorage.setItem("rentalCart", JSON.stringify(updatedCart));
+      return { rentalCart: updatedCart };
+    });
+  },
+  /*
   getTotalDeposit: () =>
   get().rentalCart.reduce(
     (acc) => acc + 500, 
     0
   ),
+*/
 
+ getTotalDeposit: () => {
+    return get().rentalCart.reduce(
+      (total, item) => total + 500* (item.quantity || 1),
+      0
+    );
+  },
 
 
 }));
