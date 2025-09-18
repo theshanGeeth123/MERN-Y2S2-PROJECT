@@ -177,9 +177,9 @@ function CheckoutForm() {
         />
       </div>
 
-      <form className="max-w-6xl mx-auto bg-slate-900 shadow-lg rounded-2xl p-8 grid grid-cols-1 md:grid-cols-2 gap-10">
+      <form className="max-w-6xl mx-auto bg-slate-900 shadow-lg rounded-2xl p-8 grid grid-cols-1 md:grid-cols-2 gap-10 ">
         {/* Rental Info */}
-        <div className="space-y-6">
+        <div className="space-y-6 ">
           <h2 className="text-2xl font-bold text-white text-center">Rental Information</h2>
           <div className="space-y-4">
             <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="w-full p-2 border rounded-xl bg-white" />
