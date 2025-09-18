@@ -123,6 +123,18 @@ function AdminLogin() {
               )}
             </button>
           </form>
+          {/* Redirect to Staff Login */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Are you a staff member?
+            <button
+              onClick={() => navigate("/staff/login")}
+              className="ml-1 text-blue-600 hover:text-blue-800 font-medium"
+            >
+              Login here
+            </button>
+          </p>
+        </div>
 
           <div className="mt-6 text-center">
             <p className="text-xs text-gray-500">© 2023 Admin Portal. Secure access only.</p>
