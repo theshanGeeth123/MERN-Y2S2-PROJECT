@@ -21,6 +21,11 @@ import orderRouter from "./routes/Order.routes.js";
 import reportRoutes from "./routes/reportRoutes.js";
 import cardRoutes from "./routes/Cards.routes.js";
 
+
+// malithi staff management
+
+import staffRoutes from "./routes/staffRoutes.js"; 
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -51,6 +56,8 @@ app.use("/api/cart", cartRouter);
 app.use("/api/orders", orderRouter);
 app.use("/api/reports", reportRoutes);
 app.use("/api/cards", cardRoutes);
+
+app.use("/api/staff", staffRoutes);
 
 // Start server
 app.listen(port, () => console.log(`Server started on PORT: ${port}`));
