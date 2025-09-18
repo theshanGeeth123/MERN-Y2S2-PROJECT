@@ -1,7 +1,7 @@
 // components/AdminNavbar.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Home, Users, ShoppingBag, CreditCard, LogOut, User } from "lucide-react";
+import { Home, Users, ShoppingBag, CreditCard, LogOut, User, FileText} from "lucide-react";
 
 function AdminNavbar() {
   const navigate = useNavigate();
