@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { AppContent } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import MainLogo from "../assets/Main_Logo.png";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -71,8 +72,8 @@ function Navbar() {
   const viewNotifications = () => navigate("/notifications");
 
   return (
-    <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24">
-      <img src={assets.pic2} alt="logo" className="w-28 sm:w-32" />
+    <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24 mt-5 max-h-[100px]">
+      <img src={MainLogo} alt="logo" className="w-28 sm:w-32" />
 
       <div className="flex items-center gap-4">
         {/* Notifications (only when logged in) */}
