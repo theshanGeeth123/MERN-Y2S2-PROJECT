@@ -36,6 +36,21 @@ import NotificationCreate from "./admin/T_Notifications/NotificationCreate";
 // Customer Notifications
 import CustomerNotifications from "./T_Customer/T_Cus_notifications/CustomerNotifications";
 
+
+// Staff Management
+
+import StaffList from "./admin/members/StaffList.jsx";
+import StaffCreate from "./admin/members/StaffCreate";
+import StaffDetail from "./admin/members/StaffDetail";
+
+import StaffHome from "./staff/staffHome.jsx";
+import StaffLogin from "./staff/StaffLogin.jsx";
+
+
+import StaffProfile from "./staff/StaffProfile";
+import StaffReport from './admin/members/StaffReport.jsx';
+
+
 function App() {
   return (
     <div>
@@ -76,6 +91,19 @@ function App() {
           path="/admin/notifications/:id"
           element={<NotificationDetail />}
         />
+
+        {/* Staff Management */}
+
+        <Route path="/staff/login" element={<StaffLogin />} />
+        <Route path="/staff/home" element={<StaffHome />} />
+
+        <Route path="/admin/staff" element={<StaffList />} />
+        <Route path="/admin/staff/create" element={<StaffCreate />} />
+        <Route path="/admin/staff/:id" element={<StaffDetail />} />
+
+        <Route path="/staff/profile" element={<StaffProfile />} />
+        <Route path="/admin/staff/report" element={<StaffReport />} />
+
       </Routes>
     </div>
   );
