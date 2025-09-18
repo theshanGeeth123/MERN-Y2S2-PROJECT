@@ -1,20 +1,19 @@
-// frontend/src/components/MRequestCus.jsx
 import React, { useEffect } from "react";
 import { useRequestStore } from "../mstore/mRequestStore";
-import { FileText, Trash2 } from "lucide-react";
+import { FileText, Trash2, Edit } from "lucide-react";
 
 const MRequestCus = () => {
   const {
     requests,
-    fetchRequestsByUser,
+    fetchRequests,
     deleteRequest,
     loading,
     error,
   } = useRequestStore();
 
   useEffect(() => {
-    fetchRequestsByUser();
-  }, [fetchRequestsByUser]);
+    fetchRequests();
+  }, [fetchRequests]);
 
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this request?")) return;
@@ -40,7 +39,20 @@ const MRequestCus = () => {
               <div className="flex items-center">
                 <FileText className="mr-3 text-blue-500" />
                 <div>
-                  <p className="font-semibold">{req.description}</p>
+                  {/* adding all items names */}
+                  <div className="font-semibold">
+                    {Array.isArray(req.items) ? (
+                      req.items.map((item, idx) => (
+                        <span key={idx}>
+                          {item.name}{item.qty ? ` (x${item.qty})` : ""}
+                          {idx < req.items.length - 1 && ", "}
+                        </span>
+                      ))
+                    ) : (
+                      <span>{req.items}</span> // fallback if items is just a string
+                    )}
+                  </div>
+
                   <p className="text-sm text-gray-500">
                     Amount: {req.amount} | Status: {req.paymentStatus ?? "pending"}
                   </p>
@@ -52,7 +64,14 @@ const MRequestCus = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                {/* you can add edit button here */}
+                <button
+                  onClick={() => handleEdit(req._id)} // <-- create this function
+                  className="p-2 rounded hover:bg-gray-100"
+                  title="Edit request"
+                >
+                  <Edit />
+                </button>
+
                 <button
                   onClick={() => handleDelete(req._id)}
                   className="p-2 rounded hover:bg-gray-100"
@@ -61,6 +80,7 @@ const MRequestCus = () => {
                   <Trash2 />
                 </button>
               </div>
+
             </li>
           ))}
         </ul>
