@@ -41,15 +41,14 @@ export const getRequests = async (req, res) => {
 };
 
 // Get requests by user
-export const getRequestsByUser = async (req, res) => {
+export const getRequestsByEmail = async (req, res) => {
   try {
-    const email = req.email; // assume middleware attaches email
+    const { email } = req.query; // email from frontend query string
     if (!email) {
-      return res.status(400).json({ success: false, message: "Email missing in request" });
+      return res.status(400).json({ success: false, message: "Email is required" });
     }
 
     const requests = await Request.find({ email }).sort({ createdAt: -1 });
-
     res.json({ success: true, data: requests || [] });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

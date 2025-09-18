@@ -26,7 +26,7 @@ function MRentalCus() {
 
 
       <div className="w-full flex justify-end mt-5 pr-6">
-      <Link to="/my-requests">
+      <Link to="/requests">
         <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-2">
           <Inbox size={18}/>
           My Rental Requests
