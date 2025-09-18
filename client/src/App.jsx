@@ -23,6 +23,7 @@ import MItemCardCus from "./components/MItemCardCus";
 import MPayment from "./pages/MPayment";
 import MSuccess from "./pages/mPaySuccess";
 import MRequestCus from "./pages/MRequestCus";
+import MRequestAdmin from "./pages/MRequestAdmin";
 
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 const authToken = localStorage.getItem("token");
@@ -54,6 +55,7 @@ function App() {
         <Route path='/admin/home' element={<AdminHome/>}/>
         <Route path='/rental' element={<MRental/>}/>
         <Route path="/admin/all-rentals" element={<MRentPage />} />
+        <Route path="/admin/requests" element={<MRequestAdmin />} />
 
       </Routes>
     </div>

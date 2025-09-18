@@ -28,9 +28,9 @@ const MRentalCart = () => {
           <Link
           to="/all-rentals"
           className="text-blue-500 hover:underline"
-        >
-           Back to Rentals
-        </Link>
+          >
+            Back to Rentals
+          </Link>
          </div>
         </div>
         
