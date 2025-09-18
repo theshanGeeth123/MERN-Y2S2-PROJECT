@@ -7,7 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import MainLogo from "../assets/Main_Logo.png";
 
-function Navbar() {
+function Navbar2() {
   const navigate = useNavigate();
 
   // Superset of both branches' context values
@@ -148,10 +148,10 @@ function Navbar() {
           </div>
         ) : (
           <button
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/")}
             className="flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all"
           >
-            Login <img src={assets.arrow_icon} alt="" />
+            Home
           </button>
         )}
       </div>
@@ -159,4 +159,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default Navbar2;
