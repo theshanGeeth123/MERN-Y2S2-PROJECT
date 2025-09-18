@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/", createRequest);
 router.get("/", getRequests);
-router.get("/my-requests", userAuth, getRequestsByUser);
+router.get("/my-requests", getRequestsByUser);
 router.put("/:id", updateRequest);
 router.delete("/:id", deleteRequest);
 
