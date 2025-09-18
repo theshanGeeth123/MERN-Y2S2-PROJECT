@@ -46,7 +46,7 @@ function App() {
         <Route path="/payment" element={<MPaymentPage />} />
         <Route path="/payment/create-payment-intent" element={<MPayment />} />
         <Route path="/payment/success" element={<MSuccess />} />
-        <Route path="/my-requests" element={<MRequestCus />} />
+        <Route path="/requests" element={<MRequestCus />} />
         
 
         {/* admin */}

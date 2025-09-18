@@ -2,7 +2,7 @@ import express from "express";
 import {
   createRequest,
   getRequests,
-  getRequestsByUser,
+  getRequestsByEmail,
   updateRequest,
   deleteRequest,
 } from "../controllers/mRequest.controller.js";
@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/", createRequest);
 router.get("/", getRequests);
-router.get("/my-requests", getRequestsByUser);
+router.get("/my-requests", getRequestsByEmail);
 router.put("/:id", updateRequest);
 router.delete("/:id", deleteRequest);
 
