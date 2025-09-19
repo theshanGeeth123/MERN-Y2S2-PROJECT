@@ -362,7 +362,7 @@ function Login() {
 
             <p
               onClick={() => navigate("/reset-password")}
-              className="mb-4 text-indigo-500 cursor-pointer hover:underline text-center"
+              className="ml-1   mb-4 text-indigo-500 cursor-pointer hover:underline "
             >
               Forgot password?
             </p>

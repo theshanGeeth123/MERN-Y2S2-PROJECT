@@ -20,28 +20,63 @@ const AddProduct = () => {
   const [loading, setLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
 
+  // NEW: inline field errors
+  const [errors, setErrors] = useState({});
+
+  // Helpers
+  const isValidUrl = (u) =>
+    /^(https?:\/\/)([\w-]+(\.[\w-]+)+)(:[0-9]+)?(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/.test((u || "").trim());
+
+  const validate = () => {
+    const e = {};
+    const { name, description, price, url, stock } = formData;
+
+    // Required
+    if (!name.trim()) e.name = "Product name is required.";
+    if (!description.trim()) e.description = "Description is required.";
+    if (price === "" || price === null) e.price = "Price is required.";
+    if (!url.trim()) e.url = "Image URL is required.";
+
+    // Business rules
+    if (name && name.trim().length < 3) e.name = "Name must be at least 3 characters.";
+    if (description && description.trim().length < 20) e.description = "Description must be at least 20 characters.";
+    if (price !== "" && Number(price) <= 0) e.price = "Price must be greater than 0.";
+    if (url && !isValidUrl(url)) e.url = "Enter a valid http(s) image URL.";
+    if (imageError) e.url = "The image URL is not loading. Please provide a valid image link.";
+
+    if (stock !== "" && (!Number.isInteger(Number(stock)) || Number(stock) < 0)) {
+      e.stock = "Stock must be an integer ≥ 0.";
+    }
+
+    setErrors(e);
+    return e;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    
-    // Clear error when user starts typing
+
+    // Clear general and field-specific errors as user types
     if (error) setError("");
-    if (name === 'url') setImageError(false);
+    setErrors((prev) => {
+      if (!prev[name]) return prev;
+      const copy = { ...prev };
+      delete copy[name];
+      return copy;
+    });
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "url") setImageError(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Validation
-    if (!formData.name || !formData.description || !formData.price || !formData.url) {
-      setError("Please fill all required fields.");
-      setLoading(false);
-      return;
-    }
-
-    if (formData.price <= 0) {
-      setError("Price must be greater than 0.");
+    // VALIDATE
+    const eMap = validate();
+    if (Object.keys(eMap).length) {
+      setError("Please fix the highlighted fields.");
       setLoading(false);
       return;
     }
@@ -50,7 +85,7 @@ const AddProduct = () => {
       await axios.post("http://localhost:4000/api/product", {
         ...formData,
         price: parseFloat(formData.price),
-        stock: parseInt(formData.stock) || 0,
+        stock: Number.isFinite(Number(formData.stock)) ? parseInt(formData.stock, 10) : 0,
       });
 
       setSuccess(true);
@@ -77,6 +112,14 @@ const AddProduct = () => {
     setImageError(true);
   };
 
+  // UI helpers for error styling
+  const inputClass = (hasError, extra = "") =>
+    `w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${extra} ${
+      hasError ? "border-red-500" : "border-gray-300"
+    }`;
+  const withIconLeft = "pl-10";
+  const hint = (msg, id) => (msg ? <p id={id} className="mt-1 text-xs text-red-600">{msg}</p> : null);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
@@ -98,7 +141,7 @@ const AddProduct = () => {
         </div>
 
         <div className="bg-white rounded-xl shadow-sm p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             {/* Status Messages */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -126,10 +169,13 @@ const AddProduct = () => {
                   placeholder="Enter product name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="pl-10 w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={inputClass(!!errors.name, withIconLeft)}
                   required
+                  aria-invalid={!!errors.name}
+                  aria-describedby="name-error"
                 />
               </div>
+              {hint(errors.name, "name-error")}
             </div>
 
             {/* Description */}
@@ -143,9 +189,12 @@ const AddProduct = () => {
                 value={formData.description}
                 onChange={handleChange}
                 rows="3"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={inputClass(!!errors.description)}
                 required
+                aria-invalid={!!errors.description}
+                aria-describedby="description-error"
               />
+              {hint(errors.description, "description-error")}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -166,10 +215,13 @@ const AddProduct = () => {
                     onChange={handleChange}
                     step="0.01"
                     min="0"
-                    className="pl-10 w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={inputClass(!!errors.price, withIconLeft)}
                     required
+                    aria-invalid={!!errors.price}
+                    aria-describedby="price-error"
                   />
                 </div>
+                {hint(errors.price, "price-error")}
               </div>
 
               {/* Stock */}
@@ -188,9 +240,12 @@ const AddProduct = () => {
                     value={formData.stock}
                     onChange={handleChange}
                     min="0"
-                    className="pl-10 w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={inputClass(!!errors.stock, withIconLeft)}
+                    aria-invalid={!!errors.stock}
+                    aria-describedby="stock-error"
                   />
                 </div>
+                {hint(errors.stock, "stock-error")}
               </div>
             </div>
 
@@ -208,7 +263,7 @@ const AddProduct = () => {
                   placeholder="e.g., Electronics, Clothing, Books"
                   value={formData.category}
                   onChange={handleChange}
-                  className="pl-10 w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={inputClass(false, withIconLeft)}
                 />
               </div>
             </div>
@@ -227,10 +282,13 @@ const AddProduct = () => {
                   placeholder="https://example.com/image.jpg"
                   value={formData.url}
                   onChange={handleChange}
-                  className="pl-10 w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className={inputClass(!!errors.url, withIconLeft)}
                   required
+                  aria-invalid={!!errors.url}
+                  aria-describedby="url-error"
                 />
               </div>
+              {hint(errors.url, "url-error")}
               
               {formData.url && (
                 <div className="mt-2">
