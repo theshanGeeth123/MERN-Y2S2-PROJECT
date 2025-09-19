@@ -6,7 +6,7 @@ const feedbackSchema = new mongoose.Schema({
   selectedPhotographer:{type:String,required:true},
   rate:{type:String,required:true},
   comment:{type:String,required:true}
-});
+}, { timestamps: true });
 
 const feedbackModel = mongoose.model.feedback ||  mongoose.model('feedback',feedbackSchema);
 

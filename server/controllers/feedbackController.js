@@ -19,7 +19,7 @@ export const feedbackSubmission = async (req, res) => {
 };
 export const getFeedbacks = async (req, res) => {
   try {
-    const feedback = await feedbackModel.find().select("username email name selectedPhotographer rate comment").lean();
+    const feedback = await feedbackModel.find().select("username email name selectedPhotographer rate comment createdAt").lean();
 
     if(!feedback){
         res.json({success:false,message:"No feedbacks yet"});

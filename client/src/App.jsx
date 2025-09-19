@@ -16,6 +16,8 @@ import MyProfile from './pages/MyProfile'
 import CustomerHome from './pages/CustomerHome'
 import CustomerFeedback from './pages/CustomerFeedback'
 import CustomerQuestion from './pages/CustomerQuestion'
+import AdminFeedback from './admin/AdminFeedbackHandler'
+
 
 function App() {
   return (
@@ -35,6 +37,7 @@ function App() {
 
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
+        <Route path='/admin/admin-feedback' element={<AdminFeedback/>}/>
 
       </Routes>
     </div>
