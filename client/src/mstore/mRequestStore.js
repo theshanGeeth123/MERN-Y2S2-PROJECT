@@ -2,6 +2,8 @@ import { create } from "zustand";
 
 export const useRequestStore = create((set, get) => ({
   requests: [],
+  loading: false,
+  error: null,
 
   // Add new rental request
   /*
@@ -98,6 +100,24 @@ addRequest: async (newRequest) => {
       return { success: true, message: "Request deleted successfully" };
     } catch (error) {
       return { success: false, message: error.message };
+    }
+  },
+
+
+  updateRequestStatus: async (id, action) => {
+    try {
+      const res = await fetch(`http://localhost:4000/api/requests/${id}/${action}`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (data.success) {
+        set((state) => ({
+          requests: state.requests.filter((r) => r._id !== id),
+        }));
+      }
+      return data;
+    } catch (err) {
+      return { success: false, message: err.message };
     }
   },
 }));
