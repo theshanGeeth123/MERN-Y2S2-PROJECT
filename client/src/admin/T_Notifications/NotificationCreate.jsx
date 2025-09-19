@@ -4,10 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const API_BASE =
-  (import.meta.env.VITE_BACKEND_URL
-    ? `${import.meta.env.VITE_BACKEND_URL}/api/notifications`
-    : "http://localhost:4000/api/notifications");
+const API_BASE ="http://localhost:4000/api/notifications";
 
 function NotificationCreate() {
   const navigate = useNavigate();
@@ -24,33 +21,103 @@ function NotificationCreate() {
     expiresAt: ""
   });
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  // NEW: inline errors (same pattern as other screens)
+  const [errors, setErrors] = useState({});
+
+  // -------------------
+  // Helpers / Validators
+  // -------------------
+  const now = () => new Date();
+
+  const parseLocalDateTime = (val) => (val ? new Date(val) : null);
+
+  const isBodyOk = (b) => (b || "").trim().length >= 20;
+
+  const isPriorityOk = (p) => {
+    const n = Number(p);
+    return Number.isInteger(n) && n >= 1 && n <= 5;
   };
 
-  const validate = () => {
-    if (!form.title.trim() || !form.body.trim()) {
-      toast.error("Title and Body are required");
-      return false;
-    }
-    if (form.startAt && form.expiresAt) {
-      const start = new Date(form.startAt);
-      const end = new Date(form.expiresAt);
-      if (end < start) {
-        toast.error("Expires At must be after Start At");
-        return false;
-      }
+  // if provided: startAt must be >= now
+  const isStartOk = (start) => {
+    if (!start) return true; // treat empty as ok (optional field)
+    const s = parseLocalDateTime(start);
+    return s && s >= now();
+  };
+
+  // if provided: expiresAt must be > now and > startAt if start provided
+  const isExpireOk = (expire, start) => {
+    if (!expire) return true; // treat empty as ok (optional field)
+    const e = parseLocalDateTime(expire);
+    if (!e || e <= now()) return false;
+    if (start) {
+      const s = parseLocalDateTime(start);
+      if (s && e <= s) return false;
     }
     return true;
   };
 
+  const validate = () => {
+    const e = {};
+    if (!form.title.trim()) e.title = "Title is required.";
+    if (!form.body.trim()) e.body = "Body is required.";
+    else if (!isBodyOk(form.body)) e.body = "Body must be at least 20 characters.";
+
+    if (!isPriorityOk(form.priority))
+      e.priority = "Priority must be an integer between 1 and 5.";
+
+    if (!isStartOk(form.startAt))
+      e.startAt = "Start At cannot be in the past.";
+
+    if (!isExpireOk(form.expiresAt, form.startAt))
+      e.expiresAt = "Expires At must be in the future and after Start At.";
+
+    setErrors(e);
+    return e;
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    // live clear specific field error
+    setErrors((prev) => {
+      if (!prev[name]) return prev;
+      const copy = { ...prev };
+      delete copy[name];
+      return copy;
+    });
+
+    if (name === "priority") {
+      // normalize to digits, clamp 1..5, allow empty while typing
+      const digits = value.replace(/[^\d-]/g, "");
+      if (digits === "") {
+        setForm((prev) => ({ ...prev, priority: "" }));
+      } else {
+        let n = Number(digits);
+        if (!Number.isFinite(n)) n = 1;
+        if (n < 1) n = 1;
+        if (n > 5) n = 5;
+        setForm((prev) => ({ ...prev, priority: n }));
+      }
+      return;
+    }
+
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    const eMap = validate();
+    if (Object.keys(eMap).length) return; // block submit
+
     setSaving(true);
     try {
-      await axios.post(API_BASE, form, { withCredentials: true });
+      await axios.post(API_BASE, {
+        ...form,
+        // ensure priority is number on submit
+        priority: Number(form.priority)
+      }, { withCredentials: true });
+
       toast.success("Notification created");
       navigate("/admin/notifications");
     } catch (err) {
@@ -59,6 +126,15 @@ function NotificationCreate() {
       setSaving(false);
     }
   };
+
+  // UI helpers: apply red border when error present
+  const inputClass = (hasError) =>
+    `w-full rounded-md border bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400 ${
+      hasError ? "border-red-500" : "border-neutral-200"
+    }`;
+
+  const hint = (msg, id) =>
+    msg ? <p id={id} className="mt-1 text-xs text-red-600">{msg}</p> : null;
 
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
@@ -81,6 +157,7 @@ function NotificationCreate() {
         {/* Form card */}
         <form
           onSubmit={handleSubmit}
+          noValidate
           className="mt-6 space-y-4 rounded-lg border border-neutral-200 bg-white p-5"
         >
           <div className="grid gap-4 sm:grid-cols-2">
@@ -93,9 +170,12 @@ function NotificationCreate() {
                 value={form.title}
                 onChange={handleChange}
                 placeholder="System Maintenance"
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className={inputClass(!!errors.title)}
+                aria-invalid={!!errors.title}
+                aria-describedby="title-error"
                 required
               />
+              {hint(errors.title, "title-error")}
             </div>
 
             <div className="sm:col-span-2">
@@ -108,9 +188,15 @@ function NotificationCreate() {
                 onChange={handleChange}
                 placeholder="Our system will be down on Sept 15 from 2 AM to 4 AM."
                 rows={4}
-                className="w-full resize-y rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className={inputClass(!!errors.body) + " resize-y"}
+                aria-invalid={!!errors.body}
+                aria-describedby="body-error"
                 required
               />
+              {hint(errors.body, "body-error")}
+              <p className="mt-1 text-[11px] text-neutral-500">
+                {Math.min((form.body || "").trim().length, 20)}/20 minimum characters
+              </p>
             </div>
 
             <div>
@@ -121,7 +207,7 @@ function NotificationCreate() {
                 name="audience"
                 value={form.audience}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className={inputClass(false)}
               >
                 <option value="all">All</option>
                 <option value="verified">Verified</option>
@@ -137,7 +223,7 @@ function NotificationCreate() {
                 name="type"
                 value={form.type}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className={inputClass(false)}
               >
                 <option value="info">Info</option>
                 <option value="warning">Warning</option>
@@ -156,8 +242,15 @@ function NotificationCreate() {
                 name="priority"
                 value={form.priority}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className={inputClass(!!errors.priority)}
+                aria-invalid={!!errors.priority}
+                aria-describedby="priority-error"
+                min={1}
+                max={5}
+                step={1}
+                placeholder="1 (lowest) - 5 (highest)"
               />
+              {hint(errors.priority, "priority-error")}
             </div>
 
             <br />
@@ -171,8 +264,11 @@ function NotificationCreate() {
                 name="startAt"
                 value={form.startAt}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className={inputClass(!!errors.startAt)}
+                aria-invalid={!!errors.startAt}
+                aria-describedby="startAt-error"
               />
+              {hint(errors.startAt, "startAt-error")}
             </div>
 
             <div>
@@ -184,8 +280,11 @@ function NotificationCreate() {
                 name="expiresAt"
                 value={form.expiresAt}
                 onChange={handleChange}
-                className="w-full rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
+                className={inputClass(!!errors.expiresAt)}
+                aria-invalid={!!errors.expiresAt}
+                aria-describedby="expiresAt-error"
               />
+              {hint(errors.expiresAt, "expiresAt-error")}
             </div>
 
             <div className="sm:col-span-2">
