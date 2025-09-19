@@ -21,7 +21,6 @@ function PackageDetail() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const fetchPackage = async () => {
@@ -72,13 +71,9 @@ function PackageDetail() {
         features: form.features.split(",").map(f => f.trim()),
       }, { withCredentials: true });
 
-      setShowPopup(true);
-
       
-      setTimeout(() => {
-        setShowPopup(false);
-        navigate(-1);
-      }, 2000);
+      alert("Package updated successfully!");
+      navigate(-1);
 
     } catch {
       alert("Error updating package");
@@ -97,8 +92,6 @@ function PackageDetail() {
         </h1>
 
         <form onSubmit={handleSave} className="space-y-6">
-          
-          
           <div>
             <label className="block text-sm font-medium text-black-700 mb-1">Title</label>
             <input
@@ -115,7 +108,6 @@ function PackageDetail() {
             {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
           </div>
 
-         
           <div>
             <label className="block text-sm font-medium text-black-700 mb-1">Description</label>
             <textarea
@@ -132,7 +124,6 @@ function PackageDetail() {
             {errors.description && <p className="text-red-500 text-sm mt-1">{errors.description}</p>}
           </div>
 
-          
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-black-700 mb-1">Price (Rs.)</label>
@@ -167,7 +158,6 @@ function PackageDetail() {
             </div>
           </div>
 
-        
           <div>
             <label className="block text-sm font-medium text-black-700 mb-1">Features</label>
             <textarea
@@ -179,7 +169,6 @@ function PackageDetail() {
             />
           </div>
 
-          
           <div className="flex justify-center">
             <button
               type="submit"
@@ -191,15 +180,6 @@ function PackageDetail() {
           </div>
         </form>
       </div>
-
-      
-      {showPopup && (
-        <div className="fixed top-5 inset-x-0 flex justify-center z-50">
-          <div className="bg-yellow-100 text-black px-6 py-3 rounded-lg shadow-lg animate-fadeIn">
-            Package updated successfully!
-          </div>
-        </div>
-      )}
     </div>
   );
 }
