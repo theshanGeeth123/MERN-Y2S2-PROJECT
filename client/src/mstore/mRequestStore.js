@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export const useRequestStore = create((set, get) => ({
   requests: [],
+  processedRequests: [],
   loading: false,
   error: null,
 
@@ -57,7 +58,7 @@ addRequest: async (newRequest) => {
       set({ requests: [] });
     }
   },
-  
+
 
   // Update a request
   updateRequest: async (rid, updatedRequest) => {
@@ -103,7 +104,7 @@ addRequest: async (newRequest) => {
     }
   },
 
-
+  // Accept/reject request
   updateRequestStatus: async (id, action) => {
     try {
       const res = await fetch(`http://localhost:4000/api/requests/${id}/${action}`, {
@@ -120,75 +121,61 @@ addRequest: async (newRequest) => {
       return { success: false, message: err.message };
     }
   },
+
+
+  // Fetch all user requests (pending + processed)
+  fetchAllProcessedRequests: async (emailOrAll) => {
+  set({ loading: true, error: null });
+  try {
+    let url;
+    if (emailOrAll === "all") {
+      url = "http://localhost:4000/api/requests/processed-all";
+    } else {
+      if (!emailOrAll) throw new Error("Email is missing");
+      url = `http://localhost:4000/api/requests/processed?email=${encodeURIComponent(emailOrAll)}`;
+    }
+
+    const res = await fetch(url, { credentials: "include" });
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await res.text();
+      throw new Error(`Expected JSON but got: ${text}`);
+    }
+
+    const data = await res.json();
+    set({ processedRequests: data.data || [], loading: false });
+  } catch (err) {
+    console.error(err);
+    set({ error: err.message, loading: false, processedRequests: [] });
+  }
+},
+
+
+
+  // Fetch processed requests by user email
+  fetchProcessedRequests: async (email) => {
+    set({ loading: true, error: null });
+    try {
+      if (!email) throw new Error("Email is missing");
+
+      const res = await fetch(
+        `http://localhost:4000/api/requests/processed?email=${encodeURIComponent(email)}`,
+        { credentials: "include" } // optional if you use cookies
+      );
+
+      // Check if response is JSON
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        throw new Error(`Expected JSON but got: ${text}`);
+      }
+
+      const data = await res.json();
+      set({ processedRequests: data.data || [], loading: false });
+    } catch (err) {
+      console.error(err);
+      set({ error: err.message, loading: false, processedRequests: [] });
+    }
+  },
+
 }));
-
-
-/*
-import { create } from "zustand";
-import axios from "axios";
-
-export const useRequestStore = create((set) => ({
-  requests: [],
-  loading: false,
-  error: null,
-
-  // Fetch all requests for logged-in customer
-  fetchRequests: async () => {
-    try {
-      set({ loading: true, error: null });
-      const res = await axios.get("/api/requests/my-requests", {
-        withCredentials: true,
-      });
-      set({ requests: res.data.data, loading: false });
-    } catch (err) {
-      set({
-        error: err.response?.data?.message || "Failed to fetch requests",
-        loading: false,
-      });
-    }
-  },
-
-  // Create a new request
-  addRequest: async (formData) => {
-    try {
-      const res = await axios.post("/api/requests", formData, {
-        withCredentials: true,
-      });
-      set((state) => ({
-        requests: [res.data.data, ...state.requests],
-      }));
-    } catch (err) {
-      set({ error: err.response?.data?.message || "Failed to create request" });
-    }
-  },
-
-  // Update request
-  updateRequest: async (id, formData) => {
-    try {
-      const res = await axios.put(`/api/requests/${id}`, formData, {
-        withCredentials: true,
-      });
-      set((state) => ({
-        requests: state.requests.map((r) =>
-          r._id === id ? res.data.data : r
-        ),
-      }));
-    } catch (err) {
-      set({ error: err.response?.data?.message || "Failed to update request" });
-    }
-  },
-
-  // Delete request
-  deleteRequest: async (id) => {
-    try {
-      await axios.delete(`/api/requests/${id}`, { withCredentials: true });
-      set((state) => ({
-        requests: state.requests.filter((r) => r._id !== id),
-      }));
-    } catch (err) {
-      set({ error: err.response?.data?.message || "Failed to delete request" });
-    }
-  },
-}));
-*/
-// frontend/mstore/mRequestStore.js
