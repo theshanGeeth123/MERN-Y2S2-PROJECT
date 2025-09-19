@@ -17,6 +17,8 @@ function BookingForm() {
     venue: "",
   });
 
+  const [showPopup, setShowPopup] = useState(false); 
+
   useEffect(() => {
     if (userData?.email) {
       setFormData((prev) => ({ ...prev, userEmail: userData.email }));
@@ -29,14 +31,41 @@ function BookingForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.date) {
+      toast.error("Please select a date.");
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [year, month, day] = formData.date.split("-");
+    const selectedDate = new Date(year, month - 1, day);
+
+    if (selectedDate <= today) {
+      toast.error("Please select a future date for booking.");
+      return;
+    }
+
     try {
       const res = await axios.post(
         "http://localhost:4000/api/bookings",
         formData,
         { withCredentials: true }
       );
-      toast.success("Booking Request successful!");
       console.log(res.data);
+
+      
+      setShowPopup(true);
+
+      
+      setFormData({
+        ...formData,
+        date: "",
+        time: "",
+        venue: "",
+      });
     } catch (err) {
       console.error(err);
       toast.error("Failed to book. Try again.");
@@ -51,8 +80,6 @@ function BookingForm() {
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-5 text-lg">
-
-          
           <div>
             <input
               type="email"
@@ -65,7 +92,6 @@ function BookingForm() {
             />
           </div>
 
-          
           <div>
             <input
               type="text"
@@ -76,7 +102,6 @@ function BookingForm() {
             />
           </div>
 
-          
           <div>
             <input
               type="text"
@@ -97,6 +122,7 @@ function BookingForm() {
               value={formData.date}
               onChange={handleChange}
               required
+              min={new Date().toISOString().split("T")[0]}
               className={`w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500
                 ${formData.date ? "text-gray-900" : "text-transparent"}`}
             />
@@ -125,7 +151,6 @@ function BookingForm() {
             )}
           </div>
 
-          
           <div className="flex justify-center">
             <button
               type="submit"
@@ -136,6 +161,22 @@ function BookingForm() {
           </div>
         </form>
       </div>
+
+      
+      {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg text-center w-80">
+            <h2 className="text-2xl font-bold mb-4">Booking Successful!</h2>
+            <p className="mb-6">Your package request has been submitted.</p>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="px-6 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
