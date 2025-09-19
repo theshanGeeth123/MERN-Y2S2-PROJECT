@@ -5,6 +5,7 @@ import {
   getRequestsByEmail,
   updateRequest,
   deleteRequest,
+  reqProcess
 } from "../controllers/mRequest.controller.js";
 import userAuth from "../middleware/userAuth.js";
 
@@ -15,5 +16,7 @@ router.get("/", getRequests);
 router.get("/my-requests", getRequestsByEmail);
 router.put("/:id", updateRequest);
 router.delete("/:id", deleteRequest);
+
+router.post("/:id/:action", reqProcess);
 
 export default router;

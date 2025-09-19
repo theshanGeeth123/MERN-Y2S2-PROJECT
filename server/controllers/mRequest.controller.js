@@ -1,14 +1,12 @@
 import mongoose from "mongoose";
 import Request from "../models/mRequest.model.js";
-import User from "../models/userModel.js"; 
+import ProcessedRequest from "../models/mReqProcess.js";
+
 // Create a new request
 export const createRequest = async (req, res) => {
   try {
     const { name, email, amount, description, account, startDate, endDate, items, paymentStatus, stripePaymentId } = req.body;
 
-    // Ensure user is authenticated
-    // const user = await User.findById(req.userId);
-    // if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
 
     const newRequest = new Request({
       name,
@@ -85,7 +83,37 @@ export const deleteRequest = async (req, res) => {
   }
 };
 
+// Accept or Reject a request
+export const reqProcess = async (req, res) => {
+  const { id, action } = req.params; // action = "accept" or "reject"
 
+  if (!["accept", "reject"].includes(action)) {
+    return res.status(400).json({ success: false, message: "Invalid action" });
+  }
+
+  try {
+    const request = await Request.findById(id);
+    if (!request) return res.status(404).json({ success: false, message: "Request not found" });
+
+    // Move to ProcessedRequest
+    const processed = new ProcessedRequest({
+      email: request.email,
+      items: request.items,
+      amount: request.amount,
+      status: action,
+      startDate: request.startDate,
+      endDate: request.endDate,
+    });
+    await processed.save();
+
+    // Delete from original requests
+    // await Request.findByIdAndDelete(id);
+
+    res.json({ success: true, message: `Request ${action}ed successfully` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 
 
 
