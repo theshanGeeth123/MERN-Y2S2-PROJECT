@@ -14,6 +14,8 @@ import {
   Legend
 } from "recharts";
 
+
+
 const COLORS = ["#4f46e5", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 const AdminReports = () => {
@@ -120,6 +122,7 @@ const AdminReports = () => {
   const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
@@ -144,24 +147,7 @@ const AdminReports = () => {
           
           {/* Time Range Selector */}
           <div className="mt-6 flex space-x-2">
-            <button
-              onClick={() => setTimeRange("weekly")}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${timeRange === "weekly" ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
-            >
-              Weekly
-            </button>
-            <button
-              onClick={() => setTimeRange("monthly")}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${timeRange === "monthly" ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setTimeRange("quarterly")}
-              className={`px-4 py-2 text-sm font-medium rounded-md ${timeRange === "quarterly" ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}
-            >
-              Quarterly
-            </button>
+            
           </div>
         </div>
 
@@ -412,6 +398,7 @@ const AdminReports = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
