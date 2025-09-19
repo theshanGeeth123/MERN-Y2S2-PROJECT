@@ -22,7 +22,7 @@ const MRequestCus = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(null);
 
-  // ✅ get logged user email
+  // Get logged user email
   useEffect(() => {
     const customerData = localStorage.getItem("customer");
     if (customerData) {
@@ -35,12 +35,12 @@ const MRequestCus = () => {
     }
   }, []);
 
-  // ✅ fetch requests once
+  // Fetch requests once
   useEffect(() => {
     fetchRequests();
   }, [fetchRequests]);
 
-  // ✅ filter only current user’s requests
+  // Filter only current user’s requests
   useEffect(() => {
     if (requests && userEmail) {
       const userRequests = requests.filter(
@@ -53,7 +53,7 @@ const MRequestCus = () => {
     }
   }, [requests, userEmail]);
 
-  // delete
+  // Delete
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this request?")) return;
     const result = await deleteRequest(id);
@@ -64,13 +64,24 @@ const MRequestCus = () => {
     }
   };
 
-  // edit open
+  // Delete Request (alternative)
+  const handleDeletePost = async (rid) => {
+    if (!window.confirm("Are you sure you want to delete this request?")) return;
+    const { success, message } = await deleteRequest(rid);
+    if (success) {
+      toast.success(`Item Deleted Successfully`, { position: "top-center", autoClose: 3000 });
+    } else {
+      toast.error(`Failed to delete: ${message}`, { position: "top-center", autoClose: 3000 });
+    }
+  };
+
+  // Open Edit Modal
   const handleEdit = (req) => {
     setEditData({ ...req });
     setIsEditing(true);
   };
 
-  // update
+  // Update Request
   const handleUpdate = async () => {
     if (!editData) return;
     const { success, message } = await updateRequest(editData._id, editData);
@@ -82,26 +93,6 @@ const MRequestCus = () => {
     }
   };
 
-  // Delete Request
-  const handleDeletePost = async (rid, req) => {
-  if (!window.confirm("Are you sure you want to delete this request?")) return;
-
-  const { success, message } = await deleteRequest(rid);
-
-  if (success) {
-    toast.success(`Item Deleted Successfully`, {
-      position: "top-center",
-      autoClose: 3000,
-    });
-  } else {
-    toast.error(`Failed to delete: ${message}`, {
-      position: "top-center",
-      autoClose: 3000,
-    });
-  }
-};
-
-
   if (loading) return <p>Loading your requests...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
   if (!userEmail) return <p>Loading your account...</p>;
@@ -109,6 +100,14 @@ const MRequestCus = () => {
   return (
     <div className="p-4">
       <Navbar />
+      <div className="w-full flex justify-end mt-5 pr-6">
+        <Link to="/my-requests">
+          <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-2">
+            My Rental Requests
+          </button>
+        </Link>
+      </div>
+
       <h2 className="text-xl font-bold mb-8 text-center">My Requests</h2>
 
       {filteredRequests.length === 0 ? (
@@ -124,30 +123,22 @@ const MRequestCus = () => {
                 <FileText className="mr-3 text-blue-500" />
                 <div>
                   <div className="font-semibold">
-                    {Array.isArray(req.items) ? (
-                      req.items.map((item, idx) => (
-                        <span key={idx}>
-                          {item.name} (x{item.qty ?? 1})
-                          {idx < req.items.length - 1 && ", "}
-                        </span>
-                      ))
-                    ) : (
-                      <span>{req.items}</span>
-                    )}
+                    {Array.isArray(req.items)
+                      ? req.items.map((item, idx) => (
+                          <span key={idx}>
+                            {item.name} (x{item.qty ?? 1})
+                            {idx < req.items.length - 1 && ", "}
+                          </span>
+                        ))
+                      : req.items}
                   </div>
 
                   <p className="text-sm text-gray-500">
-                    Amount: {req.amount} | Status:{" "}
-                    {req.paymentStatus ?? "pending"}
+                    Amount: {req.amount} | Payment : {req.paymentStatus ?? "pending"}
                   </p>
                   <p className="text-xs text-gray-400">
-                    {req.startDate
-                      ? new Date(req.startDate).toLocaleString()
-                      : ""}{" "}
-                    —{" "}
-                    {req.endDate
-                      ? " " + new Date(req.endDate).toLocaleString()
-                      : ""}
+                    {req.startDate ? new Date(req.startDate).toLocaleString() : ""} —{" "}
+                    {req.endDate ? new Date(req.endDate).toLocaleString() : ""}
                   </p>
                 </div>
               </div>
@@ -162,13 +153,12 @@ const MRequestCus = () => {
                 </button>
 
                 <button
-                  onClick={() => handleDeletePost(req._id, req)}
+                  onClick={() => handleDeletePost(req._id)}
                   className="p-2 rounded hover:bg-gray-100"
                   title="Delete request"
                 >
                   <Trash2 />
                 </button>
-
               </div>
             </li>
           ))}
@@ -181,7 +171,7 @@ const MRequestCus = () => {
         </Link>
       </div>
 
-      {/* Edit */}
+      {/* Edit Modal */}
       {isEditing && editData && (
         <div
           className="fixed inset-0 bg-black/50 flex justify-center items-center z-50"
@@ -191,11 +181,8 @@ const MRequestCus = () => {
             className="bg-white p-6 rounded-2xl w-11/12 max-w-md max-h-[90vh] overflow-auto space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-2xl font-semibold text-center">
-              Update Request
-            </h2>
+            <h2 className="text-2xl font-semibold text-center">Update Request</h2>
 
-            
             <input
               type="text"
               className="w-full p-3 rounded border bg-gray-100"
@@ -215,7 +202,6 @@ const MRequestCus = () => {
               readOnly
             />
 
-            
             <input
               type="text"
               className="w-full p-3 rounded border"
@@ -225,7 +211,6 @@ const MRequestCus = () => {
               }
               placeholder="Description"
             />
-
             <input
               type="text"
               className="w-full p-3 rounded border"
@@ -251,7 +236,6 @@ const MRequestCus = () => {
                 setEditData({ ...editData, startDate: e.target.value })
               }
             />
-
             <input
               type="date"
               className="w-full p-3 rounded border"
@@ -265,21 +249,17 @@ const MRequestCus = () => {
               }
             />
 
-            
             <div className="bg-gray-100 p-3 rounded border text-sm">
-              {Array.isArray(editData.items) ? (
-                editData.items.map((item, idx) => (
-                  <span key={idx}>
-                    {item.name} (x{item.qty ?? 1})
-                    {idx < editData.items.length - 1 && ", "}
-                  </span>
-                ))
-              ) : (
-                <span>{editData.items}</span>
-              )}
+              {Array.isArray(editData.items)
+                ? editData.items.map((item, idx) => (
+                    <span key={idx}>
+                      {item.name} (x{item.qty ?? 1})
+                      {idx < editData.items.length - 1 && " , "}
+                    </span>
+                  ))
+                : editData.items}
             </div>
 
-            
             <input
               type="text"
               className="w-full p-3 rounded border bg-gray-100"
@@ -289,7 +269,30 @@ const MRequestCus = () => {
 
             <div className="flex justify-center space-x-2 mt-3">
               <button
-                onClick={handleUpdate}
+                onClick={() => {
+                  const { description, account, startDate, endDate } = editData;
+
+                  // ✅ Required fields
+                  if (!description || !account || !startDate || !endDate) {
+                    toast.error("All fields are required!", { autoClose: 2000 });
+                    return;
+                  }
+
+                  // ✅ Start date cannot be in the past
+                  const todayStr = new Date().toISOString().split("T")[0];
+                  if (startDate < todayStr) {
+                    toast.error("Start date cannot be in the past!", { autoClose: 2000 });
+                    return;
+                  }
+
+                  // ✅ End date must be after start date
+                  if (endDate <= startDate) {
+                    toast.error("End date must be after start date!", { autoClose: 2000 });
+                    return;
+                  }
+
+                  handleUpdate();
+                }}
                 className="px-4 py-2 bg-green-500 text-white rounded-full font-bold hover:bg-green-600 transition-colors"
               >
                 Save
