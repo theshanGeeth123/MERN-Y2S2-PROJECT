@@ -16,6 +16,14 @@ function PackageCreate() {
     features: ""
   });
 
+  const [errors, setErrors] = useState({
+    title: "",
+    description: "",
+    price: "",
+    duration: "",
+    features: ""
+  });
+
   const validators = {
     title: val => {
       if (!val.trim()) return "Title cannot be empty.";
@@ -29,6 +37,7 @@ function PackageCreate() {
     },
     price: val => {
       const n = Number(val);
+      if (!val) return "Price cannot be empty.";
       if (n < 0) return "Price cannot be negative."; 
       if (n < 10000) return "Price should not be less than Rs.10,000.";
       if (n > 100000) return "Price cannot exceed Rs.100,000.";
@@ -36,6 +45,7 @@ function PackageCreate() {
     },
     duration: val => {
       const n = Number(val);
+      if (!val) return "Duration cannot be empty.";
       if (n <= 0) return "Duration cannot be 0 or negative.";
       if (n > 10) return "Duration cannot exceed 10 hours.";
       return "";
@@ -51,22 +61,26 @@ function PackageCreate() {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
 
-    const error = validators[name](value);
-    if (error) toast.error(error, { autoClose: 2000, pauseOnHover: false });
+    
+    setErrors(prev => ({ ...prev, [name]: validators[name](value) }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     let hasError = false;
+    const newErrors = {};
     for (let key in form) {
       const error = validators[key](form[key]);
-      if (error) {
-        hasError = true;
-        toast.error(error, { autoClose: 2000, pauseOnHover: false });
-      }
+      newErrors[key] = error;
+      if (error) hasError = true;
     }
-    if (hasError) return;
+    setErrors(newErrors);
+
+    if (hasError) {
+      toast.error("Please fix the errors before submitting.", { autoClose: 3000 });
+      return;
+    }
 
     const confirmSubmit = window.confirm("Please double check your details before submitting. Continue?");
     if (!confirmSubmit) return;
@@ -81,7 +95,7 @@ function PackageCreate() {
 
       toast.success("Package added successfully!", { autoClose: 3000 });
       setForm({ title: "", description: "", price: "", duration: "", features: "" });
-
+      setErrors({ title: "", description: "", price: "", duration: "", features: "" });
     } catch (err) {
       console.error(err);
       toast.error("Failed to create package", { autoClose: 2000 });
@@ -90,14 +104,14 @@ function PackageCreate() {
 
   const renderInput = (label, name, type = "text", rows) => (
     <div className="mb-3">
-      <label className="block mb-1 text-sm font-bold text-neutral-700">{label}</label> {/* Bold label */}
+      <label className="block mb-1 text-sm font-bold text-neutral-700">{label}</label>
       {type === "textarea" ? (
         <textarea
           name={name}
           value={form[name]}
           onChange={handleChange}
           rows={rows || 3}
-          className="w-full border-2 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 border-neutral-400 bg-white"
+          className={`w-full border-2 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 border-neutral-400 bg-white ${errors[name] ? 'border-red-500' : ''}`}
         />
       ) : (
         <input
@@ -106,9 +120,10 @@ function PackageCreate() {
           value={form[name]}
           onChange={handleChange}
           min={type === "number" ? 0 : undefined}
-          className="w-full border-2 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 border-neutral-400 bg-white"
+          className={`w-full border-2 rounded-md px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 border-neutral-400 bg-white ${errors[name] ? 'border-red-500' : ''}`}
         />
       )}
+      {errors[name] && <p className="text-red-500 text-xs mt-1">{errors[name]}</p>}
     </div>
   );
 
@@ -131,7 +146,10 @@ function PackageCreate() {
           <div className="flex justify-end gap-2 mt-4">
             <button
               type="button"
-              onClick={() => setForm({ title: "", description: "", price: "", duration: "", features: "" })}
+              onClick={() => {
+                setForm({ title: "", description: "", price: "", duration: "", features: "" });
+                setErrors({ title: "", description: "", price: "", duration: "", features: "" });
+              }}
               className="rounded-md border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-800 hover:bg-neutral-100 transition"
             >
               Clear
