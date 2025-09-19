@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import NavbarAdmin from "../../components/NavbarAdmin";
 
 const API_BASE ="http://localhost:4000/api/notifications";
 
@@ -60,8 +61,11 @@ function Notifications() {
   }, [notifications, q, audienceFilter]);
 
   return (
-    <div className="min-h-screen bg-neutral-50 text-neutral-900">
-      <div className="mx-auto max-w-6xl px-4 py-6">
+
+    <><NavbarAdmin />
+
+    <div className="min-h-screen bg-neutral-50 text-neutral-900 2xl:min-w-[180px]">
+      <div className="mx-auto max-w-6xl px-4 py-6  2xl:min-w-[1300px]">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -192,15 +196,16 @@ function Notifications() {
         </div>
 
         <div className="mt-4 flex justify-end">
-          <button
+          {/* <button
             onClick={fetchNotifications}
             className="rounded-md border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
           >
             Refresh
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
+    </>
   );
 }
 

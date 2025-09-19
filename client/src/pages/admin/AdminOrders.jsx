@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+import NavbarAdmin from "../../components/NavbarAdmin";
+
 const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,6 +83,9 @@ const AdminOrders = () => {
     );
 
   return (
+
+    <><NavbarAdmin />
+
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -244,6 +249,8 @@ const AdminOrders = () => {
         )}
       </div>
     </div>
+    
+    </>
   );
 };
 

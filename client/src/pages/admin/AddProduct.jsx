@@ -99,7 +99,7 @@ const AddProduct = () => {
         stock: "",
       });
 
-      setTimeout(() => navigate("/admin/home"), 2000);
+      setTimeout(() => navigate("/admin/products"), 2000);
     } catch (err) {
       console.error("Add product error:", err.message);
       setError("Failed to add product. Please try again.");
