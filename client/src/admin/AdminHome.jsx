@@ -13,6 +13,7 @@ import {
   FaTimes,
   FaMoon,
   FaSun,
+  FaSignOutAlt 
 } from "react-icons/fa";
 
 export default function AdminHome() {
@@ -46,10 +47,10 @@ export default function AdminHome() {
         setMobileOpen(false);
         navigate(to);
       }}
-      className="w-full flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 transition focus:outline-none focus:ring-2 focus:ring-primary/40"
+      className="py-4 cursor-pointer w-full flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-primary/40"
     >
-      <span className="text-lg shrink-0">{icon}</span>
-      <span className="text-sm font-medium">{label}</span>
+      <span className="text-lg shrink-0 ">{icon}</span>
+      <span className="text-[16px] font-medium ">{label}</span>
     </button>
   );
 
@@ -77,6 +78,21 @@ export default function AdminHome() {
   useEffect(() => {
     if (mobileOpen) closeBtnRef.current?.focus();
   }, [mobileOpen]);
+
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  sessionStorage.clear();
+
+  // Replace history so user can’t go back
+  navigate("/main-home", { replace: true });
+
+  // Clear forward/back cache
+  window.history.pushState(null, "", window.location.href);
+  window.addEventListener("popstate", function () {
+    navigate("/main-home", { replace: true });
+  });
+};
+
 
   return (
     <div className="min-h-screen bg-gray-300">
@@ -107,7 +123,7 @@ export default function AdminHome() {
         `}
       >
         {/* SIDEBAR (desktop) */}
-        <aside className="hidden md:flex md:flex-col bg-white/90 dark:bg-gray-900/90 border-r dark:border-gray-800">
+        <aside className="hidden md:flex md:flex-col bg-white/90 dark:bg-gray-950 border-r dark:border-gray-800">
           <div className="sticky top-0 z-30 bg-inherit">
             <div className="h-16 px-6 flex items-center justify-between border-b dark:border-gray-800">
               <div className="flex items-center gap-2">
@@ -120,12 +136,13 @@ export default function AdminHome() {
             </div>
           </div>
 
-          <nav className="flex-1 p-4 space-y-1">
-            <NavItem icon={<FaBox />} label="Manage Products" to="/admin/products" />
+          <nav className="flex-1 py-8 px-3 space-y-4 ">
+            <NavItem  icon={<FaBox />} label="Manage Products" to="/admin/products" />
             <NavItem icon={<FaClipboardList />} label="Orders" to="/admin/orders" />
             <NavItem icon={<FaUserTie />} label="Staff Members" to="/admin/staff" />
             <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
             <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
+            <NavItem icon={<FaSignOutAlt  />} label="logout" onClick={handleLogout()} />
          
           </nav>
 
@@ -135,21 +152,21 @@ export default function AdminHome() {
         </aside>
 
         {/* MOBILE DRAWER */}
-        <div className={`fixed inset-0 z-50 md:hidden ${mobileOpen ? "block" : "hidden"}`} aria-hidden={!mobileOpen}>
+        <div className={` fixed inset-0 z-50 md:hidden ${mobileOpen ? "block" : "hidden"}`} aria-hidden={!mobileOpen}>
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
           <div
             role="dialog"
             aria-modal="true"
-            className={`absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-xl transform transition-transform ${
+            className={` absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-950 shadow-xl transform transition-transform ${
               mobileOpen ? "translate-x-0" : "-translate-x-full"
             }`}
           >
-            <div className="h-14 px-4 border-b dark:border-gray-800 flex items-center justify-between">
-              <span className="font-semibold text-gray-900 dark:text-gray-100">Menu</span>
+            <div className="h-14 px-4 border-b dark:border-gray-800 flex items-center justify-between ">
+              <span className="font-semibold  text-gray-900 dark:text-gray-100">Admin Portal</span>
               <button
                 type="button"
                 aria-label="Close menu"
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200"
+                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10  text-gray-700 dark:text-gray-200"
                 onClick={() => setMobileOpen(false)}
                 ref={closeBtnRef}
               >
@@ -162,7 +179,7 @@ export default function AdminHome() {
               <NavItem icon={<FaUserTie />} label="Staff Members" to="/admin/staff" />
               <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
               <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
-             
+              <NavItem icon={<FaSignOutAlt  />} label="logout" to="/main-home" />
             </nav>
           </div>
         </div>
@@ -173,7 +190,7 @@ export default function AdminHome() {
             {/* Header */}
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-black">
-                Welcome back, Staff Member!
+                Welcome back, Admin!
               </h2>
               <p className="text-gray-600">
                 Here’s what’s happening with your account today.
