@@ -24,6 +24,8 @@ import MPayment from "./pages/MPayment";
 import MSuccess from "./pages/mPaySuccess";
 import MRequestCus from "./pages/MRequestCus";
 import MRequestAdmin from "./pages/MRequestAdmin";
+import MProcessedReq from "./pages/mprocessedReqCus";
+import MProcessedReqAd from "./pages/mProcessedReqAdmin";
 
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 const authToken = localStorage.getItem("token");
@@ -48,7 +50,8 @@ function App() {
         <Route path="/payment/create-payment-intent" element={<MPayment />} />
         <Route path="/payment/success" element={<MSuccess />} />
         <Route path="/requests" element={<MRequestCus />} />
-        
+        <Route path="/my-requests" element={<MProcessedReq />} />
+
 
         {/* admin */}
         <Route path='/admin/login' element={<AdminLogin/>}/>
@@ -56,6 +59,7 @@ function App() {
         <Route path='/rental' element={<MRental/>}/>
         <Route path="/admin/all-rentals" element={<MRentPage />} />
         <Route path="/admin/requests" element={<MRequestAdmin />} />
+        <Route path="/admin/processed-requests" element={<MProcessedReqAd />} />
 
       </Routes>
     </div>

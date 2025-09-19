@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
 import Request from "../models/mRequest.model.js";
-import ProcessedRequest from "../models/mReqProcess.js";
+import ProcessedRequest from "../models/mReqProcess.model.js";
 
 // Create a new request
 export const createRequest = async (req, res) => {
   try {
     const { name, email, amount, description, account, startDate, endDate, items, paymentStatus, stripePaymentId } = req.body;
-
 
     const newRequest = new Request({
       name,
@@ -41,7 +40,7 @@ export const getRequests = async (req, res) => {
 // Get requests by user
 export const getRequestsByEmail = async (req, res) => {
   try {
-    const { email } = req.query; // email from frontend query string
+    const { email } = req.query;
     if (!email) {
       return res.status(400).json({ success: false, message: "Email is required" });
     }
@@ -58,7 +57,9 @@ export const updateRequest = async (req, res) => {
   const { id } = req.params;
   const updRequest = req.body;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid Request ID" });
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: "Invalid Request ID" });
+  }
 
   try {
     const updated = await Request.findByIdAndUpdate(id, updRequest, { new: true });
@@ -72,7 +73,9 @@ export const updateRequest = async (req, res) => {
 // Delete a request
 export const deleteRequest = async (req, res) => {
   const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).json({ success: false, message: "Invalid Request ID" });
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: "Invalid Request ID" });
+  }
 
   try {
     const deleted = await Request.findByIdAndDelete(id);
@@ -84,6 +87,7 @@ export const deleteRequest = async (req, res) => {
 };
 
 // Accept or Reject a request
+/*
 export const reqProcess = async (req, res) => {
   const { id, action } = req.params; // action = "accept" or "reject"
 
@@ -95,7 +99,7 @@ export const reqProcess = async (req, res) => {
     const request = await Request.findById(id);
     if (!request) return res.status(404).json({ success: false, message: "Request not found" });
 
-    // Move to ProcessedRequest
+    // Save to ProcessedRequest
     const processed = new ProcessedRequest({
       email: request.email,
       items: request.items,
@@ -106,269 +110,73 @@ export const reqProcess = async (req, res) => {
     });
     await processed.save();
 
-    // Delete from original requests
-    // await Request.findByIdAndDelete(id);
+    // ✅ Update original request status (optional but recommended)
+    request.status = action;
+    await request.save();
 
-    res.json({ success: true, message: `Request ${action}ed successfully` });
+    res.json({ success: true, message: `Request ${action}ed successfully`, data: processed });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+*/
+
+
+export const reqProcess = async (req, res) => {
+  const { id, action } = req.params;
+
+  if (!["accept", "reject"].includes(action)) {
+    return res.status(400).json({ success: false, message: "Invalid action" });
+  }
+
+  try {
+    const request = await Request.findById(id);
+    if (!request) return res.status(404).json({ success: false, message: "Request not found" });
+
+    // Save to ProcessedRequest
+    const processed = new ProcessedRequest({
+      email: request.email,
+      items: request.items,
+      amount: request.amount,
+      status: action,
+      startDate: request.startDate,
+      endDate: request.endDate,
+    });
+    await processed.save();
+
+    // Delete from Request collection so it won't appear again
+    await Request.findByIdAndDelete(id);
+
+    res.json({ success: true, message: `Request ${action}ed successfully`, data: processed });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
 
-
-/*
-import mongoose from "mongoose";
-import Request from "../models/mRequest.model.js";
-import User from "../models/userModel.js"; 
-
-export const createRequest = async (req, res) => {
+// --- Get processed requests by user ---
+export const getProcessedRequestsByEmail = async (req, res) => {
   try {
-    const { amount, description, account, startDate, endDate, items } = req.body;
+    const { email } = req.query;
+    if (!email) return res.status(400).json({ success: false, message: "Email is required" });
 
-    const user = await User.findById(req.userId).select("name email");
-    if (!user) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    // Case-insensitive & trimmed query to avoid mismatches
+    const processed = await ProcessedRequest.find({
+      email: { $regex: `^${email.trim()}$`, $options: "i" }
+    }).sort({ processedAt: -1 });
 
-    const newRequest = new Request({
-      user: req.userId,
-      name: user.name || "",
-      email: user.email || "",
-      amount,
-      description,
-      account,
-      startDate,
-      endDate,
-      items,
-      paymentStatus: paymentStatus || "pending",
-      stripePaymentId: stripePaymentId || null,
-    });
-
-    await newRequest.save();
-
-    res.status(201).json({ success: true, data: newRequest });
+    res.json({ success: true, data: processed || [] });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-export const getRequests = async (req, res) => {
+
+export const getAllProcessedRequests = async (req, res) => {
   try {
-    const viewrequests = await Request.find().sort({ createdAt: -1 });
-    res.json({
-      success: true,
-      data: viewrequests,
-    });
+    const processed = await ProcessedRequest.find().sort({ processedAt: -1 });
+    res.json({ success: true, data: processed });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
-
-export const updateRequest = async (req, res) => {
-  const { id } = req.params;
-  const updrequst = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ success: false, message: "Invalid Request ID" });
-  }
-
-  try {
-    const updateRequest = await Request.findByIdAndUpdate(id, updrequst, {
-      new: true,
-    });
-    if (!updateRequest) {
-      return res.status(404).json({ success: false, message: "Request not found" });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Update Successful",
-      data: updateRequest,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to update request",
-      error: error.message,
-    });
-  }
-};
-
-export const deleteRequest = async (req, res) => {
-  const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ success: false, message: "Invalid Request ID" });
-  }
-
-  try {
-    const delrequest = await Request.findByIdAndDelete(id);
-    if (!delrequest) {
-      return res.status(404).json({ success: false, message: "Request not found" });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Request deleted successfully",
-      data: delrequest,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete request",
-      error: err.message,
-    });
-  }
-};
-
-export const getRequestsByUser = async (req, res) => {
-  try {
-    const userId = req.userId;
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: "Invalid user ID" });
-    }
-
-    const requests = await Request.find({ user: userId }).sort({ createdAt: -1 });
-
-    // return success with empty array if none found
-    res.json({ success: true, data: requests || [] });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch user requests",
-      error: error.message,
-    });
-  }
-};
-*/
-
-
-/*
-import mongoose from "mongoose";
-import Request from "../models/mRequest.model.js";
-import userModel from "../models/userModel.js";
-
-export const createRequest = async (req, res) => {
-  try {
-    const { amount, description, account, startDate, endDate, items, name, email } = req.body;
-
-    const user = await userModel.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    const newRequest = new Request({
-      user: req.userId,
-      email: email,
-      amount,
-      description,
-      account,
-      startDate,
-      endDate,
-      items,
-    });
-
-    await newRequest.save();
-
-    res.status(201).json({ success: true, data: newRequest });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
-
-
-export const getRequests = async (req, res) => {
-  try {
-    const viewrequests = await Request.find().sort({ createdAt: -1 });
-    res.json({
-      success: true,
-      data: viewrequests,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
-  }
-};
-
-export const updateRequest = async (req, res) => {
-  const { id } = req.params;
-  const updrequst = req.body;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid Request ID" });
-  }
-
-  try {
-    const updateRequest = await Request.findByIdAndUpdate(id, updrequst, {
-      new: true,
-    });
-    if (!updateRequest) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Request not found" });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Update Successful",
-      data: updateRequest,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to update request",
-      error: error.message,
-    });
-  }
-};
-
-
-export const deleteRequest = async (req, res) => {
-  try {
-    const delrequest = await Request.findByIdAndDelete(req.params.id);
-    if (!delrequest) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Request not found" });
-    }
-    res.status(200).json({
-      success: true,
-      message: "Request deleted successfully",
-      data: delrequest,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to delete request",
-      error: err.message,
-    });
-  }
-};
-
-
-export const getRequestsByUser = async (req, res) => {
-  try {
-    const userId = req.userId;
-
-    const requests = await Request.find({ user: userId }).sort({ createdAt: -1 });
-
-    if (!requests || requests.length === 0) {
-      return res.status(404).json({ success: false, message: "No requests found" });
-    }
-
-    res.json({ success: true, data: requests });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch user requests",
-      error: error.message,
-    });
-  }
-};
-*/
