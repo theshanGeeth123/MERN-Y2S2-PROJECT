@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+import NavbarAdmin from "../../components/NavbarAdmin";
+
 const API_BASE = import.meta.env.VITE_BACKEND_URL
   ? `${import.meta.env.VITE_BACKEND_URL}/api/staff`
   : "http://localhost:4000/api/staff";
@@ -63,8 +65,9 @@ function StaffList() {
   }, [rows, q, roleFilter]);
 
   return (
+    <><NavbarAdmin />
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto max-w-6xl px-4 py-8 2xl:min-w-[1300px]">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="mt-8 text-3xl font-bold tracking-tight text-neutral-900">
@@ -199,6 +202,7 @@ function StaffList() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
