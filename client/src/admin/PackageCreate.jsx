@@ -29,14 +29,13 @@ function PackageCreate() {
     },
     price: val => {
       const n = Number(val);
-      if (!val.trim() || isNaN(n)) return "Price must be a number.";
+      if (n < 0) return "Price cannot be negative."; 
       if (n < 10000) return "Price should not be less than Rs.10,000.";
       if (n > 100000) return "Price cannot exceed Rs.100,000.";
       return "";
     },
     duration: val => {
       const n = Number(val);
-      if (!val.trim() || isNaN(n)) return "Duration must be a number.";
       if (n <= 0) return "Duration cannot be 0 or negative.";
       if (n > 10) return "Duration cannot exceed 10 hours.";
       return "";
