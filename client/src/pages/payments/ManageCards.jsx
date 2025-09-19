@@ -1,4 +1,3 @@
-// client/src/pages/payments/ManageCards.jsx
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AppContent } from "../../context/AppContext";
@@ -6,7 +5,6 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { FaCreditCard, FaEdit, FaTrash, FaPlus, FaArrowLeft, FaCheck } from "react-icons/fa";
 
-// ✅ Local card-type images (exact file names from your folder)
 import visaIcon from "./card_type_images/visa.png";
 import masterIcon from "./card_type_images/Master.png";
 import amexIcon from "./card_type_images/AmericanExpress.png";
@@ -37,6 +35,44 @@ const ManageCards = () => {
     name: "",
   });
 
+  // --- Validation helpers (added) ---
+  const validateCardPayload = (payload) => {
+    const errs = [];
+
+    // Required
+    if (!String(payload.type || "").trim()) errs.push("Card type is required.");
+    if (!String(payload.name || "").trim()) errs.push("Cardholder name is required.");
+    if (!String(payload.cardNumber || "").trim()) errs.push("Card number is required.");
+    if (!String(payload.expMonth || "").trim()) errs.push("Expiration month is required.");
+    if (!String(payload.expYear || "").trim()) errs.push("Expiration year is required.");
+
+    // Card number: 15–19 digits
+    const digits = String(payload.cardNumber || "").replace(/\D/g, "");
+    if (digits.length < 15 || digits.length > 19) {
+      errs.push("Card number must be 15 to 19 digits.");
+    }
+
+    // Month 1..12 (integer)
+    const month = Number(payload.expMonth);
+    if (!Number.isInteger(month) || month < 1 || month > 12) {
+      errs.push("Expiration month must be a number between 1 and 12.");
+    }
+
+    // Future date: strictly after current month
+    const year = Number(payload.expYear);
+    const now = new Date();
+    const curMonth = now.getMonth() + 1; // 1..12
+    const curYear = now.getFullYear();
+
+    if (!Number.isInteger(year) || year < curYear) {
+      errs.push("Expiration year must be in the future.");
+    } else if (year === curYear && month <= curMonth) {
+      errs.push("Expiration must be a future month.");
+    }
+
+    return errs;
+  };
+
   // --- API calls ---
   const fetchCards = async () => {
     if (!userData?.id) return;
@@ -56,6 +92,22 @@ const ManageCards = () => {
   const addCard = async (e) => {
     e.preventDefault();
     if (!userData?.id) return toast.error("Please login first");
+
+    // VALIDATE (added)
+    const payload = {
+      userId: userData.id,
+      type: form.type,
+      cardNumber: form.cardNumber,
+      expMonth: form.expMonth,
+      expYear: form.expYear,
+      name: form.name,
+    };
+    const errors = validateCardPayload(payload);
+    if (errors.length) {
+      toast.error(errors[0]);
+      return;
+    }
+
     try {
       await axios.post("http://localhost:4000/api/cards", {
         userId: userData.id,
@@ -111,6 +163,21 @@ const ManageCards = () => {
   const updateCard = async (e) => {
     e.preventDefault();
     if (!editingCard?._id) return;
+
+    // VALIDATE (added)
+    const payload = {
+      type: editForm.type,
+      cardNumber: editForm.cardNumber,
+      expMonth: editForm.expMonth,
+      expYear: editForm.expYear,
+      name: editForm.name,
+    };
+    const errors = validateCardPayload(payload);
+    if (errors.length) {
+      toast.error(errors[0]);
+      return;
+    }
+
     try {
       await axios.put(`http://localhost:4000/api/cards/${editingCard._id}`, {
         type: editForm.type,
@@ -130,7 +197,7 @@ const ManageCards = () => {
 
   // --- Helpers ---
   const handleCardNumberChange = (e, isEditForm = false) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 16);
+    const value = e.target.value.replace(/\D/g, "").slice(0, 19); // allow up to 19 digits to type
     const formattedValue = value.replace(/(\d{4})/g, "$1 ").trim();
     if (isEditForm) {
       setEditForm((prev) => ({ ...prev, cardNumber: formattedValue }));
@@ -168,12 +235,6 @@ const ManageCards = () => {
             </button>
             <h1 className="text-2xl font-bold text-gray-900">Payment Methods</h1>
           </div>
-          {/* <button
-            onClick={() => navigate("/checkout")}
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium"
-          >
-            Go to Checkout
-          </button> */}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

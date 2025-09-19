@@ -14,11 +14,12 @@ function StaffDetail() {
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  
+  // Password modal state
   const [pwOpen, setPwOpen] = useState(false);
   const [newPw, setNewPw] = useState("");
   const [confirmPw, setConfirmPw] = useState("");
   const [savingPw, setSavingPw] = useState(false);
+  const [pwTouched, setPwTouched] = useState({ new: false, confirm: false });
 
   const [form, setForm] = useState({
     firstName: "",
@@ -86,10 +87,24 @@ function StaffDetail() {
     }
   };
 
- 
+  // ---- Password validation helpers ----
+  const pwRules = (pw) => ({
+    length: pw.length >= 6,
+    uppercase: /[A-Z]/.test(pw),
+    special: /[^A-Za-z0-9]/.test(pw),
+  });
+
+  const allPwRulesPass = (pw) => {
+    const r = pwRules(pw);
+    return r.length && r.uppercase && r.special;
+  };
+
+  const passwordsMatch = newPw && confirmPw && newPw === confirmPw;
+
   const openPwModal = () => {
     setNewPw("");
     setConfirmPw("");
+    setPwTouched({ new: false, confirm: false });
     setPwOpen(true);
   };
 
@@ -98,21 +113,22 @@ function StaffDetail() {
     setPwOpen(false);
     setNewPw("");
     setConfirmPw("");
+    setPwTouched({ new: false, confirm: false });
   };
 
   const submitPassword = async () => {
-    if (!newPw || !confirmPw) {
-      toast.error("Please enter and confirm the new password");
+    // Final guard checks
+    if (!allPwRulesPass(newPw)) {
+      toast.error(
+        "Password must be at least 6 chars, include an uppercase letter and a special character."
+      );
       return;
     }
-    if (newPw !== confirmPw) {
+    if (!passwordsMatch) {
       toast.error("Passwords do not match");
       return;
     }
-    if (newPw.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
+
     try {
       setSavingPw(true);
       await axios.put(
@@ -154,10 +170,13 @@ function StaffDetail() {
     );
   }
 
+  const rulesState = pwRules(newPw);
+  const canSavePw = allPwRulesPass(newPw) && passwordsMatch && !savingPw;
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 py-6">
       <div className="mx-auto max-w-5xl px-4">
-        
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="mt-8 text-3xl font-bold text-green-800">
@@ -187,7 +206,7 @@ function StaffDetail() {
           </div>
         </div>
 
-        
+        {/* View / Edit */}
         {!editing ? (
           <>
             <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-md">
@@ -388,7 +407,7 @@ function StaffDetail() {
         )}
       </div>
 
-      
+      {/* Password Modal */}
       {pwOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-md rounded-xl bg-white shadow-lg">
@@ -406,10 +425,27 @@ function StaffDetail() {
               <input
                 type="password"
                 value={newPw}
-                onChange={(e) => setNewPw(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-400"
+                onChange={(e) => {
+                  setNewPw(e.target.value);
+                  if (!pwTouched.new) setPwTouched((t) => ({ ...t, new: true }));
+                }}
+                onBlur={() =>
+                  setPwTouched((t) => ({ ...t, new: true }))
+                }
+                className={`mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-gray-400 ${
+                  pwTouched.new && !allPwRulesPass(newPw)
+                    ? "border-red-300"
+                    : "border-gray-300"
+                }`}
                 placeholder="Enter new password"
               />
+
+              {/* Live rules */}
+              <ul className="mt-2 space-y-1 text-xs">
+                <PwRule ok={rulesState.length} text="At least 6 characters" />
+                <PwRule ok={rulesState.uppercase} text="Contains an uppercase letter (A–Z)" />
+                <PwRule ok={rulesState.special} text="Contains a special character (!@#$…)" />
+              </ul>
 
               <label className="mt-4 block text-sm text-gray-700">
                 Confirm password
@@ -417,10 +453,24 @@ function StaffDetail() {
               <input
                 type="password"
                 value={confirmPw}
-                onChange={(e) => setConfirmPw(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-400"
+                onChange={(e) => {
+                  setConfirmPw(e.target.value);
+                  if (!pwTouched.confirm)
+                    setPwTouched((t) => ({ ...t, confirm: true }));
+                }}
+                onBlur={() =>
+                  setPwTouched((t) => ({ ...t, confirm: true }))
+                }
+                className={`mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-gray-400 ${
+                  pwTouched.confirm && !passwordsMatch
+                    ? "border-red-300"
+                    : "border-gray-300"
+                }`}
                 placeholder="Re-enter password"
               />
+              {pwTouched.confirm && confirmPw && !passwordsMatch && (
+                <p className="mt-1 text-xs text-red-600">Passwords do not match.</p>
+              )}
             </div>
 
             <div className="flex items-center justify-end gap-2 border-t border-gray-200 px-5 py-3">
@@ -433,7 +483,7 @@ function StaffDetail() {
               </button>
               <button
                 onClick={submitPassword}
-                disabled={savingPw}
+                disabled={!canSavePw}
                 className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
               >
                 {savingPw ? "Saving…" : "Save Password"}
@@ -443,6 +493,23 @@ function StaffDetail() {
         </div>
       )}
     </div>
+  );
+}
+
+/** Small helper component for rule lines */
+function PwRule({ ok, text }) {
+  return (
+    <li className={`flex items-center gap-2 ${ok ? "text-green-600" : "text-gray-500"}`}>
+      <span
+        className={`inline-flex h-4 w-4 items-center justify-center rounded-full ring-1 ${
+          ok ? "bg-green-100 ring-green-200" : "bg-gray-100 ring-gray-200"
+        }`}
+        aria-hidden
+      >
+        {ok ? "✓" : "•"}
+      </span>
+      {text}
+    </li>
   );
 }
 

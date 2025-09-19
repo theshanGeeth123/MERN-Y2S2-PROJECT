@@ -19,6 +19,10 @@ const ManageProducts = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
+  // NEW: inline validation state for edit modal
+  const [errors, setErrors] = useState({});
+  const [editImageError, setEditImageError] = useState(false);
+
   const navigate = useNavigate();
 
   const fetchProducts = async () => {
@@ -57,22 +61,76 @@ const ManageProducts = () => {
       category: product.category || "",
       stock: product.stock || 0,
     });
+    setErrors({});
+    setEditImageError(false);
   };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: name === "price" || name === "stock" ? Number(value) : value
-    }));
+
+    // clear field-specific error on change
+    setErrors((prev) => {
+      if (!prev[name]) return prev;
+      const copy = { ...prev };
+      delete copy[name];
+      return copy;
+    });
+
+    if (name === "price" || name === "stock") {
+      setFormData(prev => ({ ...prev, [name]: value === "" ? "" : Number(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+
+    if (name === "url") setEditImageError(false);
+  };
+
+  // --- Validators (same rules as AddProduct) ---
+  const isValidUrl = (u) =>
+    /^(https?:\/\/)([\w-]+(\.[\w-]+)+)(:[0-9]+)?(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/.test((u || "").trim());
+
+  const validateEdit = () => {
+    const e = {};
+    const { name, description, price, url, stock } = formData;
+
+    // required
+    if (!String(name || "").trim()) e.name = "Product name is required.";
+    if (!String(description || "").trim()) e.description = "Description is required.";
+    if (price === "" || price === null) e.price = "Price is required.";
+    if (!String(url || "").trim()) e.url = "Image URL is required.";
+    if (stock === "" || stock === null) e.stock = "Stock is required.";
+
+    // business rules
+    if (name && name.trim().length < 3) e.name = "Name must be at least 3 characters.";
+    if (description && description.trim().length < 20) e.description = "Description must be at least 20 characters.";
+    if (price !== "" && Number(price) <= 0) e.price = "Price must be greater than 0.";
+    if (stock !== "" && (!Number.isInteger(Number(stock)) || Number(stock) < 0)) {
+      e.stock = "Stock must be an integer ≥ 0.";
+    }
+    if (url && !isValidUrl(url)) e.url = "Enter a valid http(s) image URL.";
+    if (editImageError) e.url = "The image URL is not loading. Please provide a valid image link.";
+
+    setErrors(e);
+    return e;
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+
+    const eMap = validateEdit();
+    if (Object.keys(eMap).length) {
+      toast.error("Please fix the highlighted fields.");
+      return;
+    }
+
     try {
       await axios.put(
         `http://localhost:4000/api/product/${editingProduct._id}`,
-        formData
+        {
+          ...formData,
+          price: parseFloat(formData.price),
+          stock: Number.isFinite(Number(formData.stock)) ? parseInt(formData.stock, 10) : 0,
+        }
       );
       toast.success("Product updated successfully");
       setEditingProduct(null);
@@ -98,6 +156,11 @@ const ManageProducts = () => {
     fetchProducts();
   }, []);
 
+  // helpers for error UI inside modal (keeps your layout intact)
+  const inputClass = (base = "", hasError = false) =>
+    `${base} ${hasError ? "border-red-500" : "border-gray-300"}`;
+  const hint = (msg, id) => (msg ? <p id={id} className="mt-1 text-xs text-red-600">{msg}</p> : null);
+
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -105,7 +168,7 @@ const ManageProducts = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              <FaBox className="mr-3 text-blue-500" /> Product Management
+              Product Management
             </h1>
             <button  onClick={() => navigate("/admin/add-product")} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center">
               <FaPlus className="mr-2" /> Add New Product
@@ -230,14 +293,14 @@ const ManageProducts = () => {
                   <FaEdit className="mr-2 text-blue-500" /> Edit Product
                 </h2>
                 <button
-                  onClick={() => setEditingProduct(null)}
+                  onClick={() => { setEditingProduct(null); setErrors({}); setEditImageError(false); }}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <FaTimes size={20} />
                 </button>
               </div>
               
-              <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
+              <form onSubmit={handleEditSubmit} className="p-6 space-y-4" noValidate>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
@@ -246,9 +309,12 @@ const ManageProducts = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleEditChange}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className={inputClass("w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500", !!errors.name)}
                       required
+                      aria-invalid={!!errors.name}
+                      aria-describedby="edit-name-error"
                     />
+                    {hint(errors.name, "edit-name-error")}
                   </div>
                   
                   <div>
@@ -258,11 +324,14 @@ const ManageProducts = () => {
                       name="price"
                       value={formData.price}
                       onChange={handleEditChange}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className={inputClass("w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500", !!errors.price)}
                       min="0"
                       step="0.01"
                       required
+                      aria-invalid={!!errors.price}
+                      aria-describedby="edit-price-error"
                     />
+                    {hint(errors.price, "edit-price-error")}
                   </div>
                 </div>
                 
@@ -273,9 +342,12 @@ const ManageProducts = () => {
                     value={formData.description}
                     onChange={handleEditChange}
                     rows="3"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={inputClass("w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500", !!errors.description)}
                     required
+                    aria-invalid={!!errors.description}
+                    aria-describedby="edit-description-error"
                   />
+                  {hint(errors.description, "edit-description-error")}
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -298,10 +370,13 @@ const ManageProducts = () => {
                       name="stock"
                       value={formData.stock}
                       onChange={handleEditChange}
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className={inputClass("w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500", !!errors.stock)}
                       min="0"
                       required
+                      aria-invalid={!!errors.stock}
+                      aria-describedby="edit-stock-error"
                     />
+                    {hint(errors.stock, "edit-stock-error")}
                   </div>
                 </div>
                 
@@ -313,8 +388,10 @@ const ManageProducts = () => {
                       name="url"
                       value={formData.url}
                       onChange={handleEditChange}
-                      className="flex-1 border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className={inputClass("flex-1 border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500", !!errors.url)}
                       required
+                      aria-invalid={!!errors.url}
+                      aria-describedby="edit-url-error"
                     />
                     <div className="w-16 h-16 border border-gray-300 rounded-lg overflow-hidden">
                       <img
@@ -322,11 +399,14 @@ const ManageProducts = () => {
                         alt="Preview"
                         className="w-full h-full object-cover"
                         onError={(e) => {
+                          setEditImageError(true);
                           e.target.src = "https://via.placeholder.com/64?text=No+Image";
                         }}
+                        onLoad={() => setEditImageError(false)}
                       />
                     </div>
                   </div>
+                  {hint(errors.url, "edit-url-error")}
                 </div>
                 
                 <div className="flex items-center justify-between pt-6 border-t border-gray-200">
@@ -340,7 +420,7 @@ const ManageProducts = () => {
                   <div className="flex space-x-3">
                     <button
                       type="button"
-                      onClick={() => setEditingProduct(null)}
+                      onClick={() => { setEditingProduct(null); setErrors({}); setEditImageError(false); }}
                       className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                     >
                       Cancel
