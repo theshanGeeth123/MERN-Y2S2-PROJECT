@@ -6,26 +6,6 @@ export const useRequestStore = create((set, get) => ({
   loading: false,
   error: null,
 
-  // Add new rental request
-  /*
-  addRequest: async (newRequest) => {
-    try {
-      const res = await fetch("http://localhost:4000/api/requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newRequest),
-      });
-
-      const data = await res.json();
-      if (!data.success) return { success: false, message: data.message };
-
-      set((state) => ({ requests: [...state.requests, data.data] }));
-      return { success: true, message: "Rental request added successfully" };
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  },
-*/
 
 addRequest: async (newRequest) => {
   try {
@@ -177,5 +157,19 @@ addRequest: async (newRequest) => {
       set({ error: err.message, loading: false, processedRequests: [] });
     }
   },
+
+
+
+  fetchAcceptedChartData: async () => {
+  set({ loading: true, error: null });
+  try {
+    const res = await fetch("http://localhost:4000/api/requests/chart-accepted", { credentials: "include" });
+    const data = await res.json();
+    set({ chartData: data.data || [], loading: false });
+  } catch (err) {
+    set({ error: err.message, chartData: [], loading: false });
+  }
+},
+
 
 }));

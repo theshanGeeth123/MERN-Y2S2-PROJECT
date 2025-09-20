@@ -50,7 +50,7 @@ const MRentalCart = () => {
               className="bg-[#333A5C66] p-3 rounded-lg text-center"
             >
               <span>
-                {item.name} - Deposit: Rs.{" "}{(item.quantity || 1) * FIXED_DEPOSIT}.00 - Quantity: {item.quantity || 1}
+                {item.name} - Deposit: Rs.{" "}{(item.quantity || 1) * FIXED_DEPOSIT}.00
               </span>
             </li>
           ))}
