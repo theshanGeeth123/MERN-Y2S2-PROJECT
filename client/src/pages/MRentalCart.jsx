@@ -1,8 +1,7 @@
 import React from "react";
 import { useRentItemsStore } from "../mstore/mrentItems";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import {Link} from "react-router-dom";
 
 const MRentalCart = () => {
   const rentalCart = useRentItemsStore((state) => state.rentalCart);
@@ -18,26 +17,21 @@ const MRentalCart = () => {
   };
 
   if (!rentalCart || rentalCart.length === 0)
-  return (
-    <>
-      <Navbar />
-      <div className="mt-20 flex items-center justify-center bg-gray-100 p-4">
-        <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-11/12 text-center text-white text-xl font-bold">
-         🤔 Your cart is empty.
-         <div className="mt-2 font-light">
-          <Link
-          to="/all-rentals"
-          className="text-blue-500 hover:underline"
-          >
-            Back to Rentals
-          </Link>
-         </div>
+    return (
+      <>
+        <Navbar />
+        <div className="mt-20 flex items-center justify-center bg-gray-100 p-4">
+          <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-11/12 text-center text-white text-xl font-bold">
+            🤔 Your cart is empty.
+            <div className="mt-2 font-light">
+              <Link to="/all-rentals" className="text-blue-500 hover:underline">
+                Back to Rentals
+              </Link>
+            </div>
+          </div>
         </div>
-        
-      </div>
-    </>
-  );
-
+      </>
+    );
 
   return (
     <>
@@ -56,21 +50,6 @@ const MRentalCart = () => {
                 <h3 className="font-semibold">{item.name}</h3>
                 <p>Category: {item.category}</p>
                 <p>Price: Rs. {item.price}</p>
-                <p>
-                  Quantity: 
-                  <input
-                    type="number"
-                    min="1"
-                    value={item.quantity || 1}
-                    onChange={(e) =>
-                      useRentItemsStore.getState().updateQuantity(
-                        item._id,
-                        parseInt(e.target.value)
-                      )
-                    }
-                    className="ml-2 w-16 border rounded p-1"
-                  />
-                </p>
               </div>
 
               <button
@@ -87,6 +66,12 @@ const MRentalCart = () => {
           Total Deposit: Rs. {getTotalDeposit()}
         </div>
 
+
+        <div className=" font-light w-full text-center">
+              <Link to="/all-rentals" className="text-blue-500 hover:underline">
+                Back to Rentals
+              </Link>
+            </div>
         <div className="mt-4 w-full flex justify-end mr-10">
           <button
             className="mt-4 px-6 py-2 border border-black bg-white text-black font-bold rounded-md hover:bg-blue-600 transition-colors"
