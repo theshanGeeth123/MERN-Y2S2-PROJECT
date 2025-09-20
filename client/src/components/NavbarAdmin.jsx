@@ -111,9 +111,16 @@ function NavbarAdmin() {
         
           <button
             onClick={() => navigate("/admin/home")}
-            className="2xl:mr-5 flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all"
+            className="cursor-pointer 2xl:mr-5 flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all"
           >
             Dashboard
+          </button>
+
+          <button
+            onClick={() => navigate("/main-home")}
+            className=" bg-black/80 text-white cursor-pointer 2xl:mr-5 flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2  hover:bg-black transition-all"
+          >
+           Log out
           </button>
        
       </div>

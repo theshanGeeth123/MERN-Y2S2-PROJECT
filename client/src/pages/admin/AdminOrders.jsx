@@ -86,7 +86,7 @@ const AdminOrders = () => {
 
     <><NavbarAdmin />
 
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 2xl:mx-20 xl:mx-15">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <h2 className="text-3xl font-bold text-gray-900">Order Management</h2>
