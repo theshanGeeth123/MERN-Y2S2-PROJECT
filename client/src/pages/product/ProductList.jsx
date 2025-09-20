@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaSearch, FaStar, FaRegStar, FaFilter } from "react-icons/fa";
 
+import NavbarCustomer from "../../components/NavbarCustomer";
+
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -135,9 +137,12 @@ const ProductList = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8 relative">
+
+    <><NavbarCustomer/>
+
+    <div className="min-h-screen bg-gray-50 p-4 md:p-8 relative 2xl:ml-30 2xl:mr-30">
       {/* Header */}
-      <header className="bg-white rounded-xl shadow-sm p-4 mb-6">
+      <header className="bg-white rounded-xl shadow-sm p-4 mb-6 ">
         <div className="flex flex-col md:flex-row items-center justify-between">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-0">
             Premium Products
@@ -174,7 +179,7 @@ const ProductList = () => {
       </header>
 
       {/* Filters and Sorting */}
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+      <div className="bg-white rounded-xl shadow-sm p-4 mb-6 ">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
           <div className="flex items-center mb-4 md:mb-0">
             <button 
@@ -236,7 +241,7 @@ const ProductList = () => {
 
       {/* Products Grid */}
       {filteredProducts.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+        <div className="bg-white rounded-xl shadow-sm p-8 text-center ">
           <svg className="mx-auto h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -333,6 +338,7 @@ const ProductList = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

@@ -64,7 +64,7 @@ function Notifications() {
 
     <><NavbarAdmin />
 
-    <div className="min-h-screen bg-neutral-50 text-neutral-900 2xl:min-w-[180px]">
+    <div className="min-h-screen bg-neutral-50 text-neutral-900 2xl:min-w-[180px] 2xl:mx-20 xl:mx-15">
       <div className="mx-auto max-w-6xl px-4 py-6  2xl:min-w-[1300px]">
         {/* Header */}
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

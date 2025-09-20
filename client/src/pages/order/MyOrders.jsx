@@ -14,6 +14,8 @@ import {
   FaTimesCircle,
 } from "react-icons/fa";
 
+import NavbarCustomer from "../../components/NavbarCustomer";
+
 /** Helpers */
 const toId = (v) => (v != null ? String(v) : "");
 const fmt = (n) =>
@@ -117,7 +119,9 @@ const MyOrders = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+
+    <><NavbarCustomer/>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 2xl:ml-30 2xl:mr-30">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8 text-center">
@@ -308,6 +312,8 @@ const MyOrders = () => {
         )}
       </div>
     </div>
+
+    </>
   );
 };
 

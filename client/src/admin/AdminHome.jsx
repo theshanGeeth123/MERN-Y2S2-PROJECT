@@ -13,8 +13,9 @@ import {
   FaTimes,
   FaMoon,
   FaSun,
-  FaSignOutAlt 
+  FaSignOutAlt
 } from "react-icons/fa";
+import { toast } from "react-toastify";
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -40,12 +41,14 @@ export default function AdminHome() {
     return "text-gray-600 dark:text-gray-400";
   };
 
-  const NavItem = ({ icon, label, to }) => (
+  // ⬇️ UPDATED: accept optional onClick
+  const NavItem = ({ icon, label, to, onClick }) => (
     <button
       type="button"
       onClick={() => {
         setMobileOpen(false);
-        navigate(to);
+        if (typeof onClick === "function") onClick();
+        else if (to) navigate(to);
       }}
       className="py-4 cursor-pointer w-full flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-primary/40"
     >
@@ -79,20 +82,31 @@ export default function AdminHome() {
     if (mobileOpen) closeBtnRef.current?.focus();
   }, [mobileOpen]);
 
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  sessionStorage.clear();
+  // ⬇️ UPDATED: confirm + toast
+  const handleLogout = () => {
+    const ok = window.confirm("Are you sure you want to log out?");
+    if (!ok) return;
 
-  // Replace history so user can’t go back
-  navigate("/main-home", { replace: true });
+    try {
+      localStorage.removeItem("token");
+      sessionStorage.clear();
 
-  // Clear forward/back cache
-  window.history.pushState(null, "", window.location.href);
-  window.addEventListener("popstate", function () {
-    navigate("/main-home", { replace: true });
-  });
-};
+      // Navigate to public page
+      navigate("/main-home", { replace: true });
 
+      // Optional: harden against back button
+      window.history.pushState(null, "", window.location.href);
+      window.addEventListener("popstate", function () {
+        navigate("/main-home", { replace: true });
+      });
+
+      toast.success("You have been logged out.");
+    } catch (err) {
+      toast.error("Something went wrong while logging out.");
+      // You might also want to report the error somewhere
+      // console.error(err);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-300">
@@ -110,15 +124,13 @@ const handleLogout = () => {
           <h1 className="text-base font-semibold text-gray-900 dark:text-gray-100">
             Admin Portal
           </h1>
-          
         </div>
       </header>
 
-      {/* MAIN GRID: sidebar + content (no spacer divs) */}
+      {/* MAIN GRID: sidebar + content */}
       <div
         className={`
           grid min-h-screen md:grid-cols-[18rem_1fr]
-          ${/* top padding ONLY on mobile to clear fixed header */""}
           pt-14 md:pt-0
         `}
       >
@@ -127,23 +139,21 @@ const handleLogout = () => {
           <div className="sticky top-0 z-30 bg-inherit">
             <div className="h-16 px-6 flex items-center justify-between border-b dark:border-gray-800">
               <div className="flex items-center gap-2">
-               
                 <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
                   Admin Portal
                 </span>
               </div>
-              
             </div>
           </div>
 
           <nav className="flex-1 py-8 px-3 space-y-4 ">
-            <NavItem  icon={<FaBox />} label="Manage Products" to="/admin/products" />
+            <NavItem icon={<FaBox />} label="Manage Products" to="/admin/products" />
             <NavItem icon={<FaClipboardList />} label="Orders" to="/admin/orders" />
             <NavItem icon={<FaUserTie />} label="Staff Members" to="/admin/staff" />
             <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
             <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
-            <NavItem icon={<FaSignOutAlt  />} label="logout" onClick={handleLogout()} />
-         
+            {/* ⬇️ UPDATED: call handleLogout on click (don't invoke immediately) */}
+            <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
           </nav>
 
           <div className="p-4 border-t dark:border-gray-800 text-xs text-gray-500 dark:text-gray-400">
@@ -179,7 +189,8 @@ const handleLogout = () => {
               <NavItem icon={<FaUserTie />} label="Staff Members" to="/admin/staff" />
               <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
               <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
-              <NavItem icon={<FaSignOutAlt  />} label="logout" to="/main-home" />
+              {/* ⬇️ UPDATED: mobile logout also uses confirm + toast */}
+              <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
             </nav>
           </div>
         </div>
@@ -213,7 +224,7 @@ const handleLogout = () => {
                   onClick={() => navigate(a.to)}
                   className="group rounded-xl border dark:border-gray-800 bg-white/80 dark:bg-gray-900/60 hover:bg-white dark:hover:bg-gray-900 shadow-sm p-3 flex items-center gap-3 transition focus:outline-none focus:ring-2 focus:ring-primary/40"
                 >
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-200">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg  text-gray-700 dark:bg:white/10 dark:text-gray-200">
                     {a.icon}
                   </span>
                   <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -250,10 +261,12 @@ const handleLogout = () => {
                     <div
                       className={[
                         "inline-flex h-10 w-10 items-center justify-center rounded-full",
-                        ["bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300",
-                         "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300",
-                         "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
-                         "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300"][idx % 4],
+                        [
+                          "bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300",
+                          "bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300",
+                          "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+                          "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+                        ][idx % 4],
                       ].join(" ")}
                     >
                       {idx === 0 && <FaClipboardList />}
@@ -283,4 +296,3 @@ const handleLogout = () => {
     </div>
   );
 }
-

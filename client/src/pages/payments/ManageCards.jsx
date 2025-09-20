@@ -11,6 +11,8 @@ import amexIcon from "./card_type_images/AmericanExpress.png";
 import discoverIcon from "./card_type_images/Discover.png";
 import otherIcon from "./card_type_images/Other.png";
 
+import NavbarCustomer from "../../components/NavbarCustomer";
+
 const ManageCards = () => {
   const { userData } = useContext(AppContent);
   const navigate = useNavigate();
@@ -222,7 +224,9 @@ const ManageCards = () => {
 
   // --- UI ---
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+
+    <><NavbarCustomer/>
+    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 2xl:ml-30 2xl:mr-30">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -231,9 +235,9 @@ const ManageCards = () => {
               onClick={() => navigate(-1)}
               className="flex items-center text-gray-600 hover:text-gray-800 mr-4"
             >
-              <FaArrowLeft className="mr-2" />
+              {/* <FaArrowLeft className="mr-2" /> */}
             </button>
-            <h1 className="text-2xl font-bold text-gray-900">Payment Methods</h1>
+            <h1 className="text-2xl font-bold text-gray-900">Add your card details</h1>
           </div>
         </div>
 
@@ -241,7 +245,7 @@ const ManageCards = () => {
           {/* Add Card Form */}
           <div className="bg-white rounded-xl shadow-sm p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-              <FaPlus className="mr-2 text-blue-500" /> Add New Card
+               Add New Card
             </h2>
             <form onSubmit={addCard} className="space-y-4">
               <div>
@@ -479,6 +483,7 @@ const ManageCards = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

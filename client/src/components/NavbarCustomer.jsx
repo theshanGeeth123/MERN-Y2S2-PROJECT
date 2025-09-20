@@ -7,7 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import MainLogo from "../assets/Main_Logo.png";
 
-function NavbarAdmin() {
+function NavbarCustomer() {
   const navigate = useNavigate();
 
   // Superset of both branches' context values
@@ -76,56 +76,26 @@ function NavbarAdmin() {
       <img src={MainLogo} alt="logo" className="w-28 sm:w-32" />
 
       <div className="flex items-center gap-4">
-        {/* Notifications (only when logged in) */}
-        {isLoggedin && (
-          <button
-            onClick={viewNotifications}
-            aria-label="Notifications"
-            className="relative p-2 rounded-full hover:bg-gray-100 transition"
-            title="Notifications"
-          >
-            {/* Bell icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-gray-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="1.8"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14.243 17.657a2 2 0 01-4.486 0M18 8a6 6 0 10-12 0c0 4-2 5.5-2 5.5h16S18 12 18 8z"
-              />
-            </svg>
-            {/* Optional unread badge */}
-            {userData?.unreadCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 h-4 min-w-4 px-1 flex items-center justify-center rounded-full bg-red-500 text-white text-[10px] leading-none">
-                {userData.unreadCount > 9 ? "9+" : userData.unreadCount}
-              </span>
-            )}
-          </button>
-        )}
+
 
         
           <button
-            onClick={() => navigate("/admin/home")}
+            onClick={() => navigate("/customer-home")}
             className="cursor-pointer 2xl:mr-5 flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all"
           >
             Dashboard
           </button>
-
-          <button
-            onClick={() => navigate("/main-home")}
-            className=" bg-black/80 text-white cursor-pointer 2xl:mr-5 flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2  hover:bg-black transition-all"
-          >
-           Log out
-          </button>
        
+            <button
+            onClick={() => navigate("/main-home")}
+            className="bg-black/80 text-white cursor-pointer 2xl:mr-5 flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2  hover:bg-black transition-all"
+          >
+            Home
+          </button>
+
       </div>
     </div>
   );
 }
 
-export default NavbarAdmin;
+export default NavbarCustomer;

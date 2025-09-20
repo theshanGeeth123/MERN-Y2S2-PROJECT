@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavbarCustomer from "../../components/NavbarCustomer";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
@@ -58,7 +59,9 @@ const CartPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+
+    <><NavbarCustomer/>
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 2xl:ml-30 2xl:mr-30">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-3xl font-bold text-gray-900">Your Shopping Cart</h1>
@@ -198,6 +201,7 @@ const CartPage = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 
