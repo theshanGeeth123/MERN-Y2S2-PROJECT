@@ -1,4 +1,3 @@
-// components/mRentalDepositChart.jsx
 import React, { useMemo, useRef } from "react";
 import {
   LineChart,
@@ -15,7 +14,7 @@ import jsPDF from "jspdf";
 const mRentalDepositChart = ({ chartData = [], loading, error }) => {
   const chartRef = useRef();
 
-  // Prepare last 30 days data with 0 for missing days
+  //  last 30 days data in the chart
   const finalChartData = useMemo(() => {
     const today = new Date();
     const last30Days = [];
@@ -23,7 +22,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
     for (let i = 29; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
-      const dateStr = d.toISOString().split("T")[0];
+      const dateStr = d.toISOString().split("T")[0]; //assign 0 for null records in the chart
       last30Days.push({ date: dateStr, amount: 0 });
     }
 
@@ -41,7 +40,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
     }));
   }, [chartData]);
 
-  // Download chart as A4 PDF
+  // chart downloading function
   const handleDownloadPDF = async () => {
     if (!chartRef.current) return;
 
@@ -57,14 +56,14 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // PDF title
+    // title of pdf
     const title = "Rental Deposit Revenue";
     pdf.setFontSize(24);
     pdf.setTextColor("#2563eb");
     const titleWidth = pdf.getTextWidth(title);
     pdf.text(title, (pageWidth - titleWidth) / 2, 40);
 
-    // Scale chart to fit below title
+    
     const ratio = Math.min(pageWidth / canvas.width, (pageHeight - 80) / canvas.height);
     const x = (pageWidth - canvas.width * ratio) / 2;
     const y = 60;
@@ -108,7 +107,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
                 <Line
                   type="linear" 
                   dataKey="amount"
-                  stroke="#2563eb"
+                  stroke="#0036aaff"
                   strokeWidth={2}
                   dot={{ r: 4 }}
                 />
@@ -119,7 +118,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
           <div className="mt-4 text-center">
             <button
               onClick={handleDownloadPDF}
-              className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
+              className="bg-blue-900 text-white px-5 py-2 rounded hover:bg-blue-700"
             >
               Download PDF
             </button>

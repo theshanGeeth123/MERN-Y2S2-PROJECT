@@ -12,12 +12,7 @@ const MRequestAdmin = () => {
     fetchRequests();
   }, [fetchRequests]);
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this request?")) return;
-    const result = await deleteRequest(id);
-    if (!result.success) alert("Failed: " + result.message);
-  };
-
+ 
   const handleAction = async (id, action) => {
     const result = await updateRequestStatus(id, action);
     if (!result.success) {
@@ -25,7 +20,7 @@ const MRequestAdmin = () => {
     }
   };
 
-  if (loading) return <p>Loading requests...</p>;
+
   if (error) return <p className="text-red-600">{error}</p>;
 
   return (
@@ -81,7 +76,11 @@ const MRequestAdmin = () => {
 
               <div className="flex items-center justify-center gap-2">
                 <button
-                  onClick={() => handleAction(req._id, "accept")}
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to ACCEPT this request?")) {
+                      handleAction(req._id, "accept");
+                    }
+                  }}
                   className="flex items-center gap-1 p-2 rounded hover:bg-green-100"
                   title="Accept request"
                 >
@@ -89,25 +88,28 @@ const MRequestAdmin = () => {
                 </button>
 
                 <button
-                  onClick={() => handleAction(req._id, "reject")}
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to REJECT this request?")) {
+                      handleAction(req._id, "reject");
+                    }
+                  }}
                   className="flex items-center gap-1 p-2 rounded hover:bg-red-100"
                   title="Reject request"
                 >
                   <X className="text-red-500" /> Reject
                 </button>
-
-                <button
-                  onClick={() => handleDelete(req._id)}
-                  className="p-2 rounded hover:bg-gray-100"
-                  title="Delete request"
-                >
-                  <Trash2 />
-                </button>
               </div>
+
             </li>
           ))}
         </ul>
       )}
+
+      <div className="mt-10 font-light text-center mb-40">
+              <Link to="/admin/all-rentals" className="text-lg text-blue-800 hover:underline">
+                Back to Rentals
+              </Link>
+            </div>
     </div>
   );
 };
