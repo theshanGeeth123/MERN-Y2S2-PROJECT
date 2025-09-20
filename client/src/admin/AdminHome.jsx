@@ -13,10 +13,13 @@ import {
   FaTimes,
   FaMoon,
   FaSun,
-  FaSignOutAlt
+  FaBoxes,
+  FaSignOutAlt,
+  FaCalendarCheck,
+  FaCommentDots,
+  FaQuestionCircle,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
-
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -36,13 +39,13 @@ export default function AdminHome() {
 
   const changeStyle = (c) => {
     if (!c) return "text-gray-500 dark:text-gray-400";
-    if (c.toLowerCase().includes("no change")) return "text-gray-500 dark:text-gray-400";
+    if (c.toLowerCase().includes("no change"))
+      return "text-gray-500 dark:text-gray-400";
     if (c.startsWith("-")) return "text-red-600 dark:text-red-400";
     if (c.startsWith("+")) return "text-emerald-600 dark:text-emerald-400";
     return "text-gray-600 dark:text-gray-400";
   };
 
-  // ⬇️ UPDATED: accept optional onClick
   const NavItem = ({ icon, label, to, onClick }) => (
     <button
       type="button"
@@ -53,8 +56,8 @@ export default function AdminHome() {
       }}
       className="py-4 cursor-pointer w-full flex items-center gap-3 p-3 rounded-lg text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10 transition focus:outline-none focus:ring-2 focus:ring-primary/40"
     >
-      <span className="text-lg shrink-0 ">{icon}</span>
-      <span className="text-[16px] font-medium ">{label}</span>
+      <span className="text-lg shrink-0">{icon}</span>
+      <span className="text-[16px] font-medium">{label}</span>
     </button>
   );
 
@@ -83,7 +86,6 @@ export default function AdminHome() {
     if (mobileOpen) closeBtnRef.current?.focus();
   }, [mobileOpen]);
 
-  // ⬇️ UPDATED: confirm + toast
   const handleLogout = () => {
     const ok = window.confirm("Are you sure you want to log out?");
     if (!ok) return;
@@ -92,10 +94,8 @@ export default function AdminHome() {
       localStorage.removeItem("token");
       sessionStorage.clear();
 
-      // Navigate to public page
       navigate("/main-home", { replace: true });
 
-      // Optional: harden against back button
       window.history.pushState(null, "", window.location.href);
       window.addEventListener("popstate", function () {
         navigate("/main-home", { replace: true });
@@ -104,14 +104,10 @@ export default function AdminHome() {
       toast.success("You have been logged out.");
     } catch (err) {
       toast.error("Something went wrong while logging out.");
-      // You might also want to report the error somewhere
-      // console.error(err);
     }
   };
 
   return (
-
-   
     <div className="min-h-screen bg-gray-300">
       {/* MOBILE TOP BAR ONLY */}
       <header className="fixed inset-x-0 top-0 z-40 border-b md:hidden bg-white/70 dark:bg-gray-900/80 backdrop-blur">
@@ -131,14 +127,9 @@ export default function AdminHome() {
       </header>
 
       {/* MAIN GRID: sidebar + content */}
-      <div
-        className={`
-          grid min-h-screen md:grid-cols-[18rem_1fr]
-          pt-14 md:pt-0
-        `}
-      >
+      <div className="grid min-h-screen md:grid-cols-[18rem_1fr] pt-14 md:pt-0">
         {/* SIDEBAR (desktop) */}
-        <aside className="hidden md:flex md:flex-col bg-white/90 dark:bg-gray-950 border-r dark:border-gray-800">
+        <aside className="hidden md:flex md:flex-col bg-white/90 dark:bg-gray-950 border-r dark:border-gray-800 overflow-y-auto">
           <div className="sticky top-0 z-30 bg-inherit">
             <div className="h-16 px-6 flex items-center justify-between border-b dark:border-gray-800">
               <div className="flex items-center gap-2">
@@ -149,16 +140,16 @@ export default function AdminHome() {
             </div>
           </div>
 
-          <nav className="flex-1 py-8 px-3 space-y-4 ">
+          <nav className="flex-1 py-8 px-3 space-y-4">
             <NavItem icon={<FaBox />} label="Manage Products" to="/admin/products" />
             <NavItem icon={<FaClipboardList />} label="Orders" to="/admin/orders" />
             <NavItem icon={<FaUserTie />} label="Staff Members" to="/admin/staff" />
             <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
             <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
-            <NavItem icon={<FaBox  />} label="Packaages" to="/admin/packages" />
-            <NavItem icon={<FaBox  />} label="Bookings" to="/admin/bookings" />
-            <NavItem icon={<FaBox  />} label="Feedbacks" to="/admin/admin-feedback" />
-            <NavItem icon={<FaBox  />} label="Q&A" to="/admin/admin-question" />
+            <NavItem icon={<FaBoxes />} label="Packages" to="/admin/packages" />
+            <NavItem icon={<FaCalendarCheck />} label="Bookings" to="/admin/bookings" />
+            <NavItem icon={<FaCommentDots />} label="Feedbacks" to="/admin/admin-feedback" />
+            <NavItem icon={<FaQuestionCircle />} label="Q&A" to="/admin/admin-question" />
             <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
           </nav>
 
@@ -168,34 +159,48 @@ export default function AdminHome() {
         </aside>
 
         {/* MOBILE DRAWER */}
-        <div className={` fixed inset-0 z-50 md:hidden ${mobileOpen ? "block" : "hidden"}`} aria-hidden={!mobileOpen}>
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
+        <div
+          className={`fixed inset-0 z-50 md:hidden ${mobileOpen ? "block" : "hidden"}`}
+          aria-hidden={!mobileOpen}
+        >
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setMobileOpen(false)}
+          />
           <div
             role="dialog"
             aria-modal="true"
-            className={` absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-950 shadow-xl transform transition-transform ${
-              mobileOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+            // h-dvh handles mobile browser chrome; flex/overflow make list scrollable
+            className={`absolute left-0 top-0 h-dvh w-72 bg-white dark:bg-gray-950 shadow-xl transform transition-transform
+              ${mobileOpen ? "translate-x-0" : "-translate-x-full"} flex flex-col
+              pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]`}
           >
-            <div className="h-14 px-4 border-b dark:border-gray-800 flex items-center justify-between ">
-              <span className="font-semibold  text-gray-900 dark:text-gray-100">Admin Portal</span>
+            <div className="h-14 px-4 border-b dark:border-gray-800 flex items-center justify-between">
+              <span className="font-semibold text-gray-900 dark:text-gray-100">
+                Admin Portal
+              </span>
               <button
                 type="button"
                 aria-label="Close menu"
-                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10  text-gray-700 dark:text-gray-200"
+                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200"
                 onClick={() => setMobileOpen(false)}
                 ref={closeBtnRef}
               >
                 <FaTimes />
               </button>
             </div>
-            <nav className="p-4 space-y-1">
+
+            {/* SCROLLABLE NAV AREA */}
+            <nav className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-1 pr-3">
               <NavItem icon={<FaBox />} label="Manage Products" to="/admin/products" />
               <NavItem icon={<FaClipboardList />} label="Orders" to="/admin/orders" />
               <NavItem icon={<FaUserTie />} label="Staff Members" to="/admin/staff" />
               <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
               <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
-              {/* ⬇️ UPDATED: mobile logout also uses confirm + toast */}
+              <NavItem icon={<FaBoxes />} label="Packages" to="/admin/packages" />
+              <NavItem icon={<FaCalendarCheck />} label="Bookings" to="/admin/bookings" />
+              <NavItem icon={<FaCommentDots />} label="Feedbacks" to="/admin/admin-feedback" />
+              <NavItem icon={<FaQuestionCircle />} label="Q&A" to="/admin/admin-question" />
               <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
             </nav>
           </div>
@@ -206,12 +211,8 @@ export default function AdminHome() {
           <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-6 md:py-8">
             {/* Header */}
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-black">
-                Welcome back, Admin!
-              </h2>
-              <p className="text-gray-600">
-                Here’s what’s happening with your account today.
-              </p>
+              <h2 className="text-2xl font-bold text-black">Welcome back, Admin!</h2>
+              <p className="text-gray-600">Here’s what’s happening with your account today.</p>
             </div>
 
             {/* Quick actions */}
@@ -230,7 +231,7 @@ export default function AdminHome() {
                   onClick={() => navigate(a.to)}
                   className="group rounded-xl border dark:border-gray-800 bg-white/80 dark:bg-gray-900/60 hover:bg-white dark:hover:bg-gray-900 shadow-sm p-3 flex items-center gap-3 transition focus:outline-none focus:ring-2 focus:ring-primary/40"
                 >
-                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg  text-gray-700 dark:bg:white/10 dark:text-gray-200">
+                  <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-700 dark:text-gray-200">
                     {a.icon}
                   </span>
                   <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
@@ -250,7 +251,7 @@ export default function AdminHome() {
                   <div
                     className={[
                       "absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-20",
-                      ["bg-purple-400","bg-indigo-400","bg-emerald-400","bg-amber-400"][idx % 4],
+                      ["bg-purple-400", "bg-indigo-400", "bg-emerald-400", "bg-amber-400"][idx % 4],
                     ].join(" ")}
                     aria-hidden="true"
                   />
