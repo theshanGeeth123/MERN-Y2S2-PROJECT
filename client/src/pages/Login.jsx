@@ -118,7 +118,7 @@ function Login() {
           setIsLoggedin(true);
           getUserData();
           localStorage.setItem("customer", JSON.stringify({ email }));
-          navigate("/");
+          navigate("/main-home");
         } else {
           toast.error(data.message || "Registration failed");
         }
@@ -132,7 +132,7 @@ function Login() {
           setIsLoggedin(true);
           getUserData();
           localStorage.setItem("customer", JSON.stringify({ email }));
-          navigate("/");
+          navigate("/main-home");
         } else {
           toast.error(data.message || "Login failed");
         }

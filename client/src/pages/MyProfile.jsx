@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+import NavbarCustomer from '../components/NavbarCustomer';
+
 function MyProfile() {
   const [user, setUser] = useState({
     name: '',
@@ -130,6 +132,8 @@ function MyProfile() {
     msg ? <p id={id} className="mt-1 text-xs text-red-600">{msg}</p> : null;
 
   return (
+
+    <><NavbarCustomer/>
     <div className="max-w-4xl mx-auto p-6 mt-8 mb-12">
       <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">
         {/* Header Section */}
@@ -329,6 +333,7 @@ function MyProfile() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

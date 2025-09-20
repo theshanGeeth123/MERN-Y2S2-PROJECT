@@ -61,7 +61,7 @@ function Navbar() {
         toast.error(data.message || "Logout failed");
       }
 
-      navigate("/");
+      navigate("/main-home");
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
     }
@@ -126,7 +126,7 @@ function Navbar() {
                     onClick={viewHome}
                     className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10 rounded"
                   >
-                    Home
+                    Dashboard
                   </li>
                 )}
                 {userData.isAccountVerified && (

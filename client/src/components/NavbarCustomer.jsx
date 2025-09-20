@@ -61,7 +61,7 @@ function NavbarCustomer() {
         toast.error(data.message || "Logout failed");
       }
 
-      navigate("/");
+      navigate("/main-home");
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
     }
