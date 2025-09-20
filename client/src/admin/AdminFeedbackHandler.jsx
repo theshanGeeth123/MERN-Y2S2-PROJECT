@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { Star } from "lucide-react";
 import SwAdminNavbar from './SwAdminNavbar';
 
-function CustomerFeedbackDisplay() {
+function AdminFeedbackHandler() {
   const [loading, setLoading] = useState(false);
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedback, setFeedback] = useState(null);
@@ -50,7 +50,7 @@ function CustomerFeedbackDisplay() {
   return (
     <div className="min-h-screen flex flex-col bg-green-100">
       <SwAdminNavbar />
-      <div className="w-full max-w-6xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
+      <div className="w-full max-w-7xl mx-auto mt-10 p-8 bg-white shadow-lg rounded-2xl">
         <h3 className="text-4xl font-bold text-left mb-6">Feedbacks</h3>
           {loading ? (
             <div className="space-y-3">
@@ -70,7 +70,7 @@ function CustomerFeedbackDisplay() {
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-100">Photographer</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-100">Rate</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-gray-100">Comment</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-100">Created At</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-100">Created/Last Updated Time</th>
                     <th className="px-4 py-3 text-right text-sm font-medium text-gray-100">Action</th>
                   </tr>
                 </thead>
@@ -86,7 +86,7 @@ function CustomerFeedbackDisplay() {
                           </div>
                         </td>
                         <td className="px-4 py-3 text-gray-700 whitespace-pre-wrap"> {fb.comment} </td>
-                        <td className="px-4 py-3 text-gray-700 whitespace-pre-wrap"> {new Date(fb.createdAt).toLocaleString()} </td>
+                        <td className="px-4 py-3 text-gray-700 whitespace-pre-wrap"> {new Date(fb.createdAt).toISOString().split('T')[0]} </td>
                         <td className="px-4 py-3 text-right">
                           <div className="flex justify-end gap-2">
                             <button onClick={() => deleteFeedback(fb._id)} className="cursor-pointer rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700">
@@ -104,4 +104,4 @@ function CustomerFeedbackDisplay() {
   );
 }
 
-export default CustomerFeedbackDisplay;
+export default AdminFeedbackHandler;
