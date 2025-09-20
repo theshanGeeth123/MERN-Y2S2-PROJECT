@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+import NavbarAdmin from "../components/NavbarAdmin";
+
 const BOOKING_API = import.meta.env.VITE_BACKEND_URL
   ? `${import.meta.env.VITE_BACKEND_URL}/api/bookings`
   : "http://localhost:4000/api/bookings";
@@ -90,6 +92,8 @@ function Bookings() {
   };
 
   return (
+    <><NavbarAdmin/>
+
     <div className="min-h-screen bg-gray-100 py-12 px-4">
       <div className="w-full max-w-full mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-2 text-center">
@@ -241,6 +245,7 @@ function Bookings() {
         </div>
       )}
     </div>
+    </>
   );
 }
 

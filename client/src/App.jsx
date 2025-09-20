@@ -53,6 +53,13 @@ import StaffReport from './admin/members/StaffReport.jsx';
 import Packages from './admin/Packages'; 
 import PackageDetail from './admin/PackageDetail';
 
+import UserPackages from './pages/UserPackages';
+import BookingForm from './pages/BookingForm';
+
+import UserBookings from './pages/UserBookings'
+import Bookings from './pages/Bookings';
+
+
 
 
 function App() {
@@ -112,6 +119,11 @@ function App() {
 
         <Route path="/admin/packages" element={<Packages />} />
         <Route path="/packageDetail/:id" element={<PackageDetail />} />
+
+         <Route path="/userpackages" element={<UserPackages />} />
+         <Route path="/booking-request" element={<BookingForm />} />
+          <Route path="/my-bookings" element={<UserBookings />} />
+          <Route path="/admin/bookings" element={<Bookings />} />
 
       </Routes>
     </div>

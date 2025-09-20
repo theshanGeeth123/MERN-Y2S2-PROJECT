@@ -18,6 +18,7 @@ import { AppContent } from "../../context/AppContext";
 const links = [
   { label: "View Products", path: "/products", icon: <FaShoppingBag /> },
   { label: "Packages", path: "/userpackages", icon: <FaShoppingBag /> },
+  { label: "My Bookings", path: "/my-bookings", icon: <FaShoppingBag /> },
   { label: "View Cart", path: "/cart", icon: <FaShoppingCart /> },
   { label: "My Cards", path: "/cards", icon: <FaCreditCard /> },
   { label: "My Orders", path: "/my-orders", icon: <FaClipboardList /> },

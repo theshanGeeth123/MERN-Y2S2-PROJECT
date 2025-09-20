@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+
 export default function AdminHome() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -109,6 +110,8 @@ export default function AdminHome() {
   };
 
   return (
+
+   
     <div className="min-h-screen bg-gray-300">
       {/* MOBILE TOP BAR ONLY */}
       <header className="fixed inset-x-0 top-0 z-40 border-b md:hidden bg-white/70 dark:bg-gray-900/80 backdrop-blur">
@@ -153,6 +156,7 @@ export default function AdminHome() {
             <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
             <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
             <NavItem icon={<FaBox  />} label="Packaages" to="/admin/packages" />
+            <NavItem icon={<FaBox  />} label="Bookings" to="/admin/bookings" />
             <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
           </nav>
 

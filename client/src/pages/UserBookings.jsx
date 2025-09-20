@@ -3,6 +3,9 @@ import axios from "axios";
 import { AppContent } from "../context/AppContext";
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from "react-icons/fa";
 
+import NavbarCustomer from "../components/NavbarCustomer";
+
+
 const BOOKING_API = import.meta.env.VITE_BACKEND_URL
   ? `${import.meta.env.VITE_BACKEND_URL}/api/bookings/user/`
   : "http://localhost:4000/api/bookings/user/";
@@ -45,6 +48,8 @@ function UserBookings() {
   if (loading) return <p className="text-center mt-10">Loading your bookings...</p>;
 
   return (
+
+    <><NavbarCustomer/>
     <div className="min-h-screen bg-white py-12">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center text-purple-900">
@@ -105,6 +110,8 @@ function UserBookings() {
         </div>
       </div>
     </div>
+
+    </>
   );
 }
 
