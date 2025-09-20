@@ -180,3 +180,22 @@ export const getAllProcessedRequests = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+
+
+// New controller function for chart data
+export const getAcceptedChartData = async (req, res) => {
+  try {
+    const accepted = await ProcessedRequest.find({ status: "accept" }).sort({ processedAt: 1 });
+
+    const chartData = accepted.map(req => ({
+      date: req.processedAt ? req.processedAt.toISOString().split("T")[0] : "Unknown",
+      amount: req.amount
+    }));
+
+    res.json({ success: true, data: chartData });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

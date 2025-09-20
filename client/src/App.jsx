@@ -26,6 +26,7 @@ import MRequestCus from "./pages/MRequestCus";
 import MRequestAdmin from "./pages/MRequestAdmin";
 import MProcessedReq from "./pages/mprocessedReqCus";
 import MProcessedReqAd from "./pages/mProcessedReqAdmin";
+import MTodayReqAd from "./pages/mTodayReqAdmin";
 
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 const authToken = localStorage.getItem("token");
@@ -60,6 +61,7 @@ function App() {
         <Route path="/admin/all-rentals" element={<MRentPage />} />
         <Route path="/admin/requests" element={<MRequestAdmin />} />
         <Route path="/admin/processed-requests" element={<MProcessedReqAd />} />
+        <Route path="/admin/processed-today" element={<MTodayReqAd />} />
 
       </Routes>
     </div>

@@ -76,23 +76,11 @@ export const useRentItemsStore = create((set, get) => ({
    rentalCart: JSON.parse(localStorage.getItem("rentalCart")) || [],
 
   // Add item with quantity support
-  addToCart: (item, quantity = 1) => {
+  addToCart: (item) => {
     set((state) => {
-      const existingItemIndex = state.rentalCart.findIndex(
-        (cartItem) => cartItem._id === item._id
-      );
-
-      let updatedCart;
-
-      if (existingItemIndex >= 0) {
-        // Item exists → increase quantity
-        updatedCart = [...state.rentalCart];
-        updatedCart[existingItemIndex].quantity += quantity;
-      } else {
-        // Item does not exist → add new item with quantity
-        updatedCart = [...state.rentalCart, { ...item, quantity }];
-      }
-
+      // Only add item if not already in cart
+      const exists = state.rentalCart.some((cartItem) => cartItem._id === item._id);
+      let updatedCart = exists ? state.rentalCart : [...state.rentalCart, item];
       localStorage.setItem("rentalCart", JSON.stringify(updatedCart));
       return { rentalCart: updatedCart };
     });
@@ -111,29 +99,10 @@ export const useRentItemsStore = create((set, get) => ({
     localStorage.removeItem("rentalCart");
   },
 
-  updateQuantity: (id, quantity) => {
-    set((state) => {
-      const updatedCart = state.rentalCart.map((item) =>
-        item._id === id ? { ...item, quantity: quantity } : item
-      );
-      localStorage.setItem("rentalCart", JSON.stringify(updatedCart));
-      return { rentalCart: updatedCart };
-    });
-  },
-  /*
-  getTotalDeposit: () =>
-  get().rentalCart.reduce(
-    (acc) => acc + 500, 
-    0
-  ),
-*/
 
- getTotalDeposit: () => {
-    return get().rentalCart.reduce(
-      (total, item) => total + 500* (item.quantity || 1),
-      0
-    );
-  },
 
+  getTotalDeposit: () => {
+    return get().rentalCart.reduce((total, item) => total + 500, 0);
+  },
 
 }));
