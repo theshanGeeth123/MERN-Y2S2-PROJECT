@@ -50,10 +50,10 @@ export const updateQuestion = async (req, res) => {
 };
 
 export const deleteQuestion = async (req, res) => {
-  const { email } = req.query;
-  console.log(email);
+  const { id } = req.query;
+  console.log(id);
   try {
-    const question = await questionModel.findByIdAndDelete(email);
+    const question = await questionModel.findByIdAndDelete(id);
     if (!question) {
       return res.status(404).json({ success: false, message: "Question not found" });
     }
