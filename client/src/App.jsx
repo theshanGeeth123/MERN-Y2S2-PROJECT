@@ -50,6 +50,10 @@ import StaffLogin from "./staff/StaffLogin.jsx";
 import StaffProfile from "./staff/StaffProfile";
 import StaffReport from './admin/members/StaffReport.jsx';
 
+import Packages from './admin/Packages'; 
+import PackageDetail from './admin/PackageDetail';
+
+
 
 function App() {
   return (
@@ -104,6 +108,10 @@ function App() {
 
         <Route path="/staff/profile" element={<StaffProfile />} />
         <Route path="/admin/staff/report" element={<StaffReport />} />
+
+
+        <Route path="/admin/packages" element={<Packages />} />
+        <Route path="/packageDetail/:id" element={<PackageDetail />} />
 
       </Routes>
     </div>

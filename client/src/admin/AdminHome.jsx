@@ -152,7 +152,7 @@ export default function AdminHome() {
             <NavItem icon={<FaUserTie />} label="Staff Members" to="/admin/staff" />
             <NavItem icon={<FaBell />} label="Notifications" to="/admin/notifications" />
             <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
-            {/* ⬇️ UPDATED: call handleLogout on click (don't invoke immediately) */}
+            <NavItem icon={<FaBox  />} label="Packaages" to="/admin/packages" />
             <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
           </nav>
 
