@@ -75,10 +75,9 @@ export const useRentItemsStore = create((set, get) => ({
   
    rentalCart: JSON.parse(localStorage.getItem("rentalCart")) || [],
 
-  // Add item with quantity support
   addToCart: (item) => {
     set((state) => {
-      // Only add item if not already in cart
+      
       const exists = state.rentalCart.some((cartItem) => cartItem._id === item._id);
       let updatedCart = exists ? state.rentalCart : [...state.rentalCart, item];
       localStorage.setItem("rentalCart", JSON.stringify(updatedCart));

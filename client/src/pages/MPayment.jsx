@@ -14,7 +14,7 @@ import {
 } from "@stripe/react-stripe-js";
 import axios from "axios";
 
- import { useRentItemsStore } from "../mstore/mrentItems";
+import { useRentItemsStore } from "../mstore/mrentItems";
  
 
 
@@ -56,6 +56,7 @@ function CheckoutForm() {
   });
 
 const clearCart =  useRentItemsStore((state) => state.clearCart);
+
   // Load user from localStorage
   useEffect(() => {
     const customer = JSON.parse(localStorage.getItem("customer"));
@@ -72,7 +73,7 @@ const clearCart =  useRentItemsStore((state) => state.clearCart);
   }, [navigate]);
 
 
-  // Fetch Stripe client secret
+  // Fetch Stripe
   useEffect(() => {
     if (!formData.amount) return;
     axios
@@ -88,19 +89,20 @@ const clearCart =  useRentItemsStore((state) => state.clearCart);
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Date validation helpers
+  // Date validation 
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, "0");
   const dd = String(today.getDate()).padStart(2, "0");
-  const todayStr = `${yyyy}-${mm}-${dd}`;
+  const todayStr = `${yyyy}-${mm}-${dd}`; //getting today
 
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
   const tomorrowStr = `${tomorrow.getFullYear()}-${String(
     tomorrow.getMonth() + 1
-  ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;
+  ).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`;//getting tomorrow
 
+  //validate Date
   const handleDateChange = (e) => {
     const { name, value } = e.target;
     const selectedDate = new Date(value);
@@ -114,7 +116,7 @@ const clearCart =  useRentItemsStore((state) => state.clearCart);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Validate form before payment
+  // Validate form before pay
   const validateForm = () => {
     const { name, email, startDate, endDate, account, description } = formData;
     if (!name || !email || !startDate || !endDate || !account || !description) {
@@ -127,7 +129,7 @@ const clearCart =  useRentItemsStore((state) => state.clearCart);
     return true;
   };
 
-  // Handle payment and save
+  // Handle and save payment
   const handlePaymentAndSave = async () => {
     if (!stripe || !elements || !clientSecret) return;
     setLoading(true);
@@ -205,13 +207,58 @@ const clearCart =  useRentItemsStore((state) => state.clearCart);
         <div className="space-y-6 ">
           <h2 className="text-2xl font-bold text-white text-center">Rental Information</h2>
           <div className="space-y-4">
-            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Full Name" className="w-full p-2 border rounded-xl bg-white" />
-            <input type="email" name="email" value={formData.email} readOnly className="w-full p-2 rounded-xl bg-gray-100" />
-            <input type="number" name="amount" value={formData.amount} readOnly className="w-full p-2 border rounded-xl bg-gray-100"/>
-            <input type="text" name="description" value={formData.description} onChange={handleChange} placeholder="Description" className="w-full p-2 border rounded-xl bg-white" />
-            <input type="text" name="account" value={formData.account} onChange={(e) => setFormData({ ...formData, account: e.target.value.replace(/\D/g, "") })} placeholder="Add Your Account Number for Refund" className="w-full p-2 border rounded-xl bg-white" />
-            <input type="date" name="startDate" value={formData.startDate} min={todayStr} onChange={handleDateChange} className="w-full p-2 border rounded-xl bg-white" />
-            <input type="date" name="endDate" value={formData.endDate} min={tomorrowStr} onChange={handleDateChange} className="w-full p-2 border rounded-xl bg-white" />
+
+            <input 
+            type="text" 
+            name="name" 
+            value={formData.name} 
+            onChange={handleChange} 
+            placeholder="Full Name" 
+            className="w-full p-2 border rounded-xl bg-white" />
+
+            <input 
+            type="email" 
+            name="email" 
+            value={formData.email} readOnly 
+            className="w-full p-2 rounded-xl bg-gray-100" />
+
+            <input 
+            type="number" 
+            name="amount" 
+            value={formData.amount} readOnly 
+            className="w-full p-2 border rounded-xl bg-gray-100"/>
+
+            <input 
+            type="text" 
+            name="description" 
+            value={formData.description} 
+            onChange={handleChange} 
+            placeholder="Description" 
+            className="w-full p-2 border rounded-xl bg-white" />
+
+            <input 
+            type="text" 
+            name="account" 
+            value={formData.account} 
+            onChange={(e) => setFormData({ ...formData, account: e.target.value.replace(/\D/g, "") })} 
+            placeholder="Add Your Account Number for Refund" 
+            className="w-full p-2 border rounded-xl bg-white" />
+
+            <input 
+            type="date" 
+            name="startDate" 
+            value={formData.startDate} 
+            min={todayStr} 
+            onChange={handleDateChange} 
+            className="w-full p-2 border rounded-xl bg-white" />
+
+            <input 
+            type="date" 
+            name="endDate" 
+            value={formData.endDate} 
+            min={tomorrowStr} 
+            onChange={handleDateChange} 
+            className="w-full p-2 border rounded-xl bg-white" />
           </div>
         </div>
 

@@ -1,8 +1,9 @@
-// components/MProReqToday.jsx
 import React, { useEffect, useRef } from "react";
 import { useRequestStore } from "../mstore/mRequestStore";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { Link } from "react-router-dom";
+
 
 const MProReqToday = () => {
   const { processedRequests = [], fetchAllProcessedRequests, loading, error } =
@@ -110,6 +111,14 @@ const MProReqToday = () => {
           </button>
         </div>
       )}
+
+
+        <div className=" text-center mb-10">
+          <Link to="/admin/requests" className="text-lg text-blue-800 hover:underline">
+            Back to Rental Requests
+          </Link>
+        </div>    
+
 
     </div>
   );
