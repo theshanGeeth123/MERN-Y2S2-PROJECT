@@ -2,7 +2,7 @@ import express from 'express'
 import userAuth from '../middleware/userAuth.js';
 import { getUserById, getUserData, getUserIdByEmail,updateUser,deleteUser } from '../controllers/userController.js';
 import { feedbackSubmission, getFeedbacksById, getFeedbacks, updateFeedback, deletefeedback} from "../controllers/feedbackController.js";
-import { questionSubmission, getQuestionsById, updateQuestion, deleteQuestion} from "../controllers/questionController.js";
+import { questionSubmission, getQuestionsAnswers, getQuestionsById, updateQuestion, updateQuestionAnswer, deleteQuestion} from "../controllers/questionController.js";
 
 const userRouter = express.Router();
 
@@ -19,8 +19,10 @@ userRouter.put('/feedback', updateFeedback);
 userRouter.delete('/feedback', deletefeedback);
 
 userRouter.post('/question', questionSubmission);
+userRouter.get('/question', getQuestionsAnswers);
 userRouter.get("/question", getQuestionsById);
 userRouter.put('/question', updateQuestion);
 userRouter.delete('/question', deleteQuestion);
+userRouter.put('/question-answer', updateQuestionAnswer);
 
 export default userRouter;
