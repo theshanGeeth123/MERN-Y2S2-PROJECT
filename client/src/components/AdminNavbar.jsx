@@ -1,4 +1,3 @@
-// components/AdminNavbar.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Home, Users, ShoppingBag, CreditCard, LogOut, User, FileText} from "lucide-react";
@@ -18,10 +17,9 @@ function AdminNavbar() {
 
   return (
     <div className="bg-white shadow-md px-6 py-4 flex justify-between items-center mt-5">
-      {/* Left: Logo / Title */}
       <h1 className="text-xl font-bold text-slate-800">Admin Dashboard</h1>
 
-      {/* Center: Navigation Links */}
+      {/* Links */}
       <nav className="hidden md:flex items-center space-x-6">
         <Link
           to="/admin/home"
@@ -49,7 +47,7 @@ function AdminNavbar() {
         </Link>
       </nav>
 
-      {/* Profile Dropdown */}
+      {/* Profile */}
       <div className="relative">
         <div
           className="w-10 h-10 rounded-full overflow-hidden border border-gray-300 cursor-pointer"

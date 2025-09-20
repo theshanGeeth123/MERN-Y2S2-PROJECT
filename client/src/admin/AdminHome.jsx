@@ -18,46 +18,13 @@ function AdminHome() {
     fetchAcceptedChartData();
   }, [fetchAcceptedChartData]);
 
-  const handleDownloadPDF = async () => {
-    const pdf = new jsPDF({ orientation: "landscape", unit: "px", format: "a4" });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    let yOffset = 20;
-
-    const title = "Rental Deposit Revenue Report";
-    pdf.setFontSize(24);
-    pdf.setTextColor("#2563eb");
-    const titleWidth = pdf.getTextWidth(title);
-    pdf.text(title, (pageWidth - titleWidth) / 2, yOffset);
-    yOffset += 40;
-
-    const sections = [
-      { ref: topStatsRef },
-      { ref: chartRef },
-      { ref: recentTableRef },
-    ];
-
-    for (let section of sections) {
-      if (!section.ref.current) continue;
-      const canvas = await html2canvas(section.ref.current, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
-      const ratio = Math.min(
-        pageWidth / canvas.width,
-        (pdf.internal.pageSize.getHeight() - yOffset) / canvas.height
-      );
-      const x = (pageWidth - canvas.width * ratio) / 2;
-      pdf.addImage(imgData, "PNG", x, yOffset, canvas.width * ratio, canvas.height * ratio);
-      yOffset += canvas.height * ratio + 10;
-    }
-
-    pdf.save("RentalDepositReport.pdf");
-  };
 
   return (
     <div className="min-h-screen bg-gray-100">
       <AdminNavbar />
       <div className="p-6 space-y-6">
 
-        {/* Top Stats */}
+        {/* Top contents */}
         <div ref={topStatsRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white shadow-md rounded-xl p-5">
             <h2 className="text-gray-500 text-sm">Total Users</h2>
@@ -82,7 +49,7 @@ function AdminHome() {
           <RentalDepositChart chartData={chartData} loading={loading} error={error} />
         </div>
 
-        {/* Recent Activity Table */}
+        {/* Recent Activity */}
         <ProcessedRequests limit={5} refProp={recentTableRef} />
 
 
