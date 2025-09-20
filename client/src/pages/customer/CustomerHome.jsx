@@ -15,6 +15,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
 
+
 const links = [
   { label: "View Products", path: "/products", icon: <FaShoppingBag /> },
   { label: "Packages", path: "/userpackages", icon: <FaShoppingBag /> },
@@ -22,6 +23,7 @@ const links = [
   { label: "View Cart", path: "/cart", icon: <FaShoppingCart /> },
   { label: "My Cards", path: "/cards", icon: <FaCreditCard /> },
   { label: "My Orders", path: "/my-orders", icon: <FaClipboardList /> },
+  { label: "Notifications", path: "/notifications", icon: <FaClipboardList /> },
 ];
 
 const CustomerHome = () => {
@@ -88,7 +90,7 @@ const CustomerHome = () => {
           >
             <FaBars className="text-lg" />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900">Customer Portal</h1>
+          <h1 className="text-lg font-semibold text-gray-900">{userData.name}</h1>
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-700">
             <FaUser className="text-sm" />
           </div>
@@ -106,23 +108,23 @@ const CustomerHome = () => {
                   <FaUser className="text-lg" />
                 </div>
                 <div>
-                  <span className="font-semibold text-lg text-white block">Customer Portal</span>
+                  <span className="font-semibold text-lg text-white block">{userData.name}</span>
                   <span className="text-sm text-gray-400">Welcome back!</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <nav className="flex-1 py-6 px-4 space-y-1">
+          <nav className="flex-1 py-6 px-4 space-y-1 ">
             {links.map((link, i) => (
-              <NavItem
+              <NavItem 
                 key={i}
                 icon={link.icon}
                 label={link.label}
                 onClick={() => navigate(link.path)}
               />
             ))}
-            <div className="pt-4 mt-4 border-t border-gray-800">
+            <div className="pt-4 mt-4 border-t border-gray-800 ">
               <NavItem
                 icon={<FaSignOutAlt />}
                 label={loggingOut ? "Logging out..." : "Logout"}
@@ -166,7 +168,7 @@ const CustomerHome = () => {
                   <FaUser />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">Customer Account</p>
+                  <p className="text-sm font-medium text-white">{userData.name}</p>
                   <p className="text-xs text-gray-400">Welcome back!</p>
                 </div>
               </div>
@@ -257,20 +259,26 @@ function NavItem({ icon, label, onClick, isLogout = false }) {
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all ${
-        isLogout 
-          ? "text-red-400 hover:bg-gray-800 focus:bg-gray-800" 
-          : "text-gray-300 hover:bg-gray-800 hover:text-white focus:bg-gray-800"
-      }`}
+      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all cursor-pointer
+        ${
+          isLogout 
+            ? "text-red-400 hover:bg-gray-800 focus:bg-gray-800" 
+            : "text-gray-300 hover:bg-gray-800 hover:text-white focus:bg-gray-800"
+        }`}
     >
-      <span className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${
-        isLogout ? "bg-gray-800 text-red-400" : "bg-gray-800 text-gray-400 group-hover:text-white"
-      }`}>
+      <span
+        className={`inline-flex h-10 w-10 items-center justify-center rounded-lg 
+          ${isLogout 
+            ? "bg-gray-800 text-red-400" 
+            : "bg-gray-800 text-gray-400 group-hover:text-white"
+          }`}
+      >
         {icon}
       </span>
       <span>{label}</span>
     </button>
   );
 }
+
 
 export default CustomerHome;

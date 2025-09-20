@@ -1,20 +1,19 @@
-// controllers/notificationController.js
 import mongoose from 'mongoose';
 import Notification from '../models/notificationModel.js';
 
-// CREATE
+
 export const createNotification = async (req, res) => {
   try {
     const {
       title,
       body,
-      audience,   // 'all' | 'verified' | 'unverified'
-      type,       // optional: 'info' | 'warning' | 'account' | 'promo' | 'system'
-      priority,   // optional number
-      isActive,   // optional boolean
-      startAt,    // optional date
-      expiresAt,  // optional date
-      createdBy   // optional (you chose not to use req.userId)
+      audience,  
+      type,       
+      priority,  
+      isActive,   
+      startAt,    
+      expiresAt,  
+      createdBy   
     } = req.body;
 
     if (expiresAt && startAt && new Date(expiresAt) <= new Date(startAt)) {
