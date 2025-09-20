@@ -36,7 +36,6 @@ import NotificationCreate from "./admin/T_Notifications/NotificationCreate";
 // Customer Notifications
 import CustomerNotifications from "./T_Customer/T_Cus_notifications/CustomerNotifications";
 
-
 // Staff Management
 
 import StaffList from "./admin/members/StaffList.jsx";
@@ -46,23 +45,28 @@ import StaffDetail from "./admin/members/StaffDetail";
 import StaffHome from "./staff/staffHome.jsx";
 import StaffLogin from "./staff/StaffLogin.jsx";
 
-
 import StaffProfile from "./staff/StaffProfile";
-import StaffReport from './admin/members/StaffReport.jsx';
+import StaffReport from "./admin/members/StaffReport.jsx";
 
-import Packages from './admin/Packages'; 
-import PackageDetail from './admin/PackageDetail';
+import Packages from "./admin/Packages";
+import PackageDetail from "./admin/PackageDetail";
 
-import UserPackages from './pages/UserPackages';
-import BookingForm from './pages/BookingForm';
+import UserPackages from "./pages/UserPackages";
+import BookingForm from "./pages/BookingForm";
 
-import UserBookings from './pages/UserBookings'
-import Bookings from './pages/Bookings';
+import UserBookings from "./pages/UserBookings";
+import Bookings from "./pages/Bookings";
 
-import BookingReport from './admin/BookingReport'
+import BookingReport from "./admin/BookingReport";
 
+// Feedbacks Management
 
+import CustomerFeedback from "./pages/CustomerFeedback";
 
+import CustomerQuestion from "./pages/CustomerQuestion";
+
+import AdminFeedback from "./admin/AdminFeedbackHandler";
+import AdminQuestion from "./admin/AdminQuestionHandler";
 
 function App() {
   return (
@@ -118,17 +122,25 @@ function App() {
         <Route path="/staff/profile" element={<StaffProfile />} />
         <Route path="/admin/staff/report" element={<StaffReport />} />
 
-
         <Route path="/admin/packages" element={<Packages />} />
         <Route path="/packageDetail/:id" element={<PackageDetail />} />
 
-         <Route path="/userpackages" element={<UserPackages />} />
-         <Route path="/booking-request" element={<BookingForm />} />
-          <Route path="/my-bookings" element={<UserBookings />} />
-          <Route path="/admin/bookings" element={<Bookings />} />
+        <Route path="/userpackages" element={<UserPackages />} />
+        <Route path="/booking-request" element={<BookingForm />} />
+        <Route path="/my-bookings" element={<UserBookings />} />
+        <Route path="/admin/bookings" element={<Bookings />} />
 
-          <Route path="/admin/booking-report" element={<BookingReport />} />
+        <Route path="/admin/booking-report" element={<BookingReport />} />
 
+        {/* Feedbacks Management */}
+
+        <Route path="/customer-feedback" element={<CustomerFeedback />} />
+
+        <Route path="/customer-questions" element={<CustomerQuestion />} />
+
+        <Route path="/admin/admin-feedback" element={<AdminFeedback />} />
+        
+        <Route path="/admin/admin-question" element={<AdminQuestion />} />
       </Routes>
     </div>
   );

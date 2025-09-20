@@ -23,6 +23,8 @@ const links = [
   { label: "My Cards", path: "/cards", icon: <FaCreditCard /> },
   { label: "My Orders", path: "/my-orders", icon: <FaClipboardList /> },
   { label: "Notifications", path: "/notifications", icon: <FaClipboardList /> },
+  { label: "Add Feedback", path: "/customer-feedback", icon: <FaClipboardList /> },
+  { label: "Q&A", path: "/customer-questions", icon: <FaClipboardList /> },
 ];
 
 const CustomerHome = () => {

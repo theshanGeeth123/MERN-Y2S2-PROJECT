@@ -157,6 +157,8 @@ export default function AdminHome() {
             <NavItem icon={<FaUsers />} label="Customer Details" to="/customerManagement" />
             <NavItem icon={<FaBox  />} label="Packaages" to="/admin/packages" />
             <NavItem icon={<FaBox  />} label="Bookings" to="/admin/bookings" />
+            <NavItem icon={<FaBox  />} label="Feedbacks" to="/admin/admin-feedback" />
+            <NavItem icon={<FaBox  />} label="Q&A" to="/admin/admin-question" />
             <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
           </nav>
 
