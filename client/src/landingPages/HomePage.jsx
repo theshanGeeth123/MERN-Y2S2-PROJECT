@@ -7,7 +7,10 @@ import Footer from "./Footer";
 
 import image1 from "./images/cody-lannom-G95AReIh_Ko-unsplash.jpg"; 
 import image2 from "./images/hamberger-menu.png";              
-import image3 from "./images/logoNew.png";                    
+import image3 from "./images/logoNew.png";                
+
+import ChatBot from '../AI/chatbot'
+
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,6 +18,7 @@ export default function HomePage() {
   const headerRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  
 
   // Init AOS
   useEffect(() => {
@@ -94,6 +98,10 @@ export default function HomePage() {
 
   return (
     <div className="font-[Poppins] text-[var(--text-dark)] ">
+
+      <ChatBot />
+
+     
       {/* ===== Header / First Section ===== */}
       <header id="top" ref={headerRef} className="relative isolate">
         <nav
