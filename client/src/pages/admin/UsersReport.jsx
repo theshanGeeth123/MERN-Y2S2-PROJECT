@@ -1,4 +1,3 @@
-// src/pages/admin/UsersReport.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import {
@@ -7,6 +6,7 @@ import {
 } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import NavbarAdmin from "../../components/NavbarAdmin";
 
 const API = "http://localhost:4000/api/user-reports";
 const PIE_COLORS = ["#10B981", "#EF4444"]; // verified, unverified
@@ -176,6 +176,9 @@ export default function UsersReport() {
   };
 
   return (
+
+    <><NavbarAdmin/>
+
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       {/* Header + Filters */}
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
@@ -458,5 +461,6 @@ export default function UsersReport() {
         </div>
       )}
     </div>
+    </>
   );
 }

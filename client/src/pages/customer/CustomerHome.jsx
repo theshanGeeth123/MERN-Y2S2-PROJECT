@@ -1,5 +1,5 @@
 // src/admin/CustomerHome.jsx
-import React, { useRef, useState, useContext } from "react";
+import React, { useRef, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FaBars,
@@ -14,7 +14,6 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
-
 
 const links = [
   { label: "View Products", path: "/products", icon: <FaShoppingBag /> },
@@ -32,11 +31,24 @@ const CustomerHome = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
-  // Grab what logout needs from context
   const { backendUrl, userData, setIsLoggedin, setUserData } =
     useContext(AppContent);
 
   const API_BASE = backendUrl || "http://localhost:4000";
+
+  // Lock background scroll + focus the close button when drawer is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+      // slight delay to allow element to mount
+      setTimeout(() => closeBtnRef.current?.focus(), 0);
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
 
   const logout = async () => {
     if (loggingOut) return;
@@ -44,21 +56,16 @@ const CustomerHome = () => {
     try {
       axios.defaults.withCredentials = true;
 
-      // Try to clear cart on server (non-fatal if it fails)
       if (userData?.id) {
         try {
           await axios.delete(`${API_BASE}/api/cart/clear`, {
             data: { userId: userData.id },
           });
-        } catch {
-          /* ignore */
-        }
+        } catch { /* ignore */ }
       }
 
-      // Clear local state/storage
       localStorage.removeItem("customer");
 
-      // Invalidate session on server
       const { data } = await axios.post(`${API_BASE}/api/auth/logout`);
       if (data?.success) {
         setIsLoggedin?.(false);
@@ -68,8 +75,7 @@ const CustomerHome = () => {
         toast.error(data?.message || "Logout failed");
       }
 
-     navigate("/", { replace: true });
-
+      navigate("/", { replace: true });
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
     } finally {
@@ -90,7 +96,9 @@ const CustomerHome = () => {
           >
             <FaBars className="text-lg" />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900">{userData.name}</h1>
+          <h1 className="text-lg font-semibold text-gray-900">
+            {userData?.name || "Customer"}
+          </h1>
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 text-gray-700">
             <FaUser className="text-sm" />
           </div>
@@ -108,23 +116,25 @@ const CustomerHome = () => {
                   <FaUser className="text-lg" />
                 </div>
                 <div>
-                  <span className="font-semibold text-lg text-white block">{userData.name}</span>
+                  <span className="font-semibold text-lg text-white block">
+                    {userData?.name || "Customer"}
+                  </span>
                   <span className="text-sm text-gray-400">Welcome back!</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <nav className="flex-1 py-6 px-4 space-y-1 ">
+          <nav className="flex-1 py-6 px-4 space-y-1">
             {links.map((link, i) => (
-              <NavItem 
+              <NavItem
                 key={i}
                 icon={link.icon}
                 label={link.label}
                 onClick={() => navigate(link.path)}
               />
             ))}
-            <div className="pt-4 mt-4 border-t border-gray-800 ">
+            <div className="pt-4 mt-4 border-t border-gray-800">
               <NavItem
                 icon={<FaSignOutAlt />}
                 label={loggingOut ? "Logging out..." : "Logout"}
@@ -139,18 +149,25 @@ const CustomerHome = () => {
           </div>
         </aside>
 
-        {/* MOBILE DRAWER - BLACK THEME */}
+        {/* MOBILE DRAWER - BLACK THEME (SCROLLABLE) */}
         {mobileOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
             <div
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
               onClick={() => setMobileOpen(false)}
+              aria-hidden="true"
             />
             <div
               role="dialog"
               aria-modal="true"
-              className="absolute left-0 top-0 h-full w-80 bg-gray-900 shadow-xl"
+              className="absolute left-0 top-0 h-full w-80 bg-gray-900 shadow-xl flex flex-col"
+              // safe area paddings to avoid cutoffs on devices with home bar/notch
+              style={{
+                paddingTop: "env(safe-area-inset-top)",
+                paddingBottom: "env(safe-area-inset-bottom)",
+              }}
             >
+              {/* Drawer Header */}
               <div className="h-16 px-4 border-b border-gray-800 flex items-center justify-between">
                 <span className="font-semibold text-white text-lg">Customer Portal</span>
                 <button
@@ -163,39 +180,48 @@ const CustomerHome = () => {
                   <FaTimes />
                 </button>
               </div>
+
+              {/* Profile */}
               <div className="p-4 border-b border-gray-800 flex items-center gap-3">
                 <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-800 text-white">
                   <FaUser />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-white">{userData.name}</p>
+                  <p className="text-sm font-medium text-white">
+                    {userData?.name || "Customer"}
+                  </p>
                   <p className="text-xs text-gray-400">Welcome back!</p>
                 </div>
               </div>
-              <nav className="p-4 space-y-1">
-                {links.map((link, i) => (
-                  <NavItem
-                    key={i}
-                    icon={link.icon}
-                    label={link.label}
-                    onClick={() => {
-                      setMobileOpen(false);
-                      navigate(link.path);
-                    }}
-                  />
-                ))}
-                <div className="pt-4 mt-4 border-t border-gray-800">
-                  <NavItem
-                    icon={<FaSignOutAlt />}
-                    label={loggingOut ? "Logging out..." : "Logout"}
-                    onClick={async () => {
-                      setMobileOpen(false);
-                      await logout();
-                    }}
-                    isLogout
-                  />
-                </div>
-              </nav>
+
+              {/* SCROLL AREA */}
+              <div className="flex-1 overflow-y-auto">
+                <nav className="p-4 space-y-1">
+                  {links.map((link, i) => (
+                    <NavItem
+                      key={i}
+                      icon={link.icon}
+                      label={link.label}
+                      onClick={() => {
+                        setMobileOpen(false);
+                        navigate(link.path);
+                      }}
+                    />
+                  ))}
+
+                  <div className="pt-4 mt-4 border-t border-gray-800">
+                    <NavItem
+                      icon={<FaSignOutAlt />}
+                      label={loggingOut ? "Logging out..." : "Logout"}
+                      onClick={async () => {
+                        setMobileOpen(false);
+                        await logout();
+                      }}
+                      isLogout
+                    />
+                  </div>
+                </nav>
+              </div>
             </div>
           </div>
         )}
@@ -205,7 +231,9 @@ const CustomerHome = () => {
           <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-8 md:py-10">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900">Welcome back!</h2>
-              <p className="text-gray-600 mt-2">Manage your account and explore our products</p>
+              <p className="text-gray-600 mt-2">
+                Manage your account and explore our products
+              </p>
             </div>
 
             {/* Quick actions */}
@@ -222,13 +250,15 @@ const CustomerHome = () => {
                     <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 text-gray-700 group-hover:bg-gray-200 transition-colors">
                       {a.icon}
                     </span>
-                    <span className="text-base font-medium text-gray-900 text-left">{a.label}</span>
+                    <span className="text-base font-medium text-gray-900 text-left">
+                      {a.label}
+                    </span>
                   </button>
                 ))}
               </div>
             </section>
 
-            {/* Stats or additional content */}
+            {/* Stats */}
             <section className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
                 <h4 className="text-sm font-medium text-gray-500 mb-2">Recent Orders</h4>
@@ -261,16 +291,17 @@ function NavItem({ icon, label, onClick, isLogout = false }) {
       onClick={onClick}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all cursor-pointer
         ${
-          isLogout 
-            ? "text-red-400 hover:bg-gray-800 focus:bg-gray-800" 
+          isLogout
+            ? "text-red-400 hover:bg-gray-800 focus:bg-gray-800"
             : "text-gray-300 hover:bg-gray-800 hover:text-white focus:bg-gray-800"
         }`}
     >
       <span
         className={`inline-flex h-10 w-10 items-center justify-center rounded-lg 
-          ${isLogout 
-            ? "bg-gray-800 text-red-400" 
-            : "bg-gray-800 text-gray-400 group-hover:text-white"
+          ${
+            isLogout
+              ? "bg-gray-800 text-red-400"
+              : "bg-gray-800 text-gray-400"
           }`}
       >
         {icon}
@@ -279,6 +310,5 @@ function NavItem({ icon, label, onClick, isLogout = false }) {
     </button>
   );
 }
-
 
 export default CustomerHome;

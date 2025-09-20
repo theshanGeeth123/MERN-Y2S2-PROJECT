@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable"; 
 import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
+import NavbarAdmin from "../../components/NavbarAdmin";
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL
   ? `${import.meta.env.VITE_BACKEND_URL}/api/staff`
@@ -113,6 +114,8 @@ export default function StaffReport() {
   };
 
   return (
+
+    <><NavbarAdmin/>
     <div className="min-h-screen p-8 bg-gray-50 flex flex-col items-center">
       <div className="w-full max-w-6xl bg-white p-6 rounded-xl shadow-lg">
         <h1 className="text-3xl font-bold mb-6 text-gray-900 text-center">
@@ -223,5 +226,6 @@ export default function StaffReport() {
         )}
       </div>
     </div>
+    </>
   );
 }

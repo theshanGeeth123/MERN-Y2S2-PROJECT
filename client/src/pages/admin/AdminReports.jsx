@@ -13,6 +13,7 @@ import {
   CartesianGrid,
   Legend
 } from "recharts";
+import NavbarAdmin from "../../components/NavbarAdmin";
 
 
 
@@ -123,6 +124,7 @@ const AdminReports = () => {
 
   return (
     <>
+    <NavbarAdmin/>
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
