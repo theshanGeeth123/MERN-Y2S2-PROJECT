@@ -63,8 +63,8 @@ function UserPackages() {
 
   return (
     <><NavbarCustomer/>
-    <div className="min-h-screen bg-gray-200 py-10 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-100 py-10 px-4 2xl:mx-20 xl:mx-15">
+      <div className="max-w-7xl mx-auto ">
         <h1 className="text-3xl font-bold text-center text-black mb-12">
           Explore Packages
         </h1>
