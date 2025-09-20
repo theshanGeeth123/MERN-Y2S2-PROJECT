@@ -59,6 +59,8 @@ import BookingForm from './pages/BookingForm';
 import UserBookings from './pages/UserBookings'
 import Bookings from './pages/Bookings';
 
+import BookingReport from './admin/BookingReport'
+
 
 
 
@@ -124,6 +126,8 @@ function App() {
          <Route path="/booking-request" element={<BookingForm />} />
           <Route path="/my-bookings" element={<UserBookings />} />
           <Route path="/admin/bookings" element={<Bookings />} />
+
+          <Route path="/admin/booking-report" element={<BookingReport />} />
 
       </Routes>
     </div>
