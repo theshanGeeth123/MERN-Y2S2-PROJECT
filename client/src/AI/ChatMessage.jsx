@@ -26,7 +26,7 @@ const ChatMessage = ({ chat }) => {
           "message-text whitespace-pre-line break-words px-4 py-2 text-sm",
           isBot
             ? "max-w-[75%] rounded-[13px] rounded-bl-[3px] bg-blue-50 text-gray-800"
-            : "max-w-[75%] rounded-[13px] rounded-br-[3px] bg-blue-400 text-white",
+            : "max-w-[75%] rounded-[13px] rounded-br-[3px] bg-gray-500 text-white",
           isError ? "!text-red-600 !bg-red-50 !border !border-red-200" : "",
         ].join(" ")}
       >
