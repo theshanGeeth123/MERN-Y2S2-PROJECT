@@ -8,7 +8,7 @@ function SwHomeNavbar() {
   
   const navLinks = [
     { id: "home", title: "Home" },
-    { id: "feedbacks", title: "Feedback List" },
+    { id: "feedback", title: "Feedbacks" },
     { id: "qa", title: "Q&A" },
   ];
 
@@ -16,9 +16,9 @@ function SwHomeNavbar() {
   const logout = async () =>{};
 
  const routeMap = {
-    home: "/home",
-    feedback: "/admin-feedback",
-    qa: "/admin-qa",
+    home: "/admin/home",
+    feedback: "/admin/admin-feedback",
+    qa: "/admin/admin-question",
   };
 
   return (

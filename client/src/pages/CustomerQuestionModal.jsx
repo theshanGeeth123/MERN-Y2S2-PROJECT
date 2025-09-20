@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 
 function CustomerQuestionModal ({ open, onClose, question, updatedQuestion, children }) {
-  const dialogRef = useRef(null);
   const id = question?._id || null;
   const [askedQuestion, setAskedQuestion] = useState("");
   const [status, setStatus] = useState("Open");
@@ -44,13 +43,12 @@ function CustomerQuestionModal ({ open, onClose, question, updatedQuestion, chil
   return (
     <div className="fixed inset-0 z-[1000] flex items-center justify-center">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-[1px]" onClick={onClose}/>
-      <div ref={dialogRef} role="dialog" aria-modal="true"
-        className="relative z-[1001] w-[26rem] max-w-[92%] rounded-2xl bg-white p-6 shadow-2xl">
+      <div role="dialog" aria-modal="true" className="relative z-[1001] w-[26rem] max-w-[92%] rounded-2xl bg-white p-6 shadow-2xl">
         <h3 className="text-4xl font-bold text-left mb-6">Update Question</h3>
         <form onSubmit={onUpdateQuestionHandler} className="space-y-4">
           <label className="mb-1 block text-sm text-gray-700"> Asked Question </label>
           <div class="mt-2">
-            <input name="photographer" type="text" value={askedQuestion} required onChange={(e) => setAskedQuestion(e.target.value)}
+            <input name="askedQuestion" type="text" value={askedQuestion} required onChange={(e) => setAskedQuestion(e.target.value)}
                 className="w-full rounded-xl border border-gray-500 px-3 py-2 outline-none ring-1 ring-transparent focus:border-gray-900 focus:ring-gray-900/10"/>
           </div>
           <div className="mt-4 flex justify-end flex gap-3">

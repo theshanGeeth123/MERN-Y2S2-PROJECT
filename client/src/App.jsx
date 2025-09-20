@@ -17,6 +17,7 @@ import CustomerHome from './pages/CustomerHome'
 import CustomerFeedback from './pages/CustomerFeedback'
 import CustomerQuestion from './pages/CustomerQuestion'
 import AdminFeedback from './admin/AdminFeedbackHandler'
+import AdminQuestion from './admin/AdminQuestionHandler'
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
         <Route path='/admin/login' element={<AdminLogin/>}/>
         <Route path='/admin/home' element={<AdminHome/>}/>
         <Route path='/admin/admin-feedback' element={<AdminFeedback/>}/>
+        <Route path='/admin/admin-question' element={<AdminQuestion/>}/>
 
       </Routes>
     </div>
