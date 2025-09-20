@@ -31,11 +31,11 @@ const ChartForm = ({ chatHistory, setChatHistory, generateBotResponse }) => {
         type="text"
         placeholder="Message..."
         required
-        className="w-full rounded-full border border-gray-300 px-4 py-2.5 text-sm outline-none transition focus:border-violet-600"
+        className="w-full rounded-full border border-gray-300 px-4 py-2.5 text-sm outline-none transition focus:border-blue-300"
       />
       <button
         type="submit"
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-violet-700 transition hover:bg-violet-200"
+        className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 text-black transition hover:bg-gray-50"
         aria-label="Send message"
       >
         <IoSend className="text-xl" />
