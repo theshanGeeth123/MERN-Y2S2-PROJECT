@@ -1,4 +1,3 @@
-// pages/mProcessedReq.jsx
 import React, { useEffect, useRef } from "react";
 import { useRequestStore } from "../mstore/mRequestStore";
 import AdminNavbar from "../components/AdminNavbar";
@@ -34,8 +33,7 @@ const mProcessedReq = () => {
       </Link>
     </div>
 
-      {/* Wrap everything to capture in PDF */}
-      <div ref={containerRef} className="mt-4 bg-white shadow-md rounded-xl p-4">
+      <div ref={containerRef} className="mt-4 bg-white rounded-xl p-4">
         <h2 className="text-xl font-bold mb-4 text-center">All Processed Requests</h2>
 
         {processedRequests.length === 0 ? (
@@ -45,22 +43,22 @@ const mProcessedReq = () => {
             {processedRequests.map((req) => (
               <li
                 key={req._id}
-                className="flex items-center justify-between p-3 border rounded shadow-sm"
+                className="flex items-center justify-between p-3 border rounded-lg shadow-sm text-white bg-gray-800"
               >
                 <div className="flex items-center">
-                  <FileText className="mr-3 text-blue-500" />
+                  <FileText className="mr-3 text-white" />
                   <div>
                     <div className="font-semibold">
                       {Array.isArray(req.items)
                         ? req.items.map((item, idx) => (
                             <span key={idx}>
-                              {item.name} (x{item.qty ?? 1})
+                              {item.name} 
                               {idx < req.items.length - 1 && ", "}
                             </span>
                           ))
                         : req.items}
                     </div>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-white">
                       Amount: {req.amount} | Status: <strong>{req.status}</strong>
                     </p>
                     <p className="text-xs text-gray-400">
@@ -77,9 +75,9 @@ const mProcessedReq = () => {
         )}
       </div>
 
-      <div className="mt-10 font-light text-center">
-        <Link to="/admin/all-rentals" className="text-blue-500 hover:underline">
-          Back to Rentals
+      <div className="mt-10 font-light text-center mb-40">
+        <Link to="/admin/requests" className="text-lg text-blue-800 hover:underline">
+          Back to Rental Requests
         </Link>
       </div>
     </div>

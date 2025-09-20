@@ -41,7 +41,7 @@ function MRentalCus() {
       </div>
 
 
-      <div className="flex flex-col items-center min-h-screen mt-10 mb-20">
+      <div className="flex flex-col items-center min-h-screen mt-30 mb-20">
         <h2 className="text-5xl font-bold bg-gradient-to-r from-slate-900 to-indigo-800 bg-clip-text text-transparent mb-8">
           Rental Items
         </h2>
@@ -63,7 +63,7 @@ function MRentalCus() {
           ))}
         </div>
 
-        {/* show items */}
+        {/* items */}
         <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-11/12 text-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredItems && filteredItems.length > 0 ? (

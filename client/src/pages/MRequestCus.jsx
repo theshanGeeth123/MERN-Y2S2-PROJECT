@@ -18,7 +18,7 @@ const MRequestCus = () => {
   const [filteredRequests, setFilteredRequests] = useState([]);
   const [userEmail, setUserEmail] = useState(null);
 
-  // modal state
+  // state modal
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState(null);
 
@@ -35,12 +35,12 @@ const MRequestCus = () => {
     }
   }, []);
 
-  // Fetch requests once
+  // Fetch requests for ontime
   useEffect(() => {
     fetchRequests();
   }, [fetchRequests]);
 
-  // Filter only current user’s requests
+  // Filter user’s req
   useEffect(() => {
     if (requests && userEmail) {
       const userRequests = requests.filter(
@@ -53,18 +53,8 @@ const MRequestCus = () => {
     }
   }, [requests, userEmail]);
 
-  // Delete
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this request?")) return;
-    const result = await deleteRequest(id);
-    if (!result.success) {
-      alert("Failed: " + result.message);
-    } else {
-      toast.success("Request deleted successfully", { autoClose: 2000 });
-    }
-  };
 
-  // Delete Request (alternative)
+  // Delete Request
   const handleDeletePost = async (rid) => {
     if (!window.confirm("Are you sure you want to delete this request?")) return;
     const { success, message } = await deleteRequest(rid);
@@ -75,7 +65,7 @@ const MRequestCus = () => {
     }
   };
 
-  // Open Edit Modal
+  // Edit Modal
   const handleEdit = (req) => {
     setEditData({ ...req });
     setIsEditing(true);
@@ -93,9 +83,7 @@ const MRequestCus = () => {
     }
   };
 
-  if (loading) return <p>Loading your requests...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
-  if (!userEmail) return <p>Loading your account...</p>;
+  if (error) return <p className="text-red-600">{error}</p>; 
 
   return (
     <div className="p-4">
@@ -117,23 +105,23 @@ const MRequestCus = () => {
           {filteredRequests.map((req) => (
             <li
               key={req._id}
-              className="flex items-center justify-between p-3 border rounded shadow-sm"
+              className="flex items-center justify-between p-4 border rounded shadow-sm bg-slate-800 text-white"
             >
               <div className="flex items-center">
-                <FileText className="mr-3 text-blue-500" />
+                <FileText className="mr-3 text-white " />
                 <div>
                   <div className="font-semibold">
                     {Array.isArray(req.items)
                       ? req.items.map((item, idx) => (
                           <span key={idx}>
-                            {item.name} (x{item.qty ?? 1})
+                            {item.name}
                             {idx < req.items.length - 1 && ", "}
                           </span>
                         ))
                       : req.items}
                   </div>
 
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-white">
                     Amount: {req.amount} | Payment : {req.paymentStatus ?? "pending"}
                   </p>
                   <p className="text-xs text-gray-400">
@@ -146,7 +134,7 @@ const MRequestCus = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleEdit(req)}
-                  className="p-2 rounded hover:bg-gray-100"
+                  className="p-2 rounded hover:bg-gray-100 hover:text-black"
                   title="Edit request"
                 >
                   <Edit />
@@ -154,7 +142,7 @@ const MRequestCus = () => {
 
                 <button
                   onClick={() => handleDeletePost(req._id)}
-                  className="p-2 rounded hover:bg-gray-100"
+                  className="p-2 rounded hover:bg-gray-100 hover:text-red-900"
                   title="Delete request"
                 >
                   <Trash2 />
@@ -185,26 +173,26 @@ const MRequestCus = () => {
 
             <input
               type="text"
-              className="w-full p-3 rounded border bg-gray-100"
+              className="w-full p-3 rounded-lg border bg-gray-100"
               value={editData.name || ""}
               readOnly
             />
             <input
               type="email"
-              className="w-full p-3 rounded border bg-gray-100"
+              className="w-full p-3 rounded-lg border bg-gray-100"
               value={editData.email || ""}
               readOnly
             />
             <input
               type="number"
-              className="w-full p-3 rounded border bg-gray-100"
+              className="w-full p-3 rounded-lg border bg-gray-100"
               value={editData.amount || ""}
               readOnly
             />
 
             <input
               type="text"
-              className="w-full p-3 rounded border"
+              className="w-full p-3 rounded-lg border"
               value={editData.description || ""}
               onChange={(e) =>
                 setEditData({ ...editData, description: e.target.value })
@@ -213,7 +201,7 @@ const MRequestCus = () => {
             />
             <input
               type="text"
-              className="w-full p-3 rounded border"
+              className="w-full p-3 rounded-lg border"
               value={editData.account || ""}
               onChange={(e) =>
                 setEditData({
@@ -226,7 +214,7 @@ const MRequestCus = () => {
 
             <input
               type="date"
-              className="w-full p-3 rounded border"
+              className="w-full p-3 rounded-lg border"
               value={
                 editData.startDate
                   ? new Date(editData.startDate).toISOString().split("T")[0]
@@ -238,7 +226,7 @@ const MRequestCus = () => {
             />
             <input
               type="date"
-              className="w-full p-3 rounded border"
+              className="w-full p-3 rounded-lg border"
               value={
                 editData.endDate
                   ? new Date(editData.endDate).toISOString().split("T")[0]
@@ -249,7 +237,7 @@ const MRequestCus = () => {
               }
             />
 
-            <div className="bg-gray-100 p-3 rounded border text-sm">
+            <div className="bg-gray-100 p-3 rounded-lg border text-sm">
               {Array.isArray(editData.items)
                 ? editData.items.map((item, idx) => (
                     <span key={idx}>
@@ -262,30 +250,30 @@ const MRequestCus = () => {
 
             <input
               type="text"
-              className="w-full p-3 rounded border bg-gray-100"
+              className="w-full p-3 rounded-lg border bg-gray-100"
               value={editData.paymentStatus || "pending"}
               readOnly
             />
 
-            <div className="flex justify-center space-x-2 mt-3">
+            <div className="flex justify-center space-x-2 mt-3 ">
               <button
                 onClick={() => {
                   const { description, account, startDate, endDate } = editData;
 
-                  // ✅ Required fields
+                  // Required fields
                   if (!description || !account || !startDate || !endDate) {
                     toast.error("All fields are required!", { autoClose: 2000 });
                     return;
                   }
 
-                  // ✅ Start date cannot be in the past
+                  // Start date cannot be in the past
                   const todayStr = new Date().toISOString().split("T")[0];
                   if (startDate < todayStr) {
                     toast.error("Start date cannot be in the past!", { autoClose: 2000 });
                     return;
                   }
 
-                  // ✅ End date must be after start date
+                  // End date must be after start date
                   if (endDate <= startDate) {
                     toast.error("End date must be after start date!", { autoClose: 2000 });
                     return;

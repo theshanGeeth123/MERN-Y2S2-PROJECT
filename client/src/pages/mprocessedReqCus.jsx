@@ -10,7 +10,7 @@ const MyProcessedRequests = () => {
   const [userEmail, setUserEmail] = useState(null);
   const [filteredRequests, setFilteredRequests] = useState([]);
 
-  // ✅ Get logged user email
+  // Get logged email
   useEffect(() => {
     const customerData = localStorage.getItem("customer");
     if (customerData) {
@@ -23,12 +23,12 @@ const MyProcessedRequests = () => {
     }
   }, []);
 
-  // ✅ Fetch processed requests once email is known
+  // Fetch processed requests
   useEffect(() => {
     if (userEmail) fetchProcessedRequests(userEmail);
   }, [userEmail, fetchProcessedRequests]);
 
-  // ✅ Filter processed requests for current user
+  // Filter processed requests for cus
   useEffect(() => {
     if (processedRequests && userEmail) {
       const userReqs = processedRequests.filter(
@@ -41,15 +41,14 @@ const MyProcessedRequests = () => {
     }
   }, [processedRequests, userEmail]);
 
-  if (loading) return <p>Loading your processed requests...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
-  if (!userEmail) return <p>Loading your account...</p>;
 
   return (
     <div className="p-4">
       <Navbar />
 
-      <h2 className="text-xl font-bold mb-8 text-center">My Processed Requests</h2>
+      <h2 className="text-4xl font-bold mb-10 text-center mt-20 bg-gradient-to-r from-slate-900 to-indigo-800 bg-clip-text text-transparent">
+        My Processed Requests</h2>
 
       {filteredRequests.length === 0 ? (
         <p>No processed requests yet.</p>
@@ -58,10 +57,10 @@ const MyProcessedRequests = () => {
           {filteredRequests.map((req) => (
             <li
               key={req._id}
-              className="flex items-center justify-between p-3 border rounded shadow-sm"
+              className="flex items-center justify-between p-3 border rounded-lg shadow-sm  text-white bg-gray-800"
             >
               <div className="flex items-center">
-                <FileText className="mr-3 text-blue-500" />
+                <FileText className="mr-3 text-white" />
                 <div>
                   <div className="font-semibold">
                     {Array.isArray(req.items)
@@ -73,7 +72,7 @@ const MyProcessedRequests = () => {
                         ))
                       : req.items}
                   </div>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-white">
                     Amount: {req.amount} | Status: <strong>{req.status}</strong>
                   </p>
                   <p className="text-xs text-gray-400">
@@ -89,9 +88,9 @@ const MyProcessedRequests = () => {
         </ul>
       )}
 
-      <div className="mt-10 font-light text-center">
-        <Link to="/all-rentals" className="text-blue-500 hover:underline">
-          Back to Rentals
+      <div className="mt-10 font-light text-center mb-50">
+        <Link to="/requests" className="text-lg text-blue-700 hover:underline">
+          Back to My Requests
         </Link>
       </div>
     </div>

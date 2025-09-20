@@ -13,7 +13,7 @@ addRequest: async (newRequest) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newRequest),
-      credentials: "include", // ✅ keep session cookies
+      credentials: "include", // session
     });
 
     const data = await res.json();
@@ -28,7 +28,7 @@ addRequest: async (newRequest) => {
 
 
 
-  // Fetch all rental requests
+  // Fetch all rental requests 
   fetchRequests: async () => {
     try {
       const res = await fetch("http://localhost:4000/api/requests");
@@ -103,7 +103,7 @@ addRequest: async (newRequest) => {
   },
 
 
-  // Fetch all user requests (pending + processed)
+  // Fetch all user requests (processed)
   fetchAllProcessedRequests: async (emailOrAll) => {
   set({ loading: true, error: null });
   try {
@@ -140,10 +140,10 @@ addRequest: async (newRequest) => {
 
       const res = await fetch(
         `http://localhost:4000/api/requests/processed?email=${encodeURIComponent(email)}`,
-        { credentials: "include" } // optional if you use cookies
+        { credentials: "include" } // using session
       );
 
-      // Check if response is JSON
+      
       const contentType = res.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         const text = await res.text();
