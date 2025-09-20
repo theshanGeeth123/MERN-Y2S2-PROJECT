@@ -26,6 +26,9 @@ import cardRoutes from "./routes/Cards.routes.js";
 
 import staffRoutes from "./routes/staffRoutes.js"; 
 
+
+import packageRoutes from './routes/packageRoutes.js';
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -58,6 +61,8 @@ app.use("/api/reports", reportRoutes);
 app.use("/api/cards", cardRoutes);
 
 app.use("/api/staff", staffRoutes);
+
+app.use('/api/packages',packageRoutes);
 
 // Start server
 app.listen(port, () => console.log(`Server started on PORT: ${port}`));
