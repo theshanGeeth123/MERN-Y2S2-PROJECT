@@ -3,6 +3,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom"; 
 
+import NavbarCustomer from "../components/NavbarCustomer";
+
+
 const API_BASE = "http://localhost:4000/api/packages";
 
 const packageImages = {
@@ -59,6 +62,7 @@ function UserPackages() {
     );
 
   return (
+    <><NavbarCustomer/>
     <div className="min-h-screen bg-gray-200 py-10 px-4">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-black mb-12">
@@ -135,6 +139,7 @@ function UserPackages() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
