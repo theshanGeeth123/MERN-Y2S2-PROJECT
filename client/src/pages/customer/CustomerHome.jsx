@@ -82,7 +82,7 @@ const CustomerHome = () => {
         toast.error(data?.message || "Logout failed");
       }
 
-      navigate("/", { replace: true });
+      navigate("/main-home", { replace: true });
     } catch (error) {
       toast.error(error?.response?.data?.message || error.message);
     } finally {
