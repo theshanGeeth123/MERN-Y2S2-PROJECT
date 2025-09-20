@@ -67,7 +67,7 @@ const MyProcessedRequests = () => {
                     {Array.isArray(req.items)
                       ? req.items.map((item, idx) => (
                           <span key={idx}>
-                            {item.name} (x{item.qty ?? 1})
+                            {item.name} 
                             {idx < req.items.length - 1 && ", "}
                           </span>
                         ))
@@ -99,99 +99,3 @@ const MyProcessedRequests = () => {
 };
 
 export default MyProcessedRequests;
-
-
-/*
-import React, { useEffect, useState } from "react";
-
-const MyProcessedRequests = () => {
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  // Assume you store user email in localStorage after login
-  const userEmail = localStorage.getItem("customer");
-
-  useEffect(() => {
-    const fetchProcessedRequests = async () => {
-      try {
-        if (!userEmail) {
-          setError("No user email found. Please log in.");
-          setLoading(false);
-          return;
-        }
-
-        const res = await fetch(
-          `http://localhost:4000/api/requests/processed?email=${userEmail}`
-        );
-        const data = await res.json();
-
-        if (data.success) {
-          setRequests(data.data);
-        } else {
-          setError(data.message || "Failed to fetch processed requests");
-        }
-      } catch (err) {
-        setError("Server error: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProcessedRequests();
-  }, [userEmail]);
-
-  if (loading) return <p className="text-center p-4">Loading...</p>;
-  if (error) return <p className="text-center text-red-500 p-4">{error}</p>;
-
-  return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4">My Processed Requests</h2>
-      {requests.length === 0 ? (
-        <p className="text-gray-500">No processed requests found.</p>
-      ) : (
-        <div className="space-y-4">
-          {requests.map((req) => (
-            <div
-              key={req._id}
-              className="border rounded-lg shadow-sm p-4 flex justify-between items-center"
-            >
-              <div>
-                <p className="font-semibold">Amount: ${req.amount}</p>
-                <p className="text-gray-600">
-                  Items:{" "}
-                  {req.items && req.items.length > 0
-                    ? req.items.map((i) => `${i.name} (x${i.qty})`).join(", ")
-                    : "N/A"}
-                </p>
-                <p className="text-sm text-gray-500">
-                  Period: {req.startDate ? new Date(req.startDate).toLocaleDateString() : "—"}{" "}
-                  - {req.endDate ? new Date(req.endDate).toLocaleDateString() : "—"}
-                </p>
-              </div>
-              <div>
-                <span
-                  className={`px-3 py-1 rounded-full text-white ${
-                    req.status === "accept"
-                      ? "bg-green-500"
-                      : req.status === "reject"
-                      ? "bg-red-500"
-                      : "bg-gray-400"
-                  }`}
-                >
-                  {req.status}
-                </span>
-                <p className="text-xs text-gray-400 mt-1">
-                  {new Date(req.processedAt).toLocaleString()}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default MyProcessedRequests;
-*/
