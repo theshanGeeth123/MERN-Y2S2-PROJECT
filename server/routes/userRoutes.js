@@ -1,7 +1,7 @@
 import express from 'express'
 import userAuth from '../middleware/userAuth.js';
 import { getUserById, getUserData, getUserIdByEmail,updateUser,deleteUser, getAllUsers,deleteUserByAdmin} from '../controllers/userController.js';
-import { feedbackSubmission, getFeedbacksById, getFeedbacks, updateFeedback, deletefeedback} from "../controllers/feedbackController.js";
+import { feedbackSubmission, getFeedbacksById, getFeedbacks, updateFeedback, deletefeedback, getPhotographersFromStaff} from "../controllers/feedbackController.js";
 import { questionSubmission, getQuestionsAnswers, getQuestionsById, updateQuestion, updateQuestionAnswer, deleteQuestion} from "../controllers/questionController.js";
 
 
@@ -23,6 +23,7 @@ userRouter.post('/feedback',feedbackSubmission);
 userRouter.get('/feedback/:id', getFeedbacksById);
 userRouter.put('/feedback', updateFeedback);
 userRouter.delete('/feedback', deletefeedback);
+userRouter.get('/feedback-photographers', getPhotographersFromStaff);
 
 userRouter.post('/question', questionSubmission);
 userRouter.get('/question', getQuestionsAnswers);
