@@ -1,14 +1,12 @@
 import React, { useContext, useState, useEffect } from "react";
 import axios from 'axios';
 import { toast } from "react-toastify";
-import { Star } from "lucide-react";
+import { Star, Download } from "lucide-react";
 import SwAdminNavbar from './SwAdminNavbar';
 
 function AdminFeedbackHandler() {
   const [loading, setLoading] = useState(false);
   const [feedbacks, setFeedbacks] = useState([]);
-  const [feedback, setFeedback] = useState(null);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => { // load data
     loadAllFeedbacks();
@@ -47,6 +45,22 @@ function AdminFeedbackHandler() {
     }
   };
 
+  const handleGenerateReport = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/user/feedback-report-generator`, {  responseType: 'blob', });
+      const url = window.URL.createObjectURL(new Blob([response.data]));  // Create a blob link to download
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'feedback_report.pdf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); // Clean up after download
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error("Failed to generate report. Try again. " + error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-green-100">
       <SwAdminNavbar />
@@ -64,6 +78,8 @@ function AdminFeedbackHandler() {
             </div>
           ) : (
             <div className="overflow-x-auto">
+              <div className="mb-6 flex justify-end"><button onClick={() => handleGenerateReport()} className="cursor-pointer flex items-right gap-2 rounded-lg bg-green-500 px-4 py-5 text-sm font-medium text-white hover:bg-green-700">
+                <Download className="w-4 h-4" /> Generate Report </button></div>
               <table className="w-full border border-gray-200 rounded-2xl overflow-hidden">
                 <thead className="bg-gray-600">
                   <tr>
