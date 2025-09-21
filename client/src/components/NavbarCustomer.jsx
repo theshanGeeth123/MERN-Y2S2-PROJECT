@@ -78,13 +78,13 @@ function NavbarCustomer() {
       <div className="flex items-center gap-4">
 
 
-        
+        {userData.isAccountVerified && 
           <button
             onClick={() => navigate("/customer-home")}
             className="cursor-pointer 2xl:mr-5 flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all"
           >
             Dashboard
-          </button>
+          </button>}
        
             <button
             onClick={() => navigate("/main-home")}
