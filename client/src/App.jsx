@@ -57,6 +57,8 @@ import BookingForm from "./pages/BookingForm";
 import UserBookings from "./pages/UserBookings";
 import Bookings from "./pages/Bookings";
 
+import PackageCreate from './admin/PackageCreate';
+
 import BookingReport from "./admin/BookingReport";
 
 // Feedbacks Management
@@ -135,6 +137,7 @@ function App() {
 
         <Route path="/admin/packages" element={<Packages />} />
         <Route path="/packageDetail/:id" element={<PackageDetail />} />
+        <Route path="/packageCreate" element={<PackageCreate />} /> 
 
         <Route path="/userpackages" element={<UserPackages />} />
         <Route path="/booking-request" element={<BookingForm />} />
