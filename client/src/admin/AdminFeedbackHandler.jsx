@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import { Star } from "lucide-react";
-import SwAdminNavbar from './SwAdminNavbar';
+import { useNavigate } from "react-router-dom";
 import NavbarAdmin from '../components/NavbarAdmin';
 
 function AdminFeedbackHandler() {
@@ -10,6 +10,7 @@ function AdminFeedbackHandler() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedback, setFeedback] = useState(null);
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => { // load data
     loadAllFeedbacks();
@@ -68,6 +69,11 @@ function AdminFeedbackHandler() {
             </div>
           ) : (
             <div className="overflow-x-auto">
+              <div className="flex justify-end mb-6">
+                <button onClick={() => navigate("/admin/feedback-report")}
+                  className="mt-5 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-purple-700 transition font-medium text-base">
+                  Feedback Report </button>
+              </div>
               <table className="w-full border border-gray-200 rounded-2xl overflow-hidden">
                 <thead className="bg-gray-600">
                   <tr>

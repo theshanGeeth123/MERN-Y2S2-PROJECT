@@ -68,6 +68,7 @@ import CustomerFeedback from "./pages/CustomerFeedback";
 import CustomerQuestion from "./pages/CustomerQuestion";
 
 import AdminFeedback from "./admin/AdminFeedbackHandler";
+import FeedbackReport from "./admin/FeedbackReport";
 import AdminQuestion from "./admin/AdminQuestionHandler";
 
 
@@ -179,6 +180,7 @@ function App() {
         <Route path="/customer-questions" element={<CustomerQuestion />} />
 
         <Route path="/admin/admin-feedback" element={<AdminFeedback />} />
+        <Route path="/admin/feedback-report" element={<FeedbackReport />} />
 
         <Route path="/admin/admin-question" element={<AdminQuestion />} />
 
