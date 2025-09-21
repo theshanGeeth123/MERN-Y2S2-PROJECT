@@ -1,0 +1,79 @@
+import React, { useEffect, useRef } from "react";
+import { useRequestStore } from "../mstore/mRequestStore";
+import AdminNavbar from "../components/NavbarAdmin";
+import { FileText } from "lucide-react";
+import { Link } from "react-router-dom";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import MProReq30days from "../components/mProReqToday";
+
+const mProcessedReq = () => {
+  const { processedRequests = [], fetchAllProcessedRequests, loading, error } =
+    useRequestStore();
+  const containerRef = useRef();
+
+  useEffect(() => {
+    fetchAllProcessedRequests("all");
+  }, [fetchAllProcessedRequests]);
+
+
+  if (loading) return <p>Loading processed requests...</p>;
+  if (error) return <p className="text-red-600">{error}</p>;
+
+  return (
+    <div className="p-4">
+      <AdminNavbar />
+
+
+      <div ref={containerRef} className="mt-4 bg-white rounded-xl p-4">
+        <h2 className="text-xl font-bold mb-4 text-center">All Processed Requests</h2>
+
+        {processedRequests.length === 0 ? (
+          <p>No processed requests yet.</p>
+        ) : (
+          <ul className="space-y-2">
+            {processedRequests.map((req) => (
+              <li
+                key={req._id}
+                className="flex items-center justify-between p-3 border rounded-lg shadow-sm text-white bg-gray-800"
+              >
+                <div className="flex items-center">
+                  <FileText className="mr-3 text-white" />
+                  <div>
+                    <div className="font-semibold">
+                      {Array.isArray(req.items)
+                        ? req.items.map((item, idx) => (
+                            <span key={idx}>
+                              {item.name} 
+                              {idx < req.items.length - 1 && ", "}
+                            </span>
+                          ))
+                        : req.items}
+                    </div>
+                    <p className="text-sm text-white">
+                      Amount: {req.amount} | Status: <strong>{req.status}</strong>
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Email: {req.email} — Processed At:{" "}
+                      {req.processedAt
+                        ? new Date(req.processedAt).toLocaleString()
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="mt-10 font-light text-center mb-40">
+        <Link to="/admin/requests" className="text-lg text-blue-800 hover:underline">
+          Back to Rental Requests
+        </Link>
+      </div>
+    </div>
+  );
+};
+
+export default mProcessedReq;

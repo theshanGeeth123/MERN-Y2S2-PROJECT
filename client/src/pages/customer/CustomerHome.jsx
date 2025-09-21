@@ -19,6 +19,7 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
+import { ShoppingBag } from "lucide-react";
 
 const links = [
   { label: "View Products", path: "/products", icon: <FaShoppingBag /> },
@@ -30,6 +31,7 @@ const links = [
   { label: "Notifications", path: "/notifications", icon: <FaBell /> },
   { label: "Add Feedback", path: "/customer-feedback", icon: <FaCommentDots /> },
   { label: "Q&A", path: "/customer-questions", icon: <FaQuestionCircle /> },
+  { label: "Rentals", path: "/all-rentals", icon: <ShoppingBag size={18} /> },
 ];
 
 const CustomerHome = () => {
