@@ -1,4 +1,5 @@
 import questionModel from "../models/questionModel.js";
+import PDFDocument from 'pdfkit';
 
 export const questionSubmission = async (req, res) => {
   const { username, email, question, status, answer } = req.body;
@@ -91,3 +92,26 @@ export const deleteQuestion = async (req, res) => {
   }
 };
 
+export const generateQuestionReport = async (req, res) => {
+  try {
+    const questions = await questionModel.find();
+    const doc = new PDFDocument();
+
+    res.setHeader('Content-Disposition', 'attachment; filename=question_report.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    doc.pipe(res); //pipe pdf to the response
+    doc.fontSize(20).text('Question Report', { align: 'center' });
+    doc.moveDown();
+
+    questions.forEach((qa, i) => {
+      const createdDate = new Date(qa.createdAt).toISOString().split('T')[0];
+      const updatedDate = qa.updatedAt ? new Date(qa.updatedAt).toISOString().split('T')[0] : "";
+      doc.fontSize(12).text( `${i + 1}. Username: ${qa.username} | Question: ${qa.question} | Created On: ${createdDate} | 
+        Response: ${qa.answer??""} | Responsed on : ${updatedDate}` );
+      doc.moveDown(1.2);
+    });
+    doc.end();
+  } catch (err) {
+    res.status(500).json({ message: 'Error generating report', error: err.message });
+  }
+};
