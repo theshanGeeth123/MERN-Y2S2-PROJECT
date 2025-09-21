@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import axios from 'axios';
 import { toast } from "react-toastify";
-import { Star } from "lucide-react";
+import { Download  } from "lucide-react";
 import SwAdminNavbar from './SwAdminNavbar';
 
 function AdminQuestionHandler() {
@@ -77,6 +77,22 @@ function AdminQuestionHandler() {
     }
   };
 
+  const handleGenerateReport = async () => {
+    try {
+      const response = await axios.get(`http://localhost:4000/api/user/question-report-generator`, {  responseType: 'blob', });
+      const url = window.URL.createObjectURL(new Blob([response.data]));  // Create a blob link to download
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'question_report.pdf');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link); // Clean up after download
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error("Failed to generate report. Try again. " + error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-green-100">
       <SwAdminNavbar />
@@ -92,12 +108,10 @@ function AdminQuestionHandler() {
             <div className="rounded-2xl border border-gray-200 bg-white p-6 text-gray-600">
               No Questions yet
             </div>
-          ) : questions.length === 0 ? (
-            <div className="rounded-2xl border border-gray-200 bg-white p-6 text-gray-600">
-              No Questions yet
-            </div>
           ) : (
             <div className="overflow-x-auto">
+              <div className="mb-6 flex justify-end"><button onClick={() => handleGenerateReport()} className="cursor-pointer flex items-right gap-2 rounded-lg bg-green-500 px-4 py-5 text-sm font-medium text-white hover:bg-green-700">
+                <Download className="w-4 h-4" /> Generate Report </button></div>
               <table className="w-full border border-gray-200 rounded-2xl overflow-hidden">
                 <thead className="bg-gray-600">
                   <tr>
