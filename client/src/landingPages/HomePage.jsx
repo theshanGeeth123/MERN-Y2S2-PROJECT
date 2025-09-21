@@ -130,7 +130,7 @@ export default function HomePage() {
             <li><button onClick={() => go('/aboutPage')} className="hover:opacity-90 hover:cursor-pointer" data-aos="fade-down" data-aos-duration="1800">About Us</button></li>
             <li><button onClick={() => go('/galleryPage')} className="hover:opacity-90 hover:cursor-pointer" data-aos="fade-down" data-aos-duration="2100">Gallery</button></li>
             <li><button onClick={() => go('/contactUs')} className="hover:opacity-90 hover:cursor-pointer" data-aos="fade-down" data-aos-duration="2400">Contact Us</button></li>
-            <li><button onClick={() => go('/main-home')} className="hover:opacity-90 hover:cursor-pointer" data-aos="fade-down" data-aos-duration="2700">SignIn</button></li>
+            <li><button onClick={() => go('/login')} className="hover:opacity-90 hover:cursor-pointer" data-aos="fade-down" data-aos-duration="2700">SignIn</button></li>
           </ul>
 
           {/* Hamburger (mobile only) */}
@@ -227,10 +227,12 @@ export default function HomePage() {
               </div>
 
               <div className="px-4 py-3 ">
-                <button onClick={() => go('/main-home')} className="w-full text-left px-3 py-3 rounded-lg hover:bg-black/5">SignIn</button>
+                
                 <button onClick={() => go('/aboutPage')} className="w-full text-left px-3 py-3 rounded-lg hover:bg-black/5">About Us</button>
                 <button onClick={() => go('/galleryPage')} className="w-full text-left px-3 py-3 rounded-lg hover:bg-black/5">Gallery</button>
                 <button onClick={() => go('/contactUs')} className="w-full text-left px-3 py-3 rounded-lg hover:bg-black/5">Contact Us</button>
+                <button onClick={() => go('/login')} className="w-full text-left px-3 py-3 rounded-lg hover:bg-black/5">SignIn</button>
+                
               </div>
 
               <div className="mt-auto px-4 py-6 text-xs text-black/60">
