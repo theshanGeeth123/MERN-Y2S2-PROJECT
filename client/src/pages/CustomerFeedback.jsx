@@ -50,7 +50,7 @@ function CustomerFeedback() {
 
     <> <NavbarCustomer />
   
-    <div className="min-h-screen flex flex-col bg-green-50/70 2xl:mx-30 xl:mx-20">
+    <div className="min-h-screen flex flex-col  bg-gray-100 2xl:mx-30 xl:mx-20">
      
       <CustomerFeedbackCreation userData={userData} createdFb={handleCreated}/>
       <CustomerFeedbackDisplay loading={loading} feedbacks={feedbacks} updatedFb={handleUpdated} deletedFb={handleDeleted}/>

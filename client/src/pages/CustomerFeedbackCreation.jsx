@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { Star } from "lucide-react";
 
 function CustomerFeedbackCreation({ userData, createdFb }) {
   const [selectedPhotographer, setSelectedPhotographer] = useState("");
+  const [photographers, setPhotographers] = useState([]);
   const [rate, setRate] = useState(0);
   const [comment, setComment] = useState("");
   const username = userData.name;
@@ -15,6 +16,18 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
     setRate(0);
     setComment("");
   };
+
+  useEffect(() => {
+    const fetchPhotographers = async () => {
+      try {
+        const { data } = await axios.get('http://localhost:4000/api/user/feedback-photographers');
+        setPhotographers(data.phographers || []);
+      } catch (error) {
+        toast.error("Failed to load photographers");
+      }
+    };
+    fetchPhotographers();
+  }, []);
 
   const onSubmitFeedbackHandler = async (e) => {
     e.preventDefault();
@@ -62,14 +75,15 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
           Selected photographer
         </label>
         <div className="mt-2">
-          <input
-            name="photographer"
-            type="text"
-            value={selectedPhotographer}
-            required
-            onChange={(e) => setSelectedPhotographer(e.target.value)}
-            className="w-full rounded-xl border border-gray-500 px-3 py-2 outline-none ring-1 ring-transparent focus:border-gray-900 focus:ring-gray-900/10"
-          />
+          <div className="mt-2">
+          <select value={selectedPhotographer} onChange={(e) => setSelectedPhotographer(e.target.value)} required className="w-full rounded-xl border border-gray-500 px-3 py-2 text-black
+                   outline-none ring-1 ring-transparent shadow-sm transition duration-200 ease-in-out hover:border-black-700" >
+            <option value="">SELECT</option>
+            {photographers.map((p) => (
+                <option key={p._id} value={`${p.firstName} ${p.lastName} Photography`}> {`${p.firstName} ${p.lastName} Photography`} </option>
+            ))}
+          </select>
+        </div>
         </div>
 
         <label className="mb-1 block text-sm text-gray-700"> Rating </label>

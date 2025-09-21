@@ -45,7 +45,7 @@ function CustomerQuestionsAnswers() {
   };
 
   const handleUpdated = (updated) => {
-    //setQuestions((prev) => prev.map((q) => (q._id === updated._id ? updated : q)));
+    setQuestions((prev) => prev.map((q) => (q._id === updated._id ? updated : q)));
   };
 
   return (
@@ -53,7 +53,7 @@ function CustomerQuestionsAnswers() {
     <>
 
     <NavbarCustomer/>
-    <div className="min-h-screen flex flex-col bg-green-50 2xl:mx-30 xl:mx-20">
+    <div className="min-h-screen flex flex-col bg-gray-100 2xl:mx-30 xl:mx-20">
       
       <CustomerQuestionCreation userData={userData} createdQuestion={handleCreated}/>
       <CustomerQuestionDisplay loading={loading} questions={questions} updatedQuestion={handleUpdated} deletedQuestion={handleDeleted}/>

@@ -1,4 +1,5 @@
 import feedbackModel from "../models/feedbackModel.js";
+import staffModel from "../models/Staff.model.js";
 
 export const feedbackSubmission = async (req, res) => {
   const { username, email, selectedPhotographer, rate, comment } = req.body;
@@ -80,3 +81,15 @@ export const deletefeedback = async (req, res) => {
   }
 };
 
+export const getPhotographersFromStaff = async (req, res) => {
+  const role = "photographer";
+  try {
+    const photographerStaff = await staffModel.find({ role });
+    if (!photographerStaff) {
+      res.json({success:false, message:"No photographers found"});
+    }
+    return res.json({ success: true, phographers: photographerStaff });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Server error', error });
+  }
+};
