@@ -70,6 +70,32 @@ import CustomerQuestion from "./pages/CustomerQuestion";
 import AdminFeedback from "./admin/AdminFeedbackHandler";
 import AdminQuestion from "./admin/AdminQuestionHandler";
 
+
+//Rental
+
+import MRental from './pages/MRental'
+import MRentPage from "./pages/MRentPage";
+import MRentalCus from "./pages/MRentalsCus";
+import MRentalCart from "./pages/MRentalCart";
+import MPaymentPage from "./pages/MRentalPayment";
+import MItemCardCus from "./components/MItemCardCus";
+import MPayment from "./pages/MPayment";
+import MSuccess from "./pages/mPaySuccess";
+import MRequestCus from "./pages/MRequestCus";
+import MRequestAdmin from "./pages/MRequestAdmin";
+import MProcessedReq from "./pages/mprocessedReqCus";
+import MProcessedReqAd from "./pages/mProcessedReqAdmin";
+import MTodayReqAd from "./pages/mTodayReqAdmin";
+
+const loggedInUser = JSON.parse(localStorage.getItem("user"));
+const authToken = localStorage.getItem("token");
+
+
+
+
+
+
+
 // Landing pages
 
 import LHome from "./landingPages/HomePage.jsx";
@@ -155,6 +181,30 @@ function App() {
         <Route path="/admin/admin-feedback" element={<AdminFeedback />} />
 
         <Route path="/admin/admin-question" element={<AdminQuestion />} />
+
+
+
+
+
+        {/* Rental */}
+        <Route path='/all-rentals' element={<MRentalCus/>}/>
+        <Route path="/item" element={<MItemCardCus />} />
+        <Route path="/Rcart" element={<MRentalCart />} />
+        <Route path="/payment" element={<MPaymentPage />} />
+        <Route path="/payment/create-payment-intent" element={<MPayment />} />
+        <Route path="/payment/success" element={<MSuccess />} />
+        <Route path="/requests" element={<MRequestCus />} />
+        <Route path="/my-requests" element={<MProcessedReq />} />
+
+        {/* admin */}
+        <Route path='/rental' element={<MRental/>}/>
+        <Route path="/admin/all-rentals" element={<MRentPage />} />
+        <Route path="/admin/requests" element={<MRequestAdmin />} />
+        <Route path="/admin/processed-requests" element={<MProcessedReqAd />} />
+        <Route path="/admin/processed-today" element={<MTodayReqAd />} />
+
+
+
       </Routes>
     </div>
   );

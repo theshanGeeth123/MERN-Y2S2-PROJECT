@@ -31,6 +31,16 @@ import packageRoutes from './routes/packageRoutes.js';
 
 import bookingRoutes from "./routes/bookingRoutes.js";
 
+
+//Rental Routes
+import rentalRoutes from "./routes/mRental.route.js";
+import paymentRoutes from "./routes/mPayment.route.js";
+import requestRoutes from "./routes/mRequest.route.js";
+
+
+
+
+
 const app = express();
 const port = process.env.PORT || 4000;
 
@@ -67,6 +77,14 @@ app.use("/api/staff", staffRoutes);
 app.use('/api/packages',packageRoutes);
 
 app.use("/api/bookings", bookingRoutes);
+
+
+//Rental
+app.use("/api/rentalItems",rentalRoutes)
+app.use("/api/payment", paymentRoutes);
+app.use("/api/requests", requestRoutes);
+
+
 
 // Start server
 app.listen(port, () => console.log(`Server started on PORT: ${port}`));

@@ -20,6 +20,8 @@ import {
   FaQuestionCircle,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { ShoppingBag } from "lucide-react";
+
 
 export default function AdminHome() {
   const navigate = useNavigate();
@@ -150,7 +152,9 @@ export default function AdminHome() {
             <NavItem icon={<FaCalendarCheck />} label="Bookings" to="/admin/bookings" />
             <NavItem icon={<FaCommentDots />} label="Feedbacks" to="/admin/admin-feedback" />
             <NavItem icon={<FaQuestionCircle />} label="Q&A" to="/admin/admin-question" />
+            <NavItem icon={<ShoppingBag size={18} />} label="Rentals" to="/admin/all-rentals" />
             <NavItem icon={<FaSignOutAlt />} label="Logout" onClick={handleLogout} />
+            
           </nav>
 
           <div className="p-4 border-t dark:border-gray-800 text-xs text-gray-500 dark:text-gray-400">
