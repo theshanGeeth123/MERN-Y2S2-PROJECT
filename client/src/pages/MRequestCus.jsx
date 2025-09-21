@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FileText, Trash2, Edit } from "lucide-react";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
+import NavbarCustomer from "../components/NavbarCustomer";
 
 const MRequestCus = () => {
   const {
@@ -87,7 +88,7 @@ const MRequestCus = () => {
 
   return (
     <div className="p-4">
-      <Navbar />
+      <NavbarCustomer />
       <div className="w-full flex justify-end mt-5 pr-6">
         <Link to="/my-requests">
           <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-2">

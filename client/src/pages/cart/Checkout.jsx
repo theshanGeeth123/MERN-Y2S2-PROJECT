@@ -3,6 +3,7 @@ import { AppContent } from "../../context/AppContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaCreditCard, FaLock, FaChevronLeft, FaPlus, FaCheck } from "react-icons/fa";
+import NavbarCustomer from "../../components/NavbarCustomer";
 
 // Import card logos
 import VisaIcon from "../payments/card_type_images/visa.png";
@@ -196,6 +197,9 @@ const Checkout = () => {
   }
 
   return (
+
+    <><NavbarCustomer/>
+
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <button
@@ -442,6 +446,7 @@ const Checkout = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

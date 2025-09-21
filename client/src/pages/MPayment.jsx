@@ -4,6 +4,7 @@ import { useRequestStore } from "../mstore/mRequestStore";
 import { loadStripe } from "@stripe/stripe-js";
 import { toast } from "react-toastify";
 import { X } from "lucide-react";
+import NavbarCustomer from "../components/NavbarCustomer";
 import {
   Elements,
   useStripe,
@@ -194,6 +195,10 @@ const clearCart =  useRentItemsStore((state) => state.clearCart);
     navigate("/payment");
   }
   return (
+
+    <>
+    
+    
     <div className="max-w-6xl mx-auto bg-slate-900 shadow-lg rounded-2xl">
       <div className="w-full flex justify-end mt-6">
         <X
@@ -292,6 +297,8 @@ const clearCart =  useRentItemsStore((state) => state.clearCart);
         </div>
       </form>
     </div>
+    
+    </>
   );
 }
 

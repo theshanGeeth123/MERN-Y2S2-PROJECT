@@ -75,6 +75,25 @@ function StaffCreate() {
     }
   };
 
+
+const fillDemo = () => {
+  setForm({
+    firstName: "John",
+    lastName: "Doe",
+    email: "demo@example.com",
+    password: "demo1234",
+    role: "photographer",
+    phone: "0712345678",
+    address: "123 Main Street, Colombo, Sri Lanka",
+    dateOfBirth: "1995-08-15",
+    dateHired: "2025-09-01",
+    imageUrl: "https://i.pinimg.com/1200x/89/90/48/899048ab0cc455154006fdb9676964b3.jpg",
+    isActive: true,
+  });
+};
+
+
+
   return (
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-4xl px-4 py-6">
@@ -251,22 +270,31 @@ function StaffCreate() {
           </div>
 
           <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="rounded-lg border border-neutral-300 bg-white px-5 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
-              disabled={saving}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="rounded-lg bg-green-500 px-5 py-2 text-sm font-medium text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-neutral-400 disabled:opacity-60"
-              disabled={saving}
-            >
-              {saving ? "Saving…" : "Create"}
-            </button>
-          </div>
+  <button
+    type="button"
+    onClick={fillDemo}
+    className="rounded-lg border border-blue-300 bg-blue-100 px-5 py-2 text-sm text-blue-800 transition hover:bg-blue-200"
+    disabled={saving}
+  >
+    Demo
+  </button>
+  <button
+    type="button"
+    onClick={() => navigate(-1)}
+    className="rounded-lg border border-neutral-300 bg-white px-5 py-2 text-sm text-neutral-800 transition hover:bg-neutral-100"
+    disabled={saving}
+  >
+    Cancel
+  </button>
+  <button
+    type="submit"
+    className="rounded-lg bg-green-500 px-5 py-2 text-sm font-medium text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-neutral-400 disabled:opacity-60"
+    disabled={saving}
+  >
+    {saving ? "Saving…" : "Create"}
+  </button>
+</div>
+
         </form>
       </div>
     </div>

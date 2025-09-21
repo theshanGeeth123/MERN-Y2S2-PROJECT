@@ -14,7 +14,8 @@ import {
   FaBookOpen,
   FaBoxOpen,
   FaUser,
-  FaSignOutAlt
+  FaSignOutAlt,
+  FaHome
 } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -22,6 +23,7 @@ import { AppContent } from "../../context/AppContext";
 import { ShoppingBag } from "lucide-react";
 
 const links = [
+  { label: "Home", path: "/main-home", icon: <FaHome  /> },
   { label: "View Products", path: "/products", icon: <FaShoppingBag /> },
   { label: "Packages", path: "/userpackages", icon: <FaBoxOpen /> },
   { label: "My Bookings", path: "/my-bookings", icon: <FaBookOpen /> },
@@ -122,7 +124,7 @@ const CustomerHome = () => {
             <div className="h-20 px-6 flex items-center justify-between border-b border-gray-800">
               <div className="flex items-center gap-3">
                 <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gray-800 text-white">
-                  <FaUser className="text-lg" />
+                  <a href="/my-profile"><FaUser className="text-lg" /></a>
                 </div>
                 <div>
                   <span className="font-semibold text-lg text-white block">

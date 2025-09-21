@@ -147,26 +147,52 @@ function PackageCreate() {
             {renderInput("Features", "features", "textarea", 4)}
           </div>
 
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={() => {
-                setForm({ title: "", description: "", price: "", duration: "", features: "" });
-                setErrors({ title: "", description: "", price: "", duration: "", features: "" });
-              }}
-              className="rounded-md border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-800 hover:bg-neutral-100 transition"
-            >
-              Clear
-            </button>
-            <button
-              type="submit"
-              className="rounded-md bg-blue-900 px-3 py-1 text-sm font-medium text-white hover:bg-blue-800 transition"
-            >
-              Create
-            </button>
-          </div>
+          <div className="flex justify-between items-center mt-4">
+  {/* Demo Button */}
+  <button
+    type="button"
+    onClick={() => {
+      setForm({
+        title: "Premium Wedding Package",
+        description:
+          "This premium package includes full-day wedding photography, candid shots, couple portraits, and beautifully edited images to capture your special day.",
+        price: "75000",
+        duration: "8",
+        features:
+          "Full-day coverage, 2 photographers, 300+ edited photos, Premium album, Online gallery",
+      });
+      setErrors({ title: "", description: "", price: "", duration: "", features: "" });
+      toast.info("Demo data filled!", { autoClose: 2000 });
+    }}
+    className="rounded-md border border-blue-700 bg-white px-3 py-1 text-sm text-blue-800 hover:bg-blue-100 transition"
+  >
+    Demo
+  </button>
+
+  {/* Action Buttons */}
+  <div className="flex gap-2">
+    <button
+      type="button"
+      onClick={() => {
+        setForm({ title: "", description: "", price: "", duration: "", features: "" });
+        setErrors({ title: "", description: "", price: "", duration: "", features: "" });
+      }}
+      className="rounded-md border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-800 hover:bg-neutral-100 transition"
+    >
+      Clear
+    </button>
+    <button
+      type="submit"
+      className="rounded-md bg-blue-900 px-3 py-1 text-sm font-medium text-white hover:bg-blue-800 transition"
+    >
+      Create
+    </button>
+  </div>
+</div>
+
         </form>
       </div>
+      
     </div>
     </>
   );

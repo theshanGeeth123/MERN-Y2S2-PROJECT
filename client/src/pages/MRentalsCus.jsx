@@ -4,6 +4,7 @@ import { useRentItemsStore } from "../mstore/mrentItems";
 import ItemCardCus from "../components/MItemCardCus";
 import Navbar from "../components/Navbar";
 import { ShoppingBag, Inbox } from "lucide-react";
+import NavbarCustomer from "../components/NavbarCustomer";
 
 function MRentalCus() {
   const fetchRItems = useRentItemsStore((state) => state.fetchRItems); 
@@ -22,7 +23,7 @@ function MRentalCus() {
 
   return (
     <div>
-      <Navbar />
+      <NavbarCustomer />
 
 
       <div className="w-full flex justify-end mt-5 pr-6">

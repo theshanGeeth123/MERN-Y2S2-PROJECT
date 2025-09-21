@@ -5,6 +5,7 @@ import { useContext } from 'react';
 import { AppContent } from '../context/AppContext';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Navbar2 from "../components/Navbar2";
 
 function EmailVerify() {
 
@@ -54,7 +55,7 @@ function EmailVerify() {
 
                 toast.success(data.message);
                 getUserData();
-                navigate('/');
+                navigate('/main-home');
             }else{
                 toast.error(data.message);
             }
@@ -73,14 +74,11 @@ function EmailVerify() {
 
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-gradient-to-br from-blue-200 to bg-purple-400">
+
+    <><Navbar2/>
+    <div className="flex items-center justify-center mt-20 px-6 sm:px-0 ">
       
-        <img
-              onClick={()=>navigate('/')}
-                src={assets.logo}
-                alt=""
-                className="absolute left-5 sm:left-20 top-5 w-28 sm:w-32 cursor-pointer"
-              />
+        
 
               <form  onSubmit={onSubmitHandler} className='bg-slate-900 p-8 rounded-lg shadow-lg w-96 text-sm'>
                 <h1 className='text-white text-2xl font-semibold text-center mb-4'>Email Verify OTP</h1>
@@ -91,15 +89,16 @@ function EmailVerify() {
                         <input type="text" maxLength={1} key={index} required ref={e=> inputRefs.current[index]=e}
                         onInput={(e) => handleInput(e,index) }
                         onKeyDown={(e)=> handleKeyDown(e,index)}
-                        className='w-12 h-12 bg-[#333AdC] text-white text-xg rounded-md text-center'/>
+                        className='w-12 h-12 bg-gray-600 text-white text-xg rounded-md text-center'/>
                     ))}
                 </div>
 
-                <button className='w-full py-3 bg-gradient-to-r from-indigo-500 to-indigo-900 rounded-full text-white'>Verify email</button>
+                <button className='cursor-pointer w-full py-3 bg-gradient-to-r from-indigo-500 to-indigo-900 rounded-full text-white'>Verify email</button>
               
               </form>
 
     </div>
+    </>
   )
 }
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+
 const PaymentSuccess = () => {
   const [isVisible, setIsVisible] = useState(false);
 

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { X  } from "lucide-react";
 
+import NavbarAdmin from "../components/NavbarAdmin";
+
 function MRental() {
   const [newRntal, setnewRental] = useState({
     name: "",
@@ -41,8 +43,19 @@ const handleClose = async () =>{
   navigate("/admin/all-rentals"); 
 }
 
+const fillDemo = () => {
+  setnewRental({
+    name: "Canon EOS R5",
+    category: "Camera",
+    price: "2500",
+    description: "Professional mirrorless camera with 45MP sensor.",
+    image: "https://assets.videomaker.com/2020/09/Canon-EOS-R5-primary.jpg",
+  });
+};
 
   return (
+
+    <><NavbarAdmin/>
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-1/3 text-indigo-300 h-[75vh]">
       <div className="w-full flex justify-end"><X className="w-6 h-6 text-gray-700 cursor-pointer flex justify-end" onClick={handleClose} /></div>
@@ -113,17 +126,26 @@ const handleClose = async () =>{
           </div>
 
           
-          <div className="flex justify-center">
-            <button
-            type="submit"
-            className="sm:w-2/3 py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium"
-          >
-            Add Rental
-          </button>
-          </div>
+          <div className="flex justify-center gap-3">
+  <button
+    type="button"
+    onClick={fillDemo}
+    className="sm:w-1/3 py-2.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 text-white font-medium"
+  >
+    Demo
+  </button>
+
+  <button
+    type="submit"
+    className="sm:w-1/3 py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium"
+  >
+    Add Rental
+  </button>
+</div>
         </form>
       </div>
     </div>
+    </>
   );
 }
 

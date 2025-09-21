@@ -38,7 +38,8 @@ function Login() {
   const [errors, setErrors] = useState({});
 
   // Helpers (JS-only validations)
-  const isStrongPassword = (pw) => /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$/.test(pw);
+  const isStrongPassword = (pw) =>
+    /^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{6,}$/.test(pw);
   const isValidName = (n) => n.trim().length >= 5;
   const isAdult = (a) => Number(a) >= 18;
   const isValidPhone = (p) => /^\d{10}$/.test(p);
@@ -73,10 +74,13 @@ function Login() {
     if (!address.trim()) newErrors.address = "Address is required.";
 
     // Business rules
-    if (name && !isValidName(name)) newErrors.name = "Full name must be at least 5 characters.";
-    if (email && !isValidEmail(email)) newErrors.email = "Enter a valid email address.";
+    if (name && !isValidName(name))
+      newErrors.name = "Full name must be at least 5 characters.";
+    if (email && !isValidEmail(email))
+      newErrors.email = "Enter a valid email address.";
     if (age && !isAdult(age)) newErrors.age = "You must be 18 or older.";
-    if (phone && !isValidPhone(phone)) newErrors.phone = "Phone number must be exactly 10 digits.";
+    if (phone && !isValidPhone(phone))
+      newErrors.phone = "Phone number must be exactly 10 digits.";
     if (password && !isStrongPassword(password))
       newErrors.password =
         "Password must be ≥ 6 chars, with at least 1 uppercase and 1 special character.";
@@ -90,7 +94,8 @@ function Login() {
     const newErrors = {};
     if (!email.trim()) newErrors.email = "Email is required.";
     if (!password) newErrors.password = "Password is required.";
-    if (email && !isValidEmail(email)) newErrors.email = "Enter a valid email address.";
+    if (email && !isValidEmail(email))
+      newErrors.email = "Enter a valid email address.";
     return newErrors;
   };
 
@@ -138,7 +143,9 @@ function Login() {
         }
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || error.message || "An error occurred");
+      toast.error(
+        error?.response?.data?.message || error.message || "An error occurred"
+      );
     }
   };
 
@@ -158,7 +165,9 @@ function Login() {
             {state === "Sign Up" ? "Create account" : "Login"}
           </h2>
           <p className="text-center text-sm mb-6">
-            {state === "Sign Up" ? "Create your account" : "Login to your account"}
+            {state === "Sign Up"
+              ? "Create your account"
+              : "Login to your account"}
           </p>
 
           {/* Disable native validation, rely on JS only; keep required attributes for semantics */}
@@ -182,7 +191,10 @@ function Login() {
                   />
                 </div>
                 {errors.name && (
-                  <p id="name-error" className="text-red-500 text-xs -mt-1 mb-2">
+                  <p
+                    id="name-error"
+                    className="text-red-500 text-xs -mt-1 mb-2"
+                  >
                     {errors.name}
                   </p>
                 )}
@@ -225,7 +237,9 @@ function Login() {
                   setPassword(e.target.value);
                   clearError("password");
                 }}
-                autoComplete={state === "Sign Up" ? "new-password" : "current-password"}
+                autoComplete={
+                  state === "Sign Up" ? "new-password" : "current-password"
+                }
                 aria-invalid={!!errors.password}
                 aria-describedby="password-error"
               />
@@ -240,7 +254,10 @@ function Login() {
               </button>
             </div>
             {errors.password && (
-              <p id="password-error" className="text-red-500 text-xs -mt-1 mb-2">
+              <p
+                id="password-error"
+                className="text-red-500 text-xs -mt-1 mb-2"
+              >
                 {errors.password}
               </p>
             )}
@@ -267,15 +284,26 @@ function Login() {
                   <button
                     type="button"
                     onClick={() => setShowConfirm((s) => !s)}
-                    aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                    aria-label={
+                      showConfirm
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
                     className="text-indigo-300 hover:text-indigo-200 focus:outline-none"
-                    title={showConfirm ? "Hide confirm password" : "Show confirm password"}
+                    title={
+                      showConfirm
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
                   >
                     {showConfirm ? <FiEyeOff /> : <FiEye />}
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p id="confirm-error" className="text-red-500 text-xs -mt-1 mb-2">
+                  <p
+                    id="confirm-error"
+                    className="text-red-500 text-xs -mt-1 mb-2"
+                  >
                     {errors.confirmPassword}
                   </p>
                 )}
@@ -316,7 +344,9 @@ function Login() {
                     value={phone}
                     onChange={(e) => {
                       // allow only digits and cap at 10
-                      const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                      const val = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 10);
                       setPhone(val);
                       clearError("phone");
                     }}
@@ -326,7 +356,10 @@ function Login() {
                   />
                 </div>
                 {errors.phone && (
-                  <p id="phone-error" className="text-red-500 text-xs -mt-1 mb-2">
+                  <p
+                    id="phone-error"
+                    className="text-red-500 text-xs -mt-1 mb-2"
+                  >
                     {errors.phone}
                   </p>
                 )}
@@ -348,14 +381,17 @@ function Login() {
                   />
                 </div>
                 {errors.address && (
-                  <p id="address-error" className="text-red-500 text-xs -mt-1 mb-2">
+                  <p
+                    id="address-error"
+                    className="text-red-500 text-xs -mt-1 mb-2"
+                  >
                     {errors.address}
                   </p>
                 )}
 
                 <p className="text-xs text-indigo-300 -mt-1 mb-3 text-center">
-                  Password must be at least 6 characters, with at least 1 uppercase letter and 1
-                  special character.
+                  Password must be at least 6 characters, with at least 1
+                  uppercase letter and 1 special character.
                 </p>
               </>
             )}
@@ -367,18 +403,60 @@ function Login() {
               Forgot password?
             </p>
 
-            <button
-              type="submit"
-              className="w-full py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium"
-            >
-              {state === "Sign Up" ? "Sign Up" : "Login"}
-            </button>
+           
+            {/* Buttons Section */}
+<div className="flex flex-col gap-3">
+  <button
+    type="submit"
+    className="cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium"
+  >
+    {state === "Sign Up" ? "Sign Up" : "Login"}
+  </button>
+
+  {/* Demo Login Button */}
+  {state === "Login" && (
+    <button
+      type="button"
+      onClick={() => {
+        setEmail("theshangeethanjana@gmail.com");
+        setPassword("gtg@STC");
+      }}
+      className="w-full py-2.5 rounded-full bg-gradient-to-r from-gray-400 to-gray-600 text-white font-medium"
+    >
+      Demo Login
+    </button>
+  )}
+
+  {/* Demo Register Button */}
+  {state === "Sign Up" && (
+    <button
+      type="button"
+      onClick={() => {
+        setName("GEETHANJANA K.M.G.T");
+        setEmail("gamithageeth@gmail.com");
+        setPassword("gtg@STC");
+        setConfirmPassword("gtg@STC");
+        setAge("23");
+        setPhone("0750952789");
+        setAddress("Matara ,Sri Lanka");
+      }}
+      className="cursor-pointer w-full py-2.5 rounded-full bg-gradient-to-r from-gray-400 to-gray-600 text-white font-medium"
+    >
+      Demo Register
+    </button>
+  )}
+</div>
+
           </form>
 
           <p className="text-center text-gray-400 text-xs mt-4">
-            {state === "Sign Up" ? "Already have an account?" : "Don't have an account?"}{" "}
+            {state === "Sign Up"
+              ? "Already have an account?"
+              : "Don't have an account?"}{" "}
             <span
-              onClick={() => setState(state === "Sign Up" ? "Login" : "Sign Up")}
+              onClick={() =>
+                setState(state === "Sign Up" ? "Login" : "Sign Up")
+              }
               className="cursor-pointer underline text-blue-400"
             >
               {state === "Sign Up" ? "Login here" : "Sign Up"}
