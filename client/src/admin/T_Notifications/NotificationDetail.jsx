@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import NavbarAdmin from "../../components/NavbarAdmin";
 
 const API_BASE =
   (import.meta.env.VITE_BACKEND_URL
@@ -181,6 +182,9 @@ function NotificationDetail() {
   }
 
   return (
+
+    <><NavbarAdmin/>
+
     <div className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto max-w-5xl px-4 py-6">
         {/* Header */}
@@ -442,6 +446,7 @@ function NotificationDetail() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

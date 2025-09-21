@@ -13,6 +13,9 @@ import otherIcon from "./card_type_images/Other.png";
 
 import NavbarCustomer from "../../components/NavbarCustomer";
 
+
+
+
 const ManageCards = () => {
   const { userData } = useContext(AppContent);
   const navigate = useNavigate();
@@ -27,6 +30,17 @@ const ManageCards = () => {
     expYear: "",
     name: "",
   });
+
+  
+const fillDemoAddForm = () => {
+  setForm({
+    type: "VISA",
+    name: "Aloka N.P.C",
+    cardNumber: "1234 5678 9012 3456",
+    expMonth: "10",
+    expYear: "2026",
+  });
+};
 
   const [editingCard, setEditingCard] = useState(null);
   const [editForm, setEditForm] = useState({
@@ -243,10 +257,21 @@ const ManageCards = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Add Card Form */}
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-               Add New Card
-            </h2>
+          {/* Add Card Form */}
+<div className="bg-white rounded-xl shadow-sm p-6">
+  <div className="flex items-center justify-between mb-6">
+    <h2 className="text-xl font-semibold text-gray-900">Add New Card</h2>
+
+    {/* Demo button */}
+    <button
+      type="button"
+      onClick={fillDemoAddForm}
+      className="text-sm px-3 py-1.5 rounded-lg border border-blue-200 text-blue-700 hover:bg-blue-50"
+      title="Fill demo card details"
+    >
+      Demo
+    </button>
+  </div>
             <form onSubmit={addCard} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Card Type</label>

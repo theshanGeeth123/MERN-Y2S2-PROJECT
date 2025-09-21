@@ -2,6 +2,7 @@ import React from "react";
 import { useRentItemsStore } from "../mstore/mrentItems";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import NavbarCustomer from "../components/NavbarCustomer";
 
 const MRentalCart = () => {
   const rentalCart = useRentItemsStore((state) => state.rentalCart);
@@ -19,7 +20,7 @@ const MRentalCart = () => {
   if (!rentalCart || rentalCart.length === 0)
     return (
       <>
-        <Navbar />
+        <NavbarCustomer />
         <div className="mt-20 flex items-center justify-center bg-gray-100 p-4">
           <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-11/12 text-center text-white text-xl font-bold">
             🤔 Your cart is empty.
@@ -35,7 +36,7 @@ const MRentalCart = () => {
 
   return (
     <>
-      <Navbar />
+      <NavbarCustomer />
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4 text-center mt-20 mb-10">
           Your Rental Cart

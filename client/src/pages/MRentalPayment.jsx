@@ -3,7 +3,7 @@ import { useRentItemsStore } from "../mstore/mrentItems";
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
-
+import NavbarCustomer from "../components/NavbarCustomer";
 
 const MRentalCart = () => {
   const rentalCart = useRentItemsStore((state) => state.rentalCart);
@@ -37,7 +37,7 @@ const MRentalCart = () => {
 
   return (
     <div className="p-6">
-      <Navbar/>
+      <NavbarCustomer/>
       <h2 className="text-2xl font-bold mb-4 text-center mt-10 mb-10">
         Confirm Your Payment
       </h2>
