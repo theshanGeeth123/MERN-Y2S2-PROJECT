@@ -1,4 +1,6 @@
 import feedbackModel from "../models/feedbackModel.js";
+import staffModel from "../models/staffModel.js";
+import PDFDocument from 'pdfkit';
 
 export const feedbackSubmission = async (req, res) => {
   const { username, email, selectedPhotographer, rate, comment } = req.body;
@@ -50,10 +52,6 @@ export const updateFeedback = async (req, res) => {
   const { id } = req.query;
   const { username, email, selectedPhotographer, rate, comment } = req.body;
   console.log(rate || comment);
-  console.log(email || selectedPhotographer || rate || comment);
-  console.log(selectedPhotographer || rate || comment);
-  console.log(username || email || selectedPhotographer || rate || comment);
-  console.log(username || email || selectedPhotographer || rate || comment);
   try {
     const updatedData = { username, email,  selectedPhotographer, rate, comment };
     const feedback = await feedbackModel.findByIdAndUpdate(id, updatedData, { new: true });
@@ -80,3 +78,36 @@ export const deletefeedback = async (req, res) => {
   }
 };
 
+export const generateFeedbackReport = async (req, res) => {
+  try {
+    const feedbacks = await feedbackModel.find();
+    const doc = new PDFDocument();
+
+    res.setHeader('Content-Disposition', 'attachment; filename=feedback_report.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    doc.pipe(res); //pipe pdf to the response
+    doc.fontSize(20).text('Feedback Report', { align: 'center' });
+    doc.moveDown();
+
+    feedbacks.forEach((fb, i) => {
+      doc.fontSize(12) .text( `${i + 1}. Username: ${fb.username} | Comment: ${fb.comment} | Rating: ${fb.rate} | Created On: ${new Date(fb.createdAt).toISOString().split('T')[0]}` );
+      doc.moveDown(1.2);
+    });
+    doc.end();
+  } catch (err) {
+    res.status(500).json({ message: 'Error generating report', error: err.message });
+  }
+};
+
+export const getPhotographersFromStaff = async (req, res) => {
+  const role = "photographer";
+  try {
+    const photographerStaff = await staffModel.find({ role });
+    if (!photographerStaff) {
+      res.json({success:false, message:"No photographers found"});
+    }
+    return res.json({ success: true, phographers: photographerStaff });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: 'Server error', error });
+  }
+};
