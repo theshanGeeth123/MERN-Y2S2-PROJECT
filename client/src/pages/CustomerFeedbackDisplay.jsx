@@ -54,9 +54,11 @@ function CustomerFeedbackDisplay({ loading, feedbacks, updatedFb, deletedFb}) {
                         ))}
                       </span>
                     </div>
-                    <p className="whitespace-pre-wrap text-gray-800">
-                      {fb.comment}
-                    </p>
+                    <p className="whitespace-pre-wrap text-medium text-gray-800"> {fb.comment} </p>
+                    <div> <p className="whitespace-pre-wrap text-sm text-gray-400 text-right">
+                      {fb.updatedAt !== undefined ? `Updated on: ${new Date(fb.updatedAt).toISOString().split('T')[0]}`
+                          : `Created on: ${new Date(fb.createdAt).toISOString().split('T')[0]}`}
+                    </p></div>
                   </div>
 
                   <div className="mt-4 pt-3 flex justify-end gap-2">
