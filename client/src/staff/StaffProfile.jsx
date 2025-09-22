@@ -34,7 +34,7 @@ export default function StaffProfile() {
       
       <div className="flex items-center justify-between mb-6">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/staff/home")}
           className="text-sm text-gray-600 hover:text-gray-800"
         >
           ← Back
