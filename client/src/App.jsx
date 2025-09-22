@@ -88,6 +88,11 @@ import MProcessedReq from "./pages/mprocessedReqCus";
 import MProcessedReqAd from "./pages/mProcessedReqAdmin";
 import MTodayReqAd from "./pages/mTodayReqAdmin";
 
+
+import StaffPackages from "./staff/Packages.jsx";
+import StaffCusMangement from "./staff/CustomerManage.jsx";
+
+
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 const authToken = localStorage.getItem("token");
 
@@ -204,6 +209,10 @@ function App() {
         <Route path="/admin/requests" element={<MRequestAdmin />} />
         <Route path="/admin/processed-requests" element={<MProcessedReqAd />} />
         <Route path="/admin/processed-today" element={<MTodayReqAd />} />
+
+
+        <Route path="/staff/packages" element={<StaffPackages />} />
+        <Route path="/staff/customerManage" element={<StaffCusMangement />} />
 
 
 
