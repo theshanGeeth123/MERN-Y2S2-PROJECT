@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react"; 
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -37,6 +37,11 @@ function BookingForm() {
       return;
     }
 
+    if (!formData.time) {
+      toast.error("Please enter a time.");
+      return;
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -56,10 +61,8 @@ function BookingForm() {
       );
       console.log(res.data);
 
-      
       setShowPopup(true);
 
-      
       setFormData({
         ...formData,
         date: "",
@@ -114,7 +117,6 @@ function BookingForm() {
             />
           </div>
 
-          
           <div className="relative">
             <input
               type="date"
@@ -123,17 +125,19 @@ function BookingForm() {
               onChange={handleChange}
               required
               min={new Date().toISOString().split("T")[0]}
-              className={`w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500
-                ${formData.date ? "text-gray-900" : "text-transparent"}`}
+              className="w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              style={{ color: formData.date ? "black" : "transparent" }}
             />
             {!formData.date && (
-              <span className="absolute left-3 top-3 text-gray-400 pointer-events-none text-lg">
+              <span
+                className="absolute left-3 top-3 text-gray-400 text-lg cursor-text"
+                onClick={() => document.getElementsByName("date")[0].focus()}
+              >
                 mm/dd/yyyy
               </span>
             )}
           </div>
 
-          
           <div className="relative">
             <input
               type="time"
@@ -141,11 +145,14 @@ function BookingForm() {
               value={formData.time}
               onChange={handleChange}
               required
-              className={`w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500
-                ${formData.time ? "text-gray-900" : "text-transparent"}`}
+              className="w-full p-3 border border-gray-300 rounded-xl bg-white text-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+              style={{ color: formData.time ? "black" : "transparent" }}
             />
             {!formData.time && (
-              <span className="absolute left-3 top-3 text-gray-400 pointer-events-none text-lg">
+              <span
+                className="absolute left-3 top-3 text-gray-400 text-lg cursor-text"
+                onClick={() => document.getElementsByName("time")[0].focus()}
+              >
                 6:30 PM
               </span>
             )}
@@ -162,7 +169,6 @@ function BookingForm() {
         </form>
       </div>
 
-      
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-xl shadow-lg text-center w-80">
