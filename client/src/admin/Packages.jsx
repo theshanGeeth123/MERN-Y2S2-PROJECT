@@ -6,19 +6,6 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE = "http://localhost:4000/api/packages";
 
-const packageImages = {
-  "Portrait Photography Package":
-    "https://i.postimg.cc/d1Zzc7vD/Whats-App-Image-2025-09-02-at-09-55-18.jpg",
-  "Engagement Photoshoot Package":
-    "https://i.postimg.cc/3NMz8KJ1/Whats-App-Image-2025-09-02-at-09-55-18-2.jpg",
-  "Baby Photoshoot Package":
-    "https://i.postimg.cc/Jh29FNf9/Whats-App-Image-2025-09-02-at-09-55-14.jpg",
-  "Gold Wedding Package":
-    "https://i.postimg.cc/d01bnHx2/Whats-App-Image-2025-09-02-at-09-55-18-1.jpg",
-  "Event Photography Package":
-    "https://i.postimg.cc/BnMWT9MZ/Whats-App-Image-2025-09-02-at-09-55-19.jpg",
-};
-
 function Packages() {
   const [packages, setPackages] = useState([]);
   const [displayPackages, setDisplayPackages] = useState([]);
@@ -142,11 +129,9 @@ function Packages() {
                
                 <div className="min-h-[200px] flex items-center justify-center">
                   <img
-                    src={
-                      packageImages[p.title] || "https://via.placeholder.com/150"
-                    }
+                    src={p.image || "https://via.placeholder.com/150"}
                     alt={p.title || "Package Image"}
-                    className="h-40 w-40 object-cover rounded-lg"
+                    className="h-50 w-50 object-cover rounded-lg"
                   />
                 </div>
 
