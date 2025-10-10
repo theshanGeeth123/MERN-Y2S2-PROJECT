@@ -16,8 +16,10 @@ function PackageDetail() {
     description: "",
     price: "",
     duration: "",
-    features: ""
+    features: "",
+    image: ""
   });
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -33,7 +35,8 @@ function PackageDetail() {
           description: p.description || "",
           price: p.price || "",
           duration: p.duration || "",
-          features: Array.isArray(p.features) ? p.features.join(", ") : p.features || ""
+          features: Array.isArray(p.features) ? p.features.join(", ") : p.features || "",
+          image: p.image || ""
         });
       } catch {
         alert("Failed to load package");
@@ -66,15 +69,17 @@ function PackageDetail() {
 
     setSaving(true);
     try {
-      await axios.put(`${API_BASE}/${id}`, {
-        ...form,
-        features: form.features.split(",").map(f => f.trim()),
-      }, { withCredentials: true });
+      await axios.put(
+        `${API_BASE}/${id}`,
+        {
+          ...form,
+          features: form.features.split(",").map(f => f.trim()),
+        },
+        { withCredentials: true }
+      );
 
-      
       alert("Package updated successfully!");
       navigate(-1);
-
     } catch {
       alert("Error updating package");
     } finally {
@@ -82,7 +87,12 @@ function PackageDetail() {
     }
   };
 
-  if (loading) return <p className="text-center mt-20 text-gray-500 text-lg">Loading package...</p>;
+  if (loading)
+    return (
+      <p className="text-center mt-20 text-gray-500 text-lg">
+        Loading package...
+      </p>
+    );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-300 py-6 px-4">
@@ -90,6 +100,16 @@ function PackageDetail() {
         <h1 className="text-2xl font-semibold text-gray-800 mb-8 text-center">
           Update Package
         </h1>
+
+        {form.image && (
+          <div className="flex justify-center mb-6">
+            <img
+              src={form.image}
+              alt="Package"
+              className="w-48 h-48 object-cover rounded-lg shadow-md"
+            />
+          </div>
+        )}
 
         <form onSubmit={handleSave} className="space-y-6">
           <div>
@@ -165,6 +185,17 @@ function PackageDetail() {
               value={form.features}
               onChange={handleChange}
               rows={3}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-black-700 mb-1">Image URL</label>
+            <input
+              type="text"
+              name="image"
+              value={form.image}
+              onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             />
           </div>
