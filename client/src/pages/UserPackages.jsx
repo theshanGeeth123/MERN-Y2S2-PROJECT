@@ -5,19 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE = "http://localhost:4000/api/packages";
 
-const packageImages = {
-  "Portrait Photography Package":
-    "https://i.postimg.cc/d1Zzc7vD/Whats-App-Image-2025-09-02-at-09-55-18.jpg",
-  "Engagement Photoshoot Package":
-    "https://i.postimg.cc/3NMz8KJ1/Whats-App-Image-2025-09-02-at-09-55-18-2.jpg",
-  "Baby Photoshoot Package":
-    "https://i.postimg.cc/Jh29FNf9/Whats-App-Image-2025-09-02-at-09-55-14.jpg",
-  "Gold Wedding Package":
-    "https://i.postimg.cc/d01bnHx2/Whats-App-Image-2025-09-02-at-09-55-18-1.jpg",
-  "Event Photography Package":
-    "https://i.postimg.cc/BnMWT9MZ/Whats-App-Image-2025-09-02-at-09-55-19.jpg",
-};
-
 function UserPackages() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,10 +29,8 @@ function UserPackages() {
     fetchPackages();
   }, []);
 
-  
   const handleBooking = (packageItem) => {
-    const pkgWithImage = { ...packageItem, image: packageImages[packageItem.title] };
-    navigate("/booking-request", { state: { package: pkgWithImage } });
+    navigate("/booking-request", { state: { package: packageItem } });
   };
 
   if (loading)
@@ -73,10 +58,7 @@ function UserPackages() {
             >
               <div className="w-full overflow-hidden rounded-xl bg-white flex items-center justify-center p-4">
                 <img
-                  src={
-                    packageImages[p.title] ||
-                    "https://via.placeholder.com/300x200"
-                  }
+                  src={p.image || "https://via.placeholder.com/300x200"}
                   alt={p.title}
                   className="max-h-48 object-contain rounded-xl mx-auto"
                 />
