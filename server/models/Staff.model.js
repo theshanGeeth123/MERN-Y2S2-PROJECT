@@ -42,11 +42,11 @@ const staffSchema = new mongoose.Schema(
     },
     dateHired: {
       type: Date,
-      default: Date.now,
+      default: null, 
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: true, 
     },
   },
   { timestamps: true }
