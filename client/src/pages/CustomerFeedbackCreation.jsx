@@ -68,16 +68,15 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
-      <h3 className="text-4xl font-bold text-left mb-6">Submit Feedback</h3>
-      <form onSubmit={onSubmitFeedbackHandler} className="space-y-4">
-        <label className="mb-1 block text-sm text-gray-700">
-          Selected photographer
-        </label>
+    <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <h2 className="mb-1 text-xl font-semibold text-gray-600">Submit Feedback</h2>
+      <p className="mb-6 text-sm text-gray-500"> Choose a photographer, rate your experience & add a short comment. </p>
+      <form onSubmit={onSubmitFeedbackHandler} className="space-y-5">
+        <div><label className="mb-1 block text-sm font-medium text-gray-700"> Select Photographer </label></div>
         <div className="mt-2">
           <div className="mt-2">
-          <select value={selectedPhotographer} onChange={(e) => setSelectedPhotographer(e.target.value)} required className="w-full rounded-xl border border-gray-500 px-3 py-2 text-black
-                   outline-none ring-1 ring-transparent shadow-sm transition duration-200 ease-in-out hover:border-black-700" >
+          <select value={selectedPhotographer} onChange={(e) => setSelectedPhotographer(e.target.value)} required className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-800
+                           outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200" >
             <option value="">SELECT</option>
             {photographers.map((p) => (
                 <option key={p._id} value={`${p.firstName} ${p.lastName} Photography`}> {`${p.firstName} ${p.lastName} Photography`} </option>
@@ -86,8 +85,8 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
         </div>
         </div>
 
-        <label className="mb-1 block text-sm text-gray-700"> Rating </label>
-        <div className="flex space-x-4 mt-2">
+        <div><label className="mb-2 block text-sm font-medium text-gray-700"> Rating </label></div>
+        <div className="flex gap-3">
           {Array.from({ length: 5 }).map((_, index) => (
             <button
               type="button"
@@ -106,7 +105,7 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
           ))}
         </div>
 
-        <label className="mb-1 block text-sm text-gray-700"> Comment </label>
+        <div><label className="mb-2 block text-sm font-medium text-gray-700"> Comment </label></div>
         <div className="mt-2">
           <textarea
             name="comment"
@@ -115,14 +114,17 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
             value={comment}
             required
             onChange={(e) => setComment(e.target.value)}
-            className="w-full rounded-xl border border-gray-500 px-3 py-2 outline-none ring-1 ring-transparent focus:border-gray-900 focus:ring-gray-900/10"
+            className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-800
+                           outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200"
           />
         </div>
 
         <div className="mt-2 flex gap-3">
           <button
             type="submit"
-            className="rounded-md cursor-pointer hover:bg-black bg-indigo-500 px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500
+                  px-8 py-4 text-sm font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600
+                  active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2"
           >
             Submit
           </button>
@@ -131,13 +133,15 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
           <button
             type="button"
             onClick={fillDemoData}
-            className="rounded-md cursor-pointer bg-green-500 hover:bg-green-600 px-3 py-2 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-gray-500 to-gray-500
+                  px-8 py-4 text-sm font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600
+                  active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2"
           >
             Demo
           </button>
         </div>
       </form>
-    </div>
+    </section>
   );
 }
 
