@@ -88,9 +88,9 @@ const MyProcessedRequests = () => {
         </ul>
       )}
 
-      <div className="mt-10 font-light text-center mb-50">
-        <Link to="/requests" className="text-lg text-blue-700 hover:underline">
-          Back to My Requests
+      <div className="mt-10 font-light text-center">
+        <Link to="/all-rentals" className="text-blue-500 hover:underline">
+          Back to Rentals
         </Link>
       </div>
     </div>
