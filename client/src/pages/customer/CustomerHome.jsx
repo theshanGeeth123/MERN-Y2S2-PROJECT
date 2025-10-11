@@ -31,7 +31,7 @@ const links = [
   { label: "My Cards", path: "/cards", icon: <FaCreditCard /> },
   { label: "My Orders", path: "/my-orders", icon: <FaClipboardList /> },
   { label: "Notifications", path: "/notifications", icon: <FaBell /> },
-  { label: "Add Feedback", path: "/customer-feedback", icon: <FaCommentDots /> },
+  { label: "Feedback", path: "/customer-feedback", icon: <FaCommentDots /> },
   { label: "Q&A", path: "/customer-questions", icon: <FaQuestionCircle /> },
   { label: "Rentals", path: "/all-rentals", icon: <ShoppingBag size={18} /> },
 ];

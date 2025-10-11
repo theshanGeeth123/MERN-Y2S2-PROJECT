@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Star } from "lucide-react";
+import { Star, SendHorizonalIcon } from "lucide-react";
 
 function CustomerFeedbackCreation({ userData, createdFb }) {
   const [selectedPhotographer, setSelectedPhotographer] = useState("");
@@ -123,10 +123,9 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
           <button
             type="submit"
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500
-                  px-8 py-4 text-sm font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600
+                  px-6 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600
                   active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2"
-          >
-            Submit
+          > Submit
           </button>
 
           {/* 👉 Demo Button */}
@@ -134,7 +133,7 @@ function CustomerFeedbackCreation({ userData, createdFb }) {
             type="button"
             onClick={fillDemoData}
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-gray-500 to-gray-500
-                  px-8 py-4 text-sm font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600
+                  px-10 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600
                   active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2"
           >
             Demo

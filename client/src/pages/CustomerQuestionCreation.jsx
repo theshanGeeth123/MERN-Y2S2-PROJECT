@@ -1,8 +1,7 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import axios from 'axios';
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { Star } from "lucide-react";
+import { SendHorizonalIcon } from "lucide-react";
 
 function CustomerQuestionCreation({ userData, createdQuestion }) {
   const [question, setQuestion] = useState('');
@@ -43,19 +42,25 @@ function CustomerQuestionCreation({ userData, createdQuestion }) {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-2xl">
-      <h3 className="text-4xl font-bold text-center mb-6">Ask a Question</h3>
+    <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <h2 className="mb-1 text-xl font-semibold text-gray-600">Ask a Question</h2>
+      <p className="mb-5 text-sm text-gray-500">
+        Keep it clear and concise so we can answer quickly.
+      </p>
       <form onSubmit={onSubmitQuestionHandler} className="space-y-4">
-        <label lassName="mb-1 block text-sm text-gray-700"> Question </label>
-        <div class="mt-2">
+        <div><label className="mb-2 block text-sm font-medium text-gray-700"> Question </label></div>
+        <div className="flex justify-end">
           <textarea name="question" rows="4" placeholder="Write your question" value={question} required onChange={(e) => setQuestion(e.target.value)}
-              className="w-full rounded-xl border border-gray-500 px-3 py-2 outline-none ring-1 ring-transparent focus:border-gray-900 focus:ring-gray-900/10"/>
+              className="w-full rounded-xl border border-gray-300 px-4 py-10 text-sm text-gray-800 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200"/>
         </div>
         <div class="mt-2">
-          <button type="submit" class="rounded-md cursor-pointer hover:bg-black bg-indigo-500 px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Submit</button>
+          <button type="submit" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500
+            px-6 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-600 hover:to-blue-600
+            active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:ring-offset-2">
+           Submit</button>
         </div>
       </form>
-    </div>
+    </section>
   );
 }
 
