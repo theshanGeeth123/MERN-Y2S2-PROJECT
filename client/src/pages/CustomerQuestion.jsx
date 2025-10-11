@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppContent } from "../context/AppContext";
 import axios from 'axios';
+import {  MessageSquareText } from "lucide-react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import CustomerHomeNavbar from '../components/CustomerHomeNavbar';
 import CustomerQuestionDisplay from './CustomerQuestionDisplay';
 import CustomerQuestionCreation from './CustomerQuestionCreation';
 
@@ -53,10 +53,17 @@ function CustomerQuestionsAnswers() {
     <>
 
     <NavbarCustomer/>
-    <div className="min-h-screen flex flex-col bg-gray-100 2xl:mx-30 xl:mx-20">
-      
-      <CustomerQuestionCreation userData={userData} createdQuestion={handleCreated}/>
-      <CustomerQuestionDisplay loading={loading} questions={questions} updatedQuestion={handleUpdated} deletedQuestion={handleDeleted}/>
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center px-4 py-10">
+      {/* Page Header */}
+      <div className="inline-flex items-center justify-center text-2xl gap-2 text-indigo-600 bg-indigo-50 px-4 py-2 rounded-full font-medium mb-3">
+        <MessageSquareText className="h-7 w-7" /> Q&A Center
+      </div>
+      <h1 className="text-4xl font-bold text-gray-900"> Ask & Manage Questions </h1>
+      <p className="mt-2 text-gray-500 text-sm"> Ask anything and track answers from the team. </p>
+      <main className="mx-auto mt-8 w-full max-w-4xl px-4 pb-16">
+        <CustomerQuestionCreation userData={userData} createdQuestion={handleCreated}/>
+        <CustomerQuestionDisplay loading={loading} questions={questions} updatedQuestion={handleUpdated} deletedQuestion={handleDeleted}/>
+      </main>
       <br/>
     </div>
 

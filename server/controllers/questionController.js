@@ -56,7 +56,7 @@ export const updateQuestion = async (req, res) => {
     if (!askedQuestion) {
       return res.status(404).json({ success: false, message: "question not found" });
     }
-    res.json({ success: true,  data: question });
+    res.json({ success: true,  data: askedQuestion });
   } catch (err) {
     res.status(500).json({ success: false, message: "Server error" });
   }

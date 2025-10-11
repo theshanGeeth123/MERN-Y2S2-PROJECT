@@ -53,9 +53,9 @@ function CustomerFeedback() {
       {/* Page Header */}
       <div className="inline-flex items-center justify-center text-2xl gap-2 text-indigo-600 bg-indigo-50 px-4 py-2 rounded-full font-medium mb-3">
         <CameraIcon className="h-8 w-8" /> Feedback Center </div>
-        <h1 className="text-4xl font-bold text-gray-900"> Submit & Manage Feedback </h1>
-        <p className="mt-2 text-gray-500 text-sm"> Share your experience and review your previous submissions. </p>
-        <main className="mx-auto mt-8 w-full max-w-4xl px-4 pb-16">
+      <h1 className="text-4xl font-bold text-gray-900"> Submit & Manage Feedback </h1>
+      <p className="mt-2 text-gray-500 text-sm"> Share your experience and review your previous submissions. </p>
+      <main className="mx-auto mt-8 w-full max-w-4xl px-4 pb-16">
           <CustomerFeedbackCreation userData={userData} createdFb={handleCreated}/>
           <CustomerFeedbackDisplay loading={loading} feedbacks={feedbacks} updatedFb={handleUpdated} deletedFb={handleDeleted}/>
         </main>

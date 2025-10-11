@@ -110,7 +110,7 @@ function CustomerFeedbackDisplay({ loading, feedbacks, updatedFb, deletedFb}) {
                       <div className="flex gap-2">
                         <button onClick={() => { setOpen(true); setFeedback(fb)}} // Open modal to update selected feedback
                           className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-400 to-violet-400
-                          px-4 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-violet-500
+                          px-6 py-2 text-sm font-semibold text-white shadow-sm hover:from-indigo-500 hover:to-violet-500
                           active:scale-[0.97] focus:outline-none focus:ring-2 focus:ring-violet-300 focus:ring-offset-2 transition"
                           aria-label={`Edit feedback for ${fb.selectedPhotographer}`}>
                           <Edit3 className="h-4 w-4" /> Edit</button>
