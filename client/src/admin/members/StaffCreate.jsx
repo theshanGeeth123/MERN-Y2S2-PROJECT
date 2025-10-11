@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL
@@ -18,13 +17,15 @@ const initial = {
   dateOfBirth: "",
   dateHired: "",
   imageUrl: "",
-  isActive: true,
+  isActive: false, 
 };
 
 function StaffCreate() {
   const navigate = useNavigate();
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
+
+  const today = new Date().toISOString().split("T")[0];
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -33,43 +34,15 @@ function StaffCreate() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    
-    if (!form.firstName.trim() || !form.lastName.trim()) {
-      toast.error("First and last name are required");
-      return;
-    }
-
-    if (!form.email.includes("@") || !form.email.includes(".")) {
-      toast.error("Please enter a valid email address");
-      return;
-    }
-
-    if (form.password.length < 4) {
-      toast.error("Password must be at least 4 characters");
-      return;
-    }
-
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(form.phone)) {
-      toast.error("Phone number must be exactly 10 digits");
-      return;
-    }
-
-    if (form.dateOfBirth && new Date(form.dateOfBirth) > new Date()) {
-      toast.error("Date of birth cannot be in the future");
-      return;
-    }
-
     setSaving(true);
     try {
       const payload = { ...form };
-      if (!payload.dateHired) delete payload.dateHired;
+      if (!payload.dateHired) payload.dateHired = null; 
       await axios.post(API_BASE, payload, { withCredentials: true });
-      toast.success("Staff member created");
+      alert("Staff member created");
       navigate("/admin/staff");
     } catch {
-      toast.error("Create failed");
+      alert("Create failed");
     } finally {
       setSaving(false);
     }
@@ -80,9 +53,7 @@ function StaffCreate() {
       <div className="mx-auto max-w-4xl px-4 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-blue-900">
-              New Staff
-            </h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-blue-900">New Staff</h1>
             <p className="mt-3 text-l text-neutral-500">Add a new staff member.</p>
           </div>
           <button
@@ -99,68 +70,61 @@ function StaffCreate() {
         >
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-xm font-semibold text-black">
-                First name
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">First name</label>
               <input
                 name="firstName"
                 value={form.firstName}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Last name
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Last name</label>
               <input
                 name="lastName"
                 value={form.lastName}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Email
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Email</label>
               <input
                 type="email"
                 name="email"
                 value={form.email}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Password
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Password</label>
               <input
                 type="password"
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                pattern=".{6}"
                 required
+                onInvalid={(e) => e.target.setCustomValidity("Password must be exactly 6 characters")}
+                onInput={(e) => e.target.setCustomValidity("")}
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Role
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Role</label>
               <select
                 name="role"
                 value={form.role}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               >
                 <option value="photographer">Photographer</option>
                 <option value="manager">Manager</option>
@@ -170,69 +134,67 @@ function StaffCreate() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Phone
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Phone</label>
               <input
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                pattern="[0-9]{10}"
                 required
+                onInvalid={(e) => e.target.setCustomValidity("Phone number must be exactly 10 digits")}
+                onInput={(e) => e.target.setCustomValidity("")}
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Address
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Address</label>
               <input
                 name="address"
                 value={form.address}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
                 required
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Date of birth
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Date of birth</label>
               <input
                 type="date"
                 name="dateOfBirth"
                 value={form.dateOfBirth}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                max={today}
                 required
+                onInvalid={(e) => e.target.setCustomValidity("Date of birth cannot be in the future")}
+                onInput={(e) => e.target.setCustomValidity("")}
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Date hired (optional)
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Date hired (optional)</label>
               <input
                 type="date"
                 name="dateHired"
                 value={form.dateHired}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                max={today}
+                onInvalid={(e) => e.target.setCustomValidity("Date hired cannot be in the future")}
+                onInput={(e) => e.target.setCustomValidity("")}
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               />
             </div>
 
-           
             <div className="sm:col-span-2">
-              <label className="mb-2 block text-xm font-semibold text-black">
-                Profile image URL (optional)
-              </label>
+              <label className="mb-2 block text-xm font-semibold text-black">Profile image URL (optional)</label>
               <input
                 name="imageUrl"
                 value={form.imageUrl}
                 onChange={handleChange}
                 placeholder="https://…"
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
+                className="w-full rounded-lg border border-neutral-300 bg-neutral-50 px-4 py-2 text-sm text-neutral-900 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-300"
               />
             </div>
 
