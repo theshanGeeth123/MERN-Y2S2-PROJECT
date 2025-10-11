@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";  
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,12 +13,6 @@ function StaffDetail() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  
-  const [pwOpen, setPwOpen] = useState(false);
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [savingPw, setSavingPw] = useState(false);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -36,9 +30,7 @@ function StaffDetail() {
   const fetchOne = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${API_BASE}/${id}`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(`${API_BASE}/${id}`, { withCredentials: true });
       const s = data?.staff || data;
       setRow(s);
       setForm({
@@ -86,49 +78,6 @@ function StaffDetail() {
     }
   };
 
- 
-  const openPwModal = () => {
-    setNewPw("");
-    setConfirmPw("");
-    setPwOpen(true);
-  };
-
-  const closePwModal = () => {
-    if (savingPw) return;
-    setPwOpen(false);
-    setNewPw("");
-    setConfirmPw("");
-  };
-
-  const submitPassword = async () => {
-    if (!newPw || !confirmPw) {
-      toast.error("Please enter and confirm the new password");
-      return;
-    }
-    if (newPw !== confirmPw) {
-      toast.error("Passwords do not match");
-      return;
-    }
-    if (newPw.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-    try {
-      setSavingPw(true);
-      await axios.put(
-        `${API_BASE}/${id}`,
-        { password: newPw },
-        { withCredentials: true }
-      );
-      toast.success("Password updated");
-      closePwModal();
-    } catch {
-      toast.error("Failed to update password");
-    } finally {
-      setSavingPw(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -157,27 +106,16 @@ function StaffDetail() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 py-6">
       <div className="mx-auto max-w-5xl px-4">
-        
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="mt-8 text-3xl font-bold text-green-800">
               {editing ? "Edit Staff" : "Staff Details"}
             </h1>
             <p className="mt-3 text-sm text-gray-500">
-              {editing
-                ? "Update fields and save changes."
-                : "View details of staff member."}
+              {editing ? "Update fields and save changes." : "View details of staff member."}
             </p>
           </div>
           <div className="flex gap-2">
-            {!editing && (
-              <button
-                onClick={openPwModal}
-                className="mt-8 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 shadow-sm hover:bg-gray-100 transition"
-              >
-                Change Password
-              </button>
-            )}
             <button
               onClick={() => navigate("/admin/staff")}
               className="mt-8 rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm text-white shadow-sm hover:bg-black transition"
@@ -187,7 +125,6 @@ function StaffDetail() {
           </div>
         </div>
 
-        
         {!editing ? (
           <>
             <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-md">
@@ -209,9 +146,7 @@ function StaffDetail() {
                     {row.firstName} {row.lastName}
                   </h2>
                   <div className="text-sm text-gray-700">{row.email}</div>
-                  <div className="text-sm capitalize text-gray-700">
-                    {row.role}
-                  </div>
+                  <div className="text-sm capitalize text-gray-700">{row.role}</div>
                 </div>
               </div>
 
@@ -228,7 +163,7 @@ function StaffDetail() {
                         Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700 ring-1 ring-gray-200">
+                      <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-gray-200">
                         Inactive
                       </span>
                     )}
@@ -241,17 +176,13 @@ function StaffDetail() {
                 <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
                   <div className="text-black font-semibold">Date of birth</div>
                   <div className="mt-1 text-gray-700">
-                    {row.dateOfBirth
-                      ? new Date(row.dateOfBirth).toLocaleDateString()
-                      : "-"}
+                    {row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString() : "-"}
                   </div>
                 </div>
                 <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
                   <div className="text-black font-semibold">Date hired</div>
                   <div className="mt-1 text-gray-700">
-                    {row.dateHired
-                      ? new Date(row.dateHired).toLocaleDateString()
-                      : "-"}
+                    {row.dateHired ? new Date(row.dateHired).toLocaleDateString() : "-"}
                   </div>
                 </div>
               </div>
@@ -273,9 +204,7 @@ function StaffDetail() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-700">
-                  First Name
-                </label>
+                <label className="block text-sm text-gray-700">First Name</label>
                 <input
                   name="firstName"
                   value={form.firstName}
@@ -334,9 +263,7 @@ function StaffDetail() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700">
-                  Date of Birth
-                </label>
+                <label className="block text-sm text-gray-700">Date of Birth</label>
                 <input
                   type="date"
                   name="dateOfBirth"
@@ -346,9 +273,7 @@ function StaffDetail() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700">
-                  Date Hired
-                </label>
+                <label className="block text-sm text-gray-700">Date Hired</label>
                 <input
                   type="date"
                   name="dateHired"
@@ -387,61 +312,6 @@ function StaffDetail() {
           </form>
         )}
       </div>
-
-      
-      {pwOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white shadow-lg">
-            <div className="border-b border-gray-200 px-5 py-4">
-              <h3 className="text-base font-semibold text-gray-900">
-                Change Password
-              </h3>
-              <p className="mt-1 text-xs text-gray-500">
-                {row.firstName} {row.lastName} · {row.email}
-              </p>
-            </div>
-
-            <div className="px-5 py-4">
-              <label className="block text-sm text-gray-700">New password</label>
-              <input
-                type="password"
-                value={newPw}
-                onChange={(e) => setNewPw(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-400"
-                placeholder="Enter new password"
-              />
-
-              <label className="mt-4 block text-sm text-gray-700">
-                Confirm password
-              </label>
-              <input
-                type="password"
-                value={confirmPw}
-                onChange={(e) => setConfirmPw(e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-gray-400"
-                placeholder="Re-enter password"
-              />
-            </div>
-
-            <div className="flex items-center justify-end gap-2 border-t border-gray-200 px-5 py-3">
-              <button
-                onClick={closePwModal}
-                disabled={savingPw}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-60"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitPassword}
-                disabled={savingPw}
-                className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
-              >
-                {savingPw ? "Saving…" : "Save Password"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
