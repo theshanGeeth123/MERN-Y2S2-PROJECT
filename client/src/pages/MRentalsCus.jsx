@@ -24,21 +24,23 @@ function MRentalCus() {
     <div>
       <Navbar />
 
+      <nav className="w-full flex justify-end mt-5 pr-6">
 
-      <div className="w-full flex justify-end mt-5 pr-6">
-      <Link to="/requests">
-        <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-2">
-          <Inbox size={18}/>
-          My Rental Requests
-        </button>
-      </Link>
-      <Link to="/cart">
-        <button className="flex items-center gap-2 px-6 py-2 rounded-full border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-15">
-          <ShoppingBag size={18}/>
-          Rental Cart
-        </button>
-      </Link>
-      </div>
+        <Link to="/my-requests"
+          className="flex items-center gap-2 px-6 py-2 rounded-md border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-2">
+            My Processed Requests
+        </Link>
+        <Link to="/requests"
+           className="flex items-center gap-2 px-6 py-2  rounded-md border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-2">
+            My Rental Requests
+        </Link>
+    
+        <Link to="/Rcart"
+          className="flex items-center gap-2 px-6 py-2 rounded-md border-2 border-black bg-white text-black font-semibold hover:border-transparent hover:bg-gradient-to-r from-[#07E041AA] to-[#078DE0AA] hover:text-white transition mr-15">
+            Rental Cart
+          
+        </Link>
+      </nav>
 
 
       <div className="flex flex-col items-center min-h-screen mt-30 mb-20">
