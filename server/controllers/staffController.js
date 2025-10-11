@@ -43,14 +43,26 @@ export const staffLogout = (req, res) => {
   return res.json({ success: true, message: "Logged out" });
 };
 
-// ➕ Create staff
+
 export const createStaff = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role, imageUrl, phone, address, dateOfBirth } = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+      imageUrl,
+      phone,
+      address,
+      dateOfBirth,
+      dateHired,
+      isActive,
+    } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const staff = await Staff.create({
+    const staffData = {
       firstName,
       lastName,
       email,
@@ -60,7 +72,16 @@ export const createStaff = async (req, res) => {
       phone,
       address,
       dateOfBirth,
-    });
+      isActive: isActive ?? true,
+    };
+
+    if (dateHired) {
+      staffData.dateHired = new Date(dateHired);
+    } else {
+      staffData.dateHired = null;
+    }
+
+    const staff = await Staff.create(staffData);
 
     res.status(201).json({ success: true, staff });
   } catch (err) {
@@ -68,7 +89,7 @@ export const createStaff = async (req, res) => {
   }
 };
 
-// 📄 Get all staff
+
 export const getAllStaff = async (req, res) => {
   try {
     const staff = await Staff.find();
@@ -78,7 +99,7 @@ export const getAllStaff = async (req, res) => {
   }
 };
 
-// 📄 Get single staff by ID
+
 export const getStaffById = async (req, res) => {
   try {
     const staff = await Staff.findById(req.params.id);
@@ -89,7 +110,7 @@ export const getStaffById = async (req, res) => {
   }
 };
 
-// ✏️ Update staff
+
 export const updateStaff = async (req, res) => {
   try {
     const updateData = { ...req.body };
@@ -108,7 +129,7 @@ export const updateStaff = async (req, res) => {
   }
 };
 
-// ❌ Delete staff
+
 export const deleteStaff = async (req, res) => {
   try {
     const staff = await Staff.findByIdAndDelete(req.params.id);
@@ -118,7 +139,6 @@ export const deleteStaff = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
 
 export const getStaffByEmail = async (req, res) => {
   try {
