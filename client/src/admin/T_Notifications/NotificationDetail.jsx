@@ -5,10 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import NavbarAdmin from "../../components/NavbarAdmin";
 
-const API_BASE =
-  (import.meta.env.VITE_BACKEND_URL
-    ? `${import.meta.env.VITE_BACKEND_URL}/api/notifications`
-    : "http://localhost:4000/api/notifications");
+const API_BASE = "http://localhost:4000/api/notifications";
 
 function NotificationDetail() {
   const { id } = useParams();
@@ -30,10 +27,10 @@ function NotificationDetail() {
     expiresAt: ""
   });
 
-  // NEW: inline errors
+ 
   const [errors, setErrors] = useState({});
 
-  // ---------- Helpers / Validators ----------
+  
   const now = () => new Date();
   const parseLocalDateTime = (val) => (val ? new Date(val) : null);
   const isBodyOk = (b) => (b || "").trim().length >= 20;
@@ -42,12 +39,12 @@ function NotificationDetail() {
     return Number.isInteger(n) && n >= 1 && n <= 5;
   };
   const isStartOk = (start) => {
-    if (!start) return true; // optional
+    if (!start) return true; 
     const s = parseLocalDateTime(start);
     return s && s >= now();
   };
   const isExpireOk = (expire, start) => {
-    if (!expire) return true; // optional
+    if (!expire) return true;
     const e = parseLocalDateTime(expire);
     if (!e || e <= now()) return false;
     if (start) {
@@ -70,7 +67,7 @@ function NotificationDetail() {
     return e;
   };
 
-  // UI helpers
+  
   const inputClass = (hasError) =>
     `w-full rounded-md border bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400 ${
       hasError ? "border-red-500" : "border-neutral-200"
@@ -106,7 +103,7 @@ function NotificationDetail() {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // clear field-specific error on edit
+    
     setErrors((prev) => {
       if (!prev[name]) return prev;
       const copy = { ...prev };
@@ -115,7 +112,7 @@ function NotificationDetail() {
     });
 
     if (name === "priority") {
-      // clamp to 1..5 while typing; allow empty while editing
+     
       const digits = value.replace(/[^\d-]/g, "");
       if (digits === "") {
         setForm((prev) => ({ ...prev, priority: "" }));
@@ -135,7 +132,7 @@ function NotificationDetail() {
   const handleSave = async (e) => {
     e.preventDefault();
     const eMap = validate();
-    if (Object.keys(eMap).length) return; // block save
+    if (Object.keys(eMap).length) return; 
 
     setSaving(true);
     try {
@@ -154,7 +151,7 @@ function NotificationDetail() {
     }
   };
 
-  if (loading) {
+  if (loading) {  
     return (
       <div className="min-h-screen bg-neutral-50 text-neutral-900">
         <div className="mx-auto max-w-5xl px-4 py-6">

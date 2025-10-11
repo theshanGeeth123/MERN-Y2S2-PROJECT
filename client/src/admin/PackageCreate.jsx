@@ -153,13 +153,14 @@ function PackageCreate() {
     type="button"
     onClick={() => {
       setForm({
-        title: "Premium Wedding Package",
+        title: "Baby Photoshoot Package",
         description:
-          "This premium package includes full-day wedding photography, candid shots, couple portraits, and beautifully edited images to capture your special day.",
-        price: "75000",
-        duration: "8",
+          "Capture precious moments of your baby with a short and fun session."
+,
+        price: "25000",
+        duration: "2",
         features:
-          "Full-day coverage, 2 photographers, 300+ edited photos, Premium album, Online gallery",
+          "50+ Edited Photos, Indoor/Outdoor Options, Cute Props and Costumes, Optional Printed Album",
       });
       setErrors({ title: "", description: "", price: "", duration: "", features: "" });
       toast.info("Demo data filled!", { autoClose: 2000 });
