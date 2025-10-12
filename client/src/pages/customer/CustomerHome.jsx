@@ -20,7 +20,7 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, Star, Calendar, Quote, User } from "lucide-react";
 
 const links = [
   { label: "Home", path: "/main-home", icon: <FaHome  /> },
@@ -41,6 +41,8 @@ const CustomerHome = () => {
   const closeBtnRef = useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [feedbacks, setFeedbacks] = useState([]);
 
   const { backendUrl, userData, setIsLoggedin, setUserData } =
     useContext(AppContent);
@@ -49,6 +51,7 @@ const CustomerHome = () => {
 
   // Lock background scroll + focus the close button when drawer is open
   useEffect(() => {
+    loadAllFeedbacks();
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
       // slight delay to allow element to mount
@@ -60,6 +63,42 @@ const CustomerHome = () => {
       document.body.style.overflow = "";
     };
   }, [mobileOpen]);
+
+  const loadAllFeedbacks = async () => {
+    setLoading(true);
+    try {
+      const data = await axios.get(`http://localhost:4000/api/user/feedback`);
+      if (data.status=="200") {
+         let feedbackList = Array.isArray(data) ? data :Array.isArray(data.data) ? data.data : data.data.data || [];
+         feedbackList.reverse();
+         setFeedbacks(feedbackList);
+      } else {
+         toast.error(data.message);
+      }
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      toast.error("Error occurred: " + e);
+    }
+  };
+
+  const PartialStar = ({ value = 0 }) => {
+    const percent = Math.min(Math.max((value / 5) * 100, 0), 100); // 0–100%
+    return (
+      <div className="relative h-5 w-5">
+        {/* Background star (gray) */}
+        <Star className="absolute top-0 left-0 h-5 w-5 text-gray-300" />
+
+        {/* Foreground star (yellow) clipped to width */}
+        <div
+          className="absolute top-0 left-0 h-5 overflow-hidden"
+          style={{ width: `${percent}%` }}
+        >
+          <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+        </div>
+      </div>
+    );
+  };
 
   const logout = async () => {
     if (loggingOut) return;
@@ -285,6 +324,54 @@ const CustomerHome = () => {
                 <h4 className="text-sm font-medium text-gray-500 mb-2">Saved Cards</h4>
                 <p className="text-2xl font-semibold text-gray-900">0</p>
                 <p className="text-xs text-gray-500 mt-1">Payment methods</p>
+              </div>
+            </section>
+
+            {/* Customer Reviews */}
+            <section>
+              <h3 className="mt-12 text-lg font-medium text-gray-900 mb-4">Customer Reviews</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+                {!loading && feedbacks.length > 0 && (
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {feedbacks.map((fb) => (
+                      <article key={fb._id} className="group relative flex h-full flex-col rounded-xl border border-gray-200 bg-white p-5
+                          shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5">
+                        <div className="flex-1 flex flex-col">
+                          <header className="mt-2 mb-3 flex items-start justify-between gap-3">
+                            <h4 className="text-sm font-semibold text-gray-900">
+                              {/* If your value is like "John Doe Photography" and you only want the name: */}
+                              {(fb.selectedPhotographer )}
+                            </h4>
+                            <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1">
+                              <span className="text-xs font-medium text-gray-500">{fb.rate}/5</span>
+                              <PartialStar value={Number(fb.rate) || 0} />
+                            </div>
+                          </header>
+                          <div className="relative">
+                            <Quote className="absolute -left-1 -top-1 h-4 w-4 text-gray-300" />
+                            <p className="pl-5 text-sm leading-relaxed text-gray-700 line-clamp-4">
+                              {fb.comment || "No comment provided."}
+                            </p>
+                          </div>
+                        </div>
+                        <footer className="mt-8 flex flex-col items-start justify-between text-xs text-gray-500 space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <User className="h-3.5 w-3.5 text-gray-400" />
+                            <span className="truncate" title={fb.username}>
+                              {fb.username || "Anonymous"}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="inline-flex items-center gap-1">
+                              <Calendar className="h-3.5 w-3.5 text-gray-400" />
+                              {fb.createdAt ? new Date(fb.createdAt).toISOString().split("T")[0]  : ""}
+                            </span>
+                          </div>
+                        </footer>
+                      </article>
+                    ))}
+                  </div>
+                )}
               </div>
             </section>
           </div>
