@@ -1,257 +1,310 @@
-import React, { useEffect, useState, useRef } from "react";
+// src/pages/admin/AdminFeedbackReport.jsx
+import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-
+import autoTable from "jspdf-autotable";
 import {
-  BarChart,
-  Bar,
+  ResponsiveContainer,
+  CartesianGrid,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
+  BarChart,
+  Bar,
   PieChart,
   Pie,
   Cell,
+  Legend,
 } from "recharts";
+import NavbarAdmin from '../components/NavbarAdmin';
+import MainLogo from "../assets/Main_Logo.png";
 
 const FEEDBACK_API = "http://localhost:4000/api/user/feedback";
-const PIE_COLORS = ["#a78bfa", "#f472b6", "#facc15", "#60a5fa", "#4ade80"];
+const PIE_COLORS = ["#4045e8ff", "#f19eacff", "#d8a449ff", "#65cf8cff", "#7ad5e5ff", "#6d5d9aff"];
 
 function FeedbackReport() {
   const [feedbacks, setFeedbacks] = useState([]);
-  const [summary, setSummary] = useState({
-    total: 0, excellent: 0, good: 0, average: 0, poor: 0,
-  });
-  const [monthlyTrend, setMonthlyTrend] = useState([]);
-  const [topPhotographers, setTopPhotographers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const reportRef = useRef(null);
-
-  const getMonthlyRatings = (feedbacks) => { //get monthly count for ratings >= 3
-    const months = Array.from({ length: 12 }, (_, i) => ({
-      month: new Date(0, i).toLocaleString("default", { month: "short" }),
-      excellent: 0,
-      good: 0,
-      average: 0,
-      poor: 0,
-    }));
-
-    feedbacks.forEach( (fb) => {
-      const date = new Date(fb.createdAt);
-      const monthIndex = date.getMonth();
-      if (fb.rate >= 4) 
-        months[monthIndex].excellent += 1;
-      else if (fb.rate === 3) 
-        months[monthIndex].good += 1;
-      else if (fb.rate === 2) 
-        months[monthIndex].average += 1;
-      else 
-        months[monthIndex].poor += 1;
-    });
-    return months;
-  };
 
   useEffect(() => {
-    const fetchFeedbacks = async () => {
+    (async () => {
       setLoading(true);
       try {
         const { data } = await axios.get(FEEDBACK_API);
-        const fbList = Array.isArray(data.data) ? data.data : [];
-        setFeedbacks(fbList);
-
-        const summaryCounts = { total: fbList.length, excellent: 0, good: 0, average: 0, poor: 0 };
-        fbList.forEach((fb) => {
-          const rating = parseInt(fb.rate, 10);
-          if ( rating >= 4 ) 
-            summaryCounts.excellent += 1;
-          else if (rating === 3) 
-            summaryCounts.good += 1;
-          else if (rating === 2) 
-            summaryCounts.average += 1;
-          else 
-            summaryCounts.poor += 1;
-        });
-        setSummary(summaryCounts);  
-        const monthlyData = getMonthlyRatings(fbList); // Monthly trend
-        setMonthlyTrend(monthlyData);
-
-        const photographerCounts = {}; // top 5 photographers
-        fbList.forEach((fb) => {
-          if (fb.selectedPhotographer) {
-            photographerCounts[fb.selectedPhotographer] = (photographerCounts[fb.selectedPhotographer] || 0) + 1;
-          }
-        });
-        const sorted = Object.entries(photographerCounts).map(([name, count]) => ({ name, value: count }))
-                .sort((a, b) => b.value - a.value);
-        const top5 = sorted.slice(0, 5);
-        const othersCount = sorted.slice(5).reduce((sum, p) => sum + p.value, 0);
-        if (othersCount > 0) top5.push({ name: "Others", value: othersCount });
-        setTopPhotographers(top5);
-      } catch (err) {
-        console.error("Failed to fetch feedbacks:", err);
+        setFeedbacks(Array.isArray(data?.data) ? data.data : []);
+      } catch (e) {
+        console.error("Failed to fetch feedbacks:", e);
       } finally {
         setLoading(false);
       }
-    };
-    fetchFeedbacks();
+    })();
   }, []);
 
-  const exportPDF = async () => { 
-    const element = reportRef.current;
-    if (!element) return;
+  // Derived data 
+  const summary = useMemo(() => {
+    const s = { total: 0, excellent: 0, good: 0, average: 0, poor: 0 };
+    for (const fb of feedbacks) {
+      const r = Number(fb.rate) || 0;
+      s.total++;
+      if (r >= 4) s.excellent++;
+      else if (r === 3) s.good++;
+      else if (r === 2) s.average++;
+      else s.poor++;
+    }
+    return s;
+  }, [feedbacks]);
 
-    const canvas = await html2canvas(element, { scale: 6 });
-    const imgData = canvas.toDataURL("image/png");
+  const monthlyTrend = useMemo(() => {
+    const months = Array.from({ length: 12 }, (_, i) => ({
+      month: new Date(0, i).toLocaleString("default", { month: "short" }),
+      excellent: 0, good: 0, average: 0, poor: 0,
+    }));
+    feedbacks.forEach((fb) => {
+      const m = new Date(fb.createdAt).getMonth();
+      const r = Number(fb.rate) || 0;
+      if (r >= 4) months[m].excellent++;
+      else if (r === 3) months[m].good++;
+      else if (r === 2) months[m].average++;
+      else months[m].poor++;
+    });
+    return months;
+  }, [feedbacks]);
 
-    const pdf = new jsPDF("p", "mm", "a4");
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  const topPhotographers = useMemo(() => {
+    const counts = {};
+    feedbacks.forEach((fb) => {
+      const name = fb.selectedPhotographer || "(Unknown)";
+      counts[name] = (counts[name] || 0) + 1;
+    });
+    const sorted = Object.entries(counts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+    const top5 = sorted.slice(0, 5);
+    const rest = sorted.slice(5).reduce((n, x) => n + x.value, 0);
+    if (rest > 0) top5.push({ name: "Others", value: rest });
+    return top5;
+  }, [feedbacks]);
 
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("processed_requests.pdf");
+  // ---------- PDF Export ----------
+  const handleDownloadPDF = () => {
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const margin = 36;
+    let y = margin;
+
+    // Title & meta
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("Admin Report for Feedback - JW-Studio", margin, y);
+    y += 18;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, y);
+    y += 14;
+    doc.text(
+      `Total: ${summary.total}   •   Excellent: ${summary.excellent}   •   Good: ${summary.good}   •   Average: ${summary.average}   •   Poor: ${summary.poor}`,
+      margin,
+      y
+    );
+    y += 12;
+
+    // Helper to add a section heading band
+    const section = (title) => {
+      autoTable(doc, {
+        startY: y, head: [[title]], body: [],
+        theme: "plain", styles: { fontSize: 10 },
+        headStyles: {
+          fillColor: [230, 233, 238],
+          textColor: 20,
+          fontStyle: "bold",
+          halign: "left",
+          cellPadding: 6,
+        },
+        margin: { left: margin, right: margin },
+        didDrawPage: (d) => (y = d.cursor.y),
+      });
+    };
+
+    // Table: Feedbacks by Date
+    const byDate = feedbacks.reduce((acc, fb) => {
+      const d = new Date(fb.createdAt);
+      const day = isNaN(d) ? "-" : d.toISOString().slice(0, 10);
+      acc[day] = (acc[day] || 0) + 1;
+      return acc;
+    }, {});
+    const dateRows = Object.entries(byDate)
+      .sort((a, b) => (a[0] > b[0] ? 1 : -1))
+      .map(([d, c]) => [d, c]);
+    try {
+      doc.addImage(LOGO_PATH, "PNG", 36, 30, 80, 40); // (x, y, width, height)
+    } catch (err) {}
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Date (YYYY-MM-DD)", "Feedbacks"]],
+      body: dateRows,
+      theme: "grid",
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [70, 74, 84], textColor: 255 },
+      columnStyles: { 0: { halign: "left" }, 1: { halign: "center" } },
+      margin: { left: margin, right: margin },
+      didDrawPage: (d) => (y = d.cursor.y),
+    });
+
+    // Table: Rating breakdown
+    autoTable(doc, {
+      startY: y+12,
+      head: [["Rating", "Count"]],
+      body: [
+        ["Excellent (4–5)", summary.excellent],
+        ["Good (3)", summary.good],
+        ["Average (2)", summary.average],
+        ["Poor (1)", summary.poor],
+      ],
+      theme: "grid",
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [70, 74, 84], textColor: 255 },
+      columnStyles: { 0: { halign: "left" }, 1: { halign: "center" } },
+      margin: { left: margin, right: margin },
+      didDrawPage: (d) => (y = d.cursor.y),
+    });
+
+    // Table: Photographers
+    autoTable(doc, {
+      startY: y+ 12,
+      head: [["Photographer", "Feedbacks"]],
+      body: topPhotographers.map((p) => [p.name, p.value]),
+      theme: "grid",
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [70, 74, 84], textColor: 255 },
+      columnStyles: { 0: { halign: "left" }, 1: { halign: "center" } },
+      margin: { left: margin, right: margin },
+      didDrawPage: (d) => (y = d.cursor.y),
+    });
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(110);
+    doc.text(
+      "© 2025 JW-Studio — Feedback Management Report",
+      doc.internal.pageSize.getWidth() / 2,
+      doc.internal.pageSize.getHeight() - 12,
+      { align: "center" }
+    );
+
+    doc.save(`jwstudio-feedback-report-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
 
   return (
-    <div style={{ padding: "2rem", minHeight: "100vh", backgroundColor: "#f3f4f6" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", color: "#111827", textAlign: "center", flex: 1 }}>Feedback Report</h1>
-        <button onClick={exportPDF} style={{ padding: "0.5rem 1rem", backgroundColor: "#2563eb", color: "#ffffff", borderRadius: "0.5rem",
-            fontWeight: 500, fontSize: "1rem", cursor: "pointer", }}>Export as PDF </button>
-      </div>
-
-      {loading ? (
-        <p style={{ textAlign: "center", color: "#374151", fontSize: "1.125rem" }}>Loading report...</p>
-      ) : (
-        <div  ref={reportRef}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem", marginBottom: "2.5rem" }}>
-            {[
-              { title: "Total Feedbacks", value: summary.total, color: { backgroundColor: "#f3f4f6", color: "#111827" }, key: "total" },
-              { title: "Excellent", value: summary.excellent, color: { backgroundColor: "#d1fae5", color: "#065f46" }, key: "excellent" },
-              { title: "Good", value: summary.good, color: { backgroundColor: "#bfdbfe", color: "#1e40af" }, key: "good" },
-              { title: "Average", value: summary.average, color: { backgroundColor: "#fef3c7", color: "#78350f" }, key: "average" },
-              { title: "Poor", value: summary.poor, color: { backgroundColor: "#fecaca", color: "#991b1b" }, key: "poor" },
-            ].map((card) => (
-              <div key={card.key} style={{ ...card.color, padding: "1.5rem", borderRadius: "1rem", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", textAlign: "center" }}>
-                <h2 style={{ fontSize: "1.125rem", fontWeight: "600" }}>{card.title}</h2>
-                <p style={{ fontSize: "2rem", fontWeight: "700", marginTop: "0.5rem" }}>{card.value}</p>
-              </div>
-            ))}
+    <>
+      <NavbarAdmin />
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900">Feedback Management</h2>
+              <p className="text-gray-600 mt-2">  View and manage all customer feedback & export detailed reports. </p>
+            </div>
+            <button
+              onClick={handleDownloadPDF} className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              Download PDF Report
+            </button>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-            <div style={{ backgroundColor: "#ffffff", padding: "1.5rem", borderRadius: "1rem", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "1rem", color: "#111827" }}>Monthly Ratings</h2>
-              {monthlyTrend.length > 0 ? (
-                <ResponsiveContainer width="100%" height={350}>
-                  <BarChart data={monthlyTrend} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                    <CartesianGrid stroke="#e0e0e0" strokeDasharray="4 4" />
-                    <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#4b5563" }} />
-                    <YAxis tick={{ fontSize: 12, fill: "#4b5563" }} allowDecimals={false} />
-                    <Tooltip wrapperStyle={{ fontSize: 13 }} contentStyle={{ borderRadius: 8, border: "1px solid #d1d5db" }} />
-                    <Bar dataKey="excellent" fill="#4ade80" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="good" fill="#60a5fa" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="average" fill="#facc15" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="poor" fill="#f87171" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <p style={{ textAlign: "center", color: "#6b7280" }}>No feedbacks available.</p>
-              )}
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500" />
+              <span className="ml-4 text-gray-600">Loading feedback…</span>
             </div>
-
-            <div style={{ backgroundColor: "#ffffff", padding: "1.5rem", borderRadius: "1rem", boxShadow: "0 4px 6px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column" }}>
-              <h2 style={{ fontSize: "1.5rem", fontWeight: "700", marginBottom: "1rem", color: "#111827" }}>Top Photographers</h2>
-              {topPhotographers.length > 0 ? (
-                <>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={topPhotographers}
-                        dataKey="value"
-                        nameKey="name"
-                        outerRadius={80}
-                        label={({ value, x, y }) => {
-                          const total = topPhotographers.reduce((sum, entry) => sum + entry.value, 0);
-                          const percent = ((value / total) * 100).toFixed(0);
-                          return (
-                            <text x={x} y={y} textAnchor="middle" dominantBaseline="central" fill="black" fontSize={12} fontWeight="bold">
-                              {percent}%
-                            </text>
-                          );
-                        }}
-                      >
-                        {topPhotographers.map((entry, index) => (
-                          <Cell key={index} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        content={({ payload }) => {
-                          if (payload && payload.length) {
-                            return (
-                              <div style={{ background: "white", border: "1px solid #ccc", padding: "5px" }}>
-                                {payload[0].name}: {payload[0].value} feedbacks
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-
-                  <div style={{ marginTop: "1rem", overflowY: "auto", maxHeight: "8rem" }}>
-                    {topPhotographers.map((p, index) => (
-                      <div key={index} style={{ display: "flex", alignItems: "center", marginBottom: "0.25rem" }}>
-                        <span style={{ width: "1rem", height: "1rem", borderRadius: "0.125rem", marginRight: "0.5rem", backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }}></span>
-                        <p style={{ fontSize: "0.875rem", color: "#1f2937" }}>{p.name}</p>
-                      </div>
-                    ))}
+          ) : (
+            <>
+              {/* Summary cards */}
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+                {[
+                  { label: "Total", value: summary.total, bg: "bg-gray-100", text: "text-gray-900" },
+                  { label: "Excellent", value: summary.excellent, bg: "bg-emerald-50", text: "text-emerald-700" },
+                  { label: "Good", value: summary.good, bg: "bg-blue-50", text: "text-blue-700" },
+                  { label: "Average", value: summary.average, bg: "bg-amber-50", text: "text-amber-700" },
+                  { label: "Poor", value: summary.poor, bg: "bg-rose-50", text: "text-rose-700" },
+                ].map((c) => (
+                  <div key={c.label} className={`rounded-xl p-4 shadow-sm ${c.bg}`}>
+                    <div className="text-sm font-medium text-gray-500">{c.label}</div>
+                    <div className={`mt-1 text-2xl font-bold ${c.text}`}>{c.value}</div>
                   </div>
-                </>
-              ) : (
-                <p style={{ textAlign: "center", color: "#374151" }}>No photographer data available.</p>
-              )}
-            </div>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow overflow-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr style={{ backgroundColor: "#e5e7eb", textAlign: "center" }}>
-                  <th style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>#</th>
-                  <th style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>Email</th>
-                  <th style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>Rating</th>
-                  <th style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>Comment</th>
-                  <th style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>Photographer</th>
-                  <th style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {feedbacks.map((fb, index) => (
-                  <tr
-                    key={fb._id}
-                    style={{
-                      backgroundColor: index % 2 === 0 ? "#f9fafb" : "#ffffff",
-                      textAlign: "center",
-                    }}
-                  >
-                    <td style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>{index + 1}</td>
-                    <td style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>{fb.email}</td>
-                    <td style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>{fb.rate}</td>
-                    <td style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>{fb.comment || "-"}</td>
-                    <td style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>{fb.selectedPhotographer || "-"}</td>
-                    <td style={{ border: "1px solid #d1d5db", padding: "0.5rem" }}>
-                      {new Date(fb.createdAt).toLocaleString()}
-                    </td>
-                  </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+
+              {/* Charts */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Ratings</h3>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={monthlyTrend} margin={{ top: 10, right: 20, bottom: 20, left: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                        <XAxis dataKey="month" tick={{ fill: "#6b7280", fontSize: 12 }} />
+                        <YAxis allowDecimals={false} tick={{ fill: "#6b7280", fontSize: 12 }} />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="excellent" name="Excellent" fill="#22c55e" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="good" name="Good" fill="#60a5fa" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="average" name="Average" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="poor" name="Poor" fill="#ef4444" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Photographers</h3>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie data={topPhotographers}
+                          dataKey="value" nameKey="name" outerRadius={110} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          labelLine={false} > {topPhotographers.map((_, i) => (
+                            <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+
+              {/* Table  view */}
+              <div className="mt-8 bg-white rounded-lg shadow overflow-auto">
+                <table className="min-w-full">
+                  <thead className="bg-gray-200 text-left text-xxs font-semibold uppercase tracking-wider text-gray-600">
+                    <tr>
+                      <th className="px-5 py-3 w-1/15">#</th>
+                      <th className="px-5 py-3 w-3/15">Created Date</th>
+                      <th className="px-5 py-3 w-3/15">Username</th>
+                      <th className="px-5 py-3 w-1/15">Rating</th>
+                      <th className="px-5 py-3 w-4/15">Comment</th>
+                      <th className="px-5 py-3 w-3/15">Photographer</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-400">
+                    {feedbacks.map((fb, i) => (
+                      <tr key={fb._id} className="hover:bg-gray-50">
+                        <td className="px-5 py-3 text-gray-400">{i + 1}</td>
+                        <td className="px-5 py-3 text-gray-700">  {new Date(fb.createdAt).toISOString().slice(0, 10)} </td>
+                        <td className="px-5 py-3 text-gray-800">{fb.username || "-"}</td>
+                        <td className="px-5 py-3 text-gray-800">{fb.rate ?? "-"}</td>
+                        <td className="px-5 py-3 text-gray-700">{fb.comment || "-"}</td>
+                        <td className="px-5 py-3 text-gray-700">{fb.selectedPhotographer || "-"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
 
