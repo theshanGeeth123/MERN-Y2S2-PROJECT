@@ -8,6 +8,8 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import NavbarAdmin from "../../components/NavbarAdmin";
 
+import logo from "./Main_Logo.png";
+
 const API = "http://localhost:4000/api/user-reports";
 const PIE_COLORS = ["#10B981", "#EF4444"]; // verified, unverified
 
@@ -77,103 +79,341 @@ export default function UsersReport() {
   );
 
   // ---------- PDF Download ----------
-  const handleDownloadPDF = () => {
-    const doc = new jsPDF({ unit: "pt", format: "a4" }); // 595x842
-    const marginX = 60;
-    let y = 60;
+const handleDownloadPDF = () => {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
 
-    // Header
+  // ----- Page metrics -----
+  const pageWidth  = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+
+  const frameMargin = 40;                 // decorative border margin
+  const marginX = 64;                     // left/right content margin
+  const contentWidth = pageWidth - marginX * 2;
+
+  // Footer and spacing
+  const FOOTER_Y = pageHeight - frameMargin - 10;  // footer sits inside frame
+  const TOP_PADDING = frameMargin + 26;            // top content offset inside frame
+  const bottomReserve = 80;                        // keep tables clear of footer
+
+  // Palette
+  const HEADER_GRAY = [70, 70, 70];
+  const HEADER_TEXT = [255, 255, 255];
+
+  // ---------- Draw helpers ----------
+  const drawFrame = () => {
+    doc.setDrawColor(0);
+    doc.setLineWidth(1.1);
+    doc.rect(
+      frameMargin,
+      frameMargin,
+      pageWidth  - frameMargin * 2,
+      pageHeight - frameMargin * 2
+    );
+  };
+
+  const drawFooter = () => {
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9);
+    doc.text("© 2025 JW Studio — User Analytics Report", pageWidth / 2, FOOTER_Y, { align: "center" });
+  };
+
+  // Base config for tables — ensures frame + footer are drawn on every page
+  const tableBase = {
+    margin: { left: marginX, right: marginX, bottom: bottomReserve },
+    styles: { font: "helvetica", fontSize: 10, cellPadding: 7, lineColor: [225, 225, 225] },
+    headStyles: { fillColor: HEADER_GRAY, textColor: HEADER_TEXT },
+    tableWidth: contentWidth,
+    didDrawPage: () => { drawFrame(); drawFooter(); }
+  };
+
+  // ---------- Utilities ----------
+  const addSectionTitle = (text, y) => {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text(text, marginX, y);
+    return y + 16;
+  };
+
+  // Ensure there’s room; otherwise start a new page and reset y
+  const ensureSpace = (y, required = 150) => {
+    const usableBottom = pageHeight - frameMargin - bottomReserve; // bottom limit for content
+    const remaining = usableBottom - y;
+    if (remaining < required) {
+      doc.addPage();
+      // frame/footer will be drawn by the first table on this page via didDrawPage,
+      // but we also draw them now so titles before a table look correct immediately.
+      drawFrame();
+      drawFooter();
+      return TOP_PADDING;
+    }
+    return y;
+  };
+
+  const fmtInt  = (n) => Number(n || 0).toLocaleString();
+  const safeNum = (v) => (typeof v === "number" && isFinite(v) ? v : 0);
+  const percent = (num, den) => (Number(den) ? `${((Number(num||0) / Number(den)) * 100).toFixed(1)}%` : "0%");
+
+  const extractVU = (row) => {
+    if (!row) return { ver: null, unv: null };
+    if (typeof row.verified === "number" || typeof row.unverified === "number")
+      return { ver: row.verified ?? null, unv: row.unverified ?? null };
+    if (row.breakdown)
+      return { ver: row.breakdown.verified ?? null, unv: row.breakdown.unverified ?? null };
+    return { ver: null, unv: null };
+  };
+
+  const parseIdDate = (id) => {
+    if (!id) return null;
+    const s = /^\d{4}-\d{2}$/.test(id) ? `${id}-01` : String(id);
+    const d = new Date(s);
+    return Number.isNaN(d.getTime()) ? null : d;
+  };
+
+  const toMonthKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  const monthLabel = (ym) => {
+    const [y, m] = ym.split("-");
+    const d = new Date(Number(y), Number(m) - 1, 1);
+    return d.toLocaleString(undefined, { month: "short", year: "numeric" });
+  };
+
+  const getEarliestDate = (rows) => {
+    let earliest = null;
+    rows.forEach((r) => {
+      const d = parseIdDate(r?._id);
+      if (d && (!earliest || d < earliest)) earliest = d;
+    });
+    return earliest;
+  };
+
+  const aggregateYTDByMonth = (rows, now = new Date()) => {
+    const curYear = now.getFullYear();
+    const out = new Map();
+    let hasSplit = false;
+
+    const add = (ym, all, ver = null, unv = null) => {
+      if (!out.has(ym)) out.set(ym, { all: 0, ver: 0, unv: 0 });
+      const rec = out.get(ym);
+      rec.all += Number(all || 0);
+      if (ver != null || unv != null) {
+        hasSplit = true;
+        rec.ver += Number(ver || 0);
+        rec.unv += Number(unv || 0);
+      }
+    };
+
+    rows.forEach((r) => {
+      const d = parseIdDate(r?._id);
+      if (!d || d.getFullYear() !== curYear) return;
+      const ym = toMonthKey(d);
+      const { ver, unv } = extractVU(r);
+      add(ym, Number(r?.registrations || 0), ver, unv);
+    });
+
+    const rowsOut = Array.from(out.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([ym, v]) => ({ ym, ...v }));
+    return { rows: rowsOut, hasSplit };
+  };
+
+  const findMinMax = (rows, key) => {
+    if (!rows.length) return null;
+    let min = rows[0], max = rows[0];
+    rows.forEach((r) => {
+      if (r[key] < min[key]) min = r;
+      if (r[key] > max[key]) max = r;
+    });
+    return { min, max };
+  };
+
+  const averagePerDay = (total, start, end = new Date()) => {
+    if (!start) return null;
+    const days = Math.max(1, Math.floor((end - start) / 86400000) + 1);
+    return Number(total || 0) / days;
+  };
+
+  // ---------- Render ----------
+  const render = (img) => {
+    // draw border/footer for first page immediately
+    drawFrame();
+    drawFooter();
+
+    let y = TOP_PADDING;
+
+    // Logo
+    if (img) {
+      const maxW = 140;
+      const ratio = img.width && img.height ? img.width / img.height : 3.8;
+      const w = Math.min(maxW, contentWidth);
+      const h = w / ratio;
+      const x = (pageWidth - w) / 2;
+      doc.addImage(img, "PNG", x, y, w, h, undefined, "FAST");
+      y += h + 26;
+    } else {
+      y += 20;
+    }
+
+    // Title
     doc.setFont("helvetica", "bold");
     doc.setFontSize(20);
-    doc.text("WS-STUDIO Admin Report for Users", marginX, y);
-    y += 22;
+    doc.text("JW-Studio Report for User Analytics", marginX, y);
+    y += 26;
 
+    // Meta
+    const now = new Date();
+    const range = (date?.start || date?.end) ? ` | Range: ${date.start || "—"} to ${date.end || "—"}` : "";
     doc.setFont("helvetica", "normal");
     doc.setFontSize(11);
-    const dateRange =
-      date.start || date.end
-        ? ` | Range: ${date.start || "—"} to ${date.end || "—"}`
-        : "";
-    doc.text(`Generated on: ${new Date().toLocaleString()}${dateRange}`, marginX, y);
+    doc.text(`Generated on: ${now.toLocaleString()}${range}`, marginX, y);
     y += 18;
 
-    // Summary line
+    // Summary
+    const total = Number(summary?.totalUsers || 0);
+    const verified = Number(summary?.verifiedUsers || 0);
+    const unverified = Number(summary?.unverifiedUsers || 0);
+
     doc.setFontSize(12);
     doc.text(
-      `Total: ${summary.totalUsers}   •   Verified: ${summary.verifiedUsers}   •   Unverified: ${summary.unverifiedUsers}`,
+      `Total: ${fmtInt(total)}   •   Verified: ${fmtInt(verified)} (${percent(verified, total)})   •   Unverified: ${fmtInt(unverified)} (${percent(unverified, total)})`,
       marginX,
       y
     );
-    y += 16;
+    y += 22;
 
-    // helper to add some vertical spacing
-    const gap = (n = 12) => (y += n);
-
-    // Registrations by Period (day or month)
-    gap(16);
+    // Verified split
     autoTable(doc, {
+      ...tableBase,
       startY: y,
-      head: [[groupBy === "day" ? "Date (YYYY-MM-DD)" : "Month (YYYY-MM)", "Registrations"]],
-      body:
-        byPeriod.length > 0
-          ? byPeriod.map((m) => [m._id, String(m.registrations)])
-          : [["—", "0"]],
-      theme: "grid",
-      headStyles: { fillColor: [16, 185, 129] }, // teal
-      styles: { halign: "left" },
-      margin: { left: marginX, right: marginX },
-    });
-    y = doc.lastAutoTable.finalY;
-
-    // Age Distribution
-    gap(20);
-    autoTable(doc, {
-      startY: y,
-      head: [["Age Range", "Users"]],
-      body:
-        ageDist.length > 0
-          ? ageDist.map((a) => [a.range, String(a.count)])
-          : [["—", "0"]],
-      theme: "grid",
-      headStyles: { fillColor: [99, 102, 241] }, // indigo
-      styles: { halign: "left" },
-      margin: { left: marginX, right: marginX },
-    });
-    y = doc.lastAutoTable.finalY;
-
-    // Verified Split
-    gap(20);
-    autoTable(doc, {
-      startY: y,
-      head: [["Status", "Users"]],
+      head: [["Segment", "Users", "Share"]],
       body: [
-        ["Verified", String(verifiedSplit.verified || 0)],
-        ["Unverified", String(verifiedSplit.unverified || 0)],
+        ["Verified", fmtInt(verified), percent(verified, total)],
+        ["Unverified", fmtInt(unverified), percent(unverified, total)],
       ],
-      theme: "grid",
-      headStyles: { fillColor: [168, 85, 247] }, // purple
-      styles: { halign: "left" },
-      margin: { left: marginX, right: marginX },
     });
-    y = doc.lastAutoTable.finalY;
+    y = (doc.lastAutoTable.finalY || y) + 26;
 
-    // Top Email Domains
-    gap(20);
+    // Registrations by period
+    const byList = Array.isArray(byPeriod) ? byPeriod : [];
+    if (byList.length) {
+      y = addSectionTitle(`Registrations by ${groupBy === "month" ? "Month" : "Day"}`, y);
+
+      autoTable(doc, {
+        ...tableBase,
+        startY: y,
+        head: [[groupBy === "month" ? "Month" : "Date", "Registrations"]],
+        body: byList.map(r => [String(r?._id ?? "—"), Number(r?.registrations ?? 0)]),
+      });
+      y = (doc.lastAutoTable.finalY || y) + 24;
+    }
+
+    // Min/Max YTD
+    const { rows: ytdRows } = aggregateYTDByMonth(byList, now);
+    if (ytdRows.length) {
+      y = addSectionTitle(`Min / Max Month (YTD ${now.getFullYear()}) — All Users`, y);
+      const mm = findMinMax(ytdRows, "all");
+      if (mm) {
+        autoTable(doc, {
+          ...tableBase,
+          startY: y,
+          head: [["Type", "Month", "Registrations"]],
+          body: [
+            ["Minimum", monthLabel(mm.min.ym), fmtInt(mm.min.all)],
+            ["Maximum", monthLabel(mm.max.ym), fmtInt(mm.max.all)],
+          ],
+        });
+        y = (doc.lastAutoTable.finalY || y) + 20;
+      }
+    }
+
+    // >>>>> FORCE THIS WHOLE SECTION TO NEXT PAGE WHEN NEEDED <<<<<
+    // We estimate ~220pt for the section (title + two small tables).
+    y = ensureSpace(y, 220);
+
+    // Average Registrations Per Day (from first registration to now)
+    const earliest = getEarliestDate(byList);
+    const avgAll = averagePerDay(total, earliest, now);
+    const avgVer = averagePerDay(verified, earliest, now);
+    const avgUnv = averagePerDay(unverified, earliest, now);
+
+    y = addSectionTitle("Average Registrations Per Day (from first registration to now)", y);
+
     autoTable(doc, {
+      ...tableBase,
       startY: y,
-      head: [["Email Domain", "Users"]],
-      body:
-        domains.length > 0
-          ? domains.map((d) => [d.domain, String(d.count)])
-          : [["—", "0"]],
-      theme: "grid",
-      headStyles: { fillColor: [245, 158, 11] }, // amber
-      styles: { halign: "left" },
-      margin: { left: marginX, right: marginX },
+      head: [["Range Start", "Range End", "Days (inclusive)", "Avg / Day"]],
+      body: [[
+        earliest ? earliest.toLocaleDateString() : "—",
+        now.toLocaleDateString(),
+        earliest ? (Math.floor((now - earliest) / 86400000) + 1).toLocaleString() : "—",
+        avgAll != null ? avgAll.toFixed(2) : "—",
+      ]],
     });
+    y = (doc.lastAutoTable.finalY || y) + 18;
 
-    doc.save("WS-STUDIO_User_Report.pdf");
+    autoTable(doc, {
+      ...tableBase,
+      startY: y,
+      head: [["Segment", "Avg / Day"]],
+      body: [
+        ["Verified",  avgVer != null ? avgVer.toFixed(2)  : "—"],
+        ["Unverified",avgUnv != null ? avgUnv.toFixed(2) : "—"],
+      ],
+    });
+    y = (doc.lastAutoTable.finalY || y) + 26;
+
+    // Age distribution
+    const ages = Array.isArray(ageDist) ? ageDist : [];
+    if (ages.length) {
+      y = ensureSpace(y, 160);
+      y = addSectionTitle("Age Distribution", y);
+      autoTable(doc, {
+        ...tableBase,
+        startY: y,
+        head: [["Age Range", "Users"]],
+        body: ages.map(r => [String(r?.range ?? "—"), Number(r?.count ?? 0)]),
+      });
+      y = (doc.lastAutoTable.finalY || y) + 20;
+    }
+
+    // Domains (basic)
+    const doms = Array.isArray(domains) ? domains : [];
+    if (doms.length) {
+      y = ensureSpace(y, 200);
+      y = addSectionTitle("Top Email Domains — Share & Split", y);
+      const shaped = doms.map(r => ({
+        domain: String(r?.domain ?? r?._id ?? "—"),
+        users: Number(r?.count ?? r?.users ?? 0),
+      }));
+      const totalUsersAll = shaped.reduce((s, r) => s + safeNum(r.users), 0);
+      autoTable(doc, {
+        ...tableBase,
+        startY: y,
+        head: [["Domain", "Users", "Share"]],
+        body: shaped.map(r => [r.domain, fmtInt(r.users), percent(r.users, totalUsersAll)]),
+      });
+      // y update not needed further
+    }
+
+    const safeStart = (date?.start || "all").replaceAll(/[:/\\]/g, "-");
+    const safeEnd = (date?.end || "all").replaceAll(/[:/\\]/g, "-");
+    doc.save(`User_Analytics_Report_${safeStart}_to_${safeEnd}.pdf`);
   };
+
+  // Load logo (optional)
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+  img.src = logo || "";
+  img.onload = () => render(img);
+  img.onerror = () => render(null);
+};
+
+
+
+
+
+
+
+
+
 
   return (
 

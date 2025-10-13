@@ -15,7 +15,6 @@ import {
 } from "recharts";
 import NavbarAdmin from "../../components/NavbarAdmin";
 
-// ✅ ensure this path is correct
 import logo from "./Main_Logo.png";
 
 const COLORS = ["#4f46e5", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
@@ -318,7 +317,7 @@ const handleDownloadPDF = () => {
     // final footer (in case no new page was created by tables)
     drawFooter();
 
-    doc.save("WS-STUDIO_Product_Sales_Report.pdf");
+    doc.save("JW-Studio_Product_Sales_Report.pdf");
   };
 
   // load logo image (already imported at top)
