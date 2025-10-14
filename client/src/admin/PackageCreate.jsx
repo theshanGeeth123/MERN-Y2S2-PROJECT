@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
+import { useNavigate } from "react-router-dom";
 import NavbarAdmin from "../components/NavbarAdmin";
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL
@@ -10,12 +8,15 @@ const API_BASE = import.meta.env.VITE_BACKEND_URL
   : "http://localhost:4000/api/packages";
 
 function PackageCreate() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState({
     title: "",
     description: "",
     price: "",
     duration: "",
-    features: ""
+    features: "",
+    image: ""
   });
 
   const [errors, setErrors] = useState({
@@ -23,7 +24,8 @@ function PackageCreate() {
     description: "",
     price: "",
     duration: "",
-    features: ""
+    features: "",
+    image: ""
   });
 
   const validators = {
@@ -40,9 +42,9 @@ function PackageCreate() {
     price: val => {
       const n = Number(val);
       if (!val) return "Price cannot be empty.";
-      if (n < 0) return "Price cannot be negative."; 
+      if (n < 0) return "Price cannot be negative.";
       if (n < 10000) return "Price should not be less than Rs.10,000.";
-      if (n > 100000) return "Price cannot exceed Rs.100,000.";
+      if (n > 500000) return "Price cannot exceed Rs.500,000.";
       return "";
     },
     duration: val => {
@@ -56,14 +58,18 @@ function PackageCreate() {
       if (!val.trim()) return "Features cannot be empty.";
       if (val.length < 20) return "Features must be at least 20 characters.";
       return "";
+    },
+    image: val => {
+      if (!val.trim()) return "Image URL cannot be empty.";
+      const urlPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp))$/i;
+      if (!urlPattern.test(val)) return "Please enter a valid image URL.";
+      return "";
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
-
-    
     setErrors(prev => ({ ...prev, [name]: validators[name](value) }));
   };
 
@@ -80,7 +86,7 @@ function PackageCreate() {
     setErrors(newErrors);
 
     if (hasError) {
-      toast.error("Please fix the errors before submitting.", { autoClose: 3000 });
+      alert("Please fix the errors before submitting."); 
       return;
     }
 
@@ -95,12 +101,13 @@ function PackageCreate() {
         features: form.features.split(",").map(f => f.trim()),
       });
 
-      toast.success("Package added successfully!", { autoClose: 3000 });
-      setForm({ title: "", description: "", price: "", duration: "", features: "" });
-      setErrors({ title: "", description: "", price: "", duration: "", features: "" });
+      
+      alert("Package added successfully!");
+      navigate("/admin/packages");
+
     } catch (err) {
       console.error(err);
-      toast.error("Failed to create package", { autoClose: 2000 });
+      alert("Failed to create package");
     }
   };
 
@@ -132,8 +139,8 @@ function PackageCreate() {
   return (
 
     <><NavbarAdmin/>
+
     <div className="min-h-screen bg-gray-50 py-8">
-      <ToastContainer position="top-right" />
       <div className="mx-auto max-w-md px-3">
         <h1 className="text-2xl font-bold text-blue-900 mb-2">📸 Add New Package</h1>
         <p className="text-sm text-neutral-500 mb-4">Add a new photography package with details and pricing.</p>
@@ -143,57 +150,31 @@ function PackageCreate() {
             {renderInput("Title", "title")}
             {renderInput("Description", "description", "textarea", 4)}
             {renderInput("Price (Rs.)", "price", "number")}
-            {renderInput("Duration (Hours)", "duration", "number")}
+            {renderInput("Shoot Duration (Hours)", "duration", "number")}
             {renderInput("Features", "features", "textarea", 4)}
+            {renderInput("Image URL", "image")}
           </div>
 
-          <div className="flex justify-between items-center mt-4">
-  {/* Demo Button */}
-  <button
-    type="button"
-    onClick={() => {
-      setForm({
-        title: "Baby Photoshoot Package",
-        description:
-          "Capture precious moments of your baby with a short and fun session."
-,
-        price: "25000",
-        duration: "2",
-        features:
-          "50+ Edited Photos, Indoor/Outdoor Options, Cute Props and Costumes, Optional Printed Album",
-      });
-      setErrors({ title: "", description: "", price: "", duration: "", features: "" });
-      toast.info("Demo data filled!", { autoClose: 2000 });
-    }}
-    className="rounded-md border border-blue-700 bg-white px-3 py-1 text-sm text-blue-800 hover:bg-blue-100 transition"
-  >
-    Demo
-  </button>
-
-  {/* Action Buttons */}
-  <div className="flex gap-2">
-    <button
-      type="button"
-      onClick={() => {
-        setForm({ title: "", description: "", price: "", duration: "", features: "" });
-        setErrors({ title: "", description: "", price: "", duration: "", features: "" });
-      }}
-      className="rounded-md border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-800 hover:bg-neutral-100 transition"
-    >
-      Clear
-    </button>
-    <button
-      type="submit"
-      className="rounded-md bg-blue-900 px-3 py-1 text-sm font-medium text-white hover:bg-blue-800 transition"
-    >
-      Create
-    </button>
-  </div>
-</div>
-
+          <div className="flex justify-end gap-2 mt-4">
+            <button
+              type="button"
+              onClick={() => {
+                setForm({ title: "", description: "", price: "", duration: "", features: "", image: "" });
+                setErrors({ title: "", description: "", price: "", duration: "", features: "", image: "" });
+              }}
+              className="rounded-md border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-800 hover:bg-neutral-100 transition"
+            >
+              Clear
+            </button>
+            <button
+              type="submit"
+              className="rounded-md bg-blue-900 px-3 py-1 text-sm font-medium text-white hover:bg-blue-800 transition"
+            >
+              Create
+            </button>
+          </div>
         </form>
       </div>
-      
     </div>
     </>
   );

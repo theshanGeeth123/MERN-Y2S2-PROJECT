@@ -134,7 +134,7 @@ function MyProfile() {
   return (
 
     <><NavbarCustomer/>
-    <div className="max-w-7xl mx-auto p-6 mt-8 mb-12 bg-gray-50">
+    <div className="max-w-7xl mx-auto p-6 mt-8 mb-12  ">
       <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200 ">
         {/* Header Section */}
         <div className="bg-gradient-to-r from-gray-800 to-gray-600 p-8 text-white">
