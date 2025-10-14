@@ -10,8 +10,6 @@ function CustomerQuestionDisplay({ loading, questions, updatedQuestion, deletedQ
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all"); // 'all', 'awaiting', 'answered'
 
-  const isAnswered = (q) => !!q.answer || q.status === "Answered";
-
   const deleteQuestion = async (id) => { // delete the selected question
     if (!window.confirm("Delete this questiion")) return;
     try {
@@ -28,15 +26,14 @@ function CustomerQuestionDisplay({ loading, questions, updatedQuestion, deletedQ
   };
 
   const filtered = useMemo(() => {
+    if (!query && statusFilter === "all") return questions;
     return questions.filter((q) => {
-      // Filter by status
-      if (statusFilter === "answered" && !isAnswered(q)) return false;
-      if (statusFilter === "awaiting" && isAnswered(q)) return false;
-
-      // Filter by text search (question + answer)
-      if (!query.trim())  return true;
       const t = query.toLowerCase();
-      return ( q.question?.toLowerCase().includes(t) || q.answer?.toLowerCase().includes(t));
+      let filterByText = ( q.question?.toLowerCase().includes(t) || q.answer?.toLowerCase().includes(t));
+      if (statusFilter === "answered" && q.answer && filterByText) return true;
+      if (statusFilter === "awaiting" && !q.answer && filterByText) return true;
+      if (statusFilter === "all" && filterByText) return true;
+      return false;
     });
   }, [questions, statusFilter, query]);
 
@@ -94,7 +91,7 @@ function CustomerQuestionDisplay({ loading, questions, updatedQuestion, deletedQ
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-2xl border border-gray-200 bg-white p-6 text-gray-600">
-            You haven’t submitted any questions yet.
+            No questions.
           </div>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-1 gap-4">
