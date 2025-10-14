@@ -14,6 +14,9 @@ import adminRouter from "./routes/Admin.route.js";
 import userReportRoutes from "./routes/userReportRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
 
+//for get userData
+import userRoutes from "./routes/userRoutes.js";
+
 // aloka branch routes
 import productRouter from "./routes/Product.routes.js";
 import cartRouter from "./routes/Cart.routes.js";
@@ -64,6 +67,12 @@ app.use("/api/admin", adminRouter);
 // From theshan_aloka
 app.use("/api/user-reports", userReportRoutes);
 app.use("/api/notifications", notificationRoutes);
+
+//get data for admin charts
+app.use("/api/user", userRouter);
+app.use("/api/orders", orderRouter);
+
+
 
 // From aloka
 app.use("/api/product", productRouter);

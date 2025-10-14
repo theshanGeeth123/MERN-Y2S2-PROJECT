@@ -47,6 +47,33 @@ export const getUserBookings = async (req, res) => {
 
 
 
+// getting booking trend for chart
+export const getBookingTrendsChart = async (req, res) => {
+  try {
+    const trends = await Booking.aggregate([
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          total: { $sum: 1 },
+          approved: { $sum: { $cond: [{ $eq: ["$status", "approved"] }, 1, 0] } },
+          pending: { $sum: { $cond: [{ $eq: ["$status", "pending"] }, 1, 0] } },
+          cancelled: { $sum: { $cond: [{ $eq: ["$status", "cancelled"] }, 1, 0] } },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+
+    res.status(200).json({ trends });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch booking trends", error: err.message });
+  }
+};
+
+
+
+
+
 export const updateBookingStatus = async (req, res) => {
   try {
     const { id } = req.params;

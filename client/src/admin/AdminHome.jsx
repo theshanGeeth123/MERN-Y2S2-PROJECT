@@ -1,6 +1,9 @@
 // src/admin/AdminHome.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CustomerGrowthChart from "../components/adminComponents/CustomerGrowthChart";
+import OrderStatusChart from "../components/adminComponents/OrderStatusChart";
+import BookingStatusChart from "../components/adminComponents/BookingStatusChart";
 import {
   FaBox,
   FaClipboardList,
@@ -31,6 +34,113 @@ export default function AdminHome() {
       ? window.matchMedia("(prefers-color-scheme: dark)").matches
       : false
   );
+
+  
+  //for customer
+  const [growthData, setGrowthData] = useState([]); // chart data state
+  const BASE_URL = "http://localhost:4000";
+  // Fetch customer growth data
+  useEffect(() => {
+    const fetchGrowth = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/user/growth`);
+        if (!res.ok) {
+          console.error("Growth fetch failed:", res.status);
+          setGrowthData([]); 
+          return;
+        }
+
+        const data = await res.json();
+
+        
+        if (Array.isArray(data)) {
+          setGrowthData(data);
+        } else if (Array.isArray(data.growth)) {
+          setGrowthData(data.growth);
+        } else {
+          console.warn("Unexpected data shape:", data);
+          setGrowthData([]);
+        }
+      } catch (err) {
+        console.error("Error fetching growth data:", err);
+        setGrowthData([]);
+      }
+    };
+
+    fetchGrowth();
+  }, []);
+
+
+  //for order
+  const [orderStatusData, setOrderStatusData] = useState([]);
+
+  useEffect(() => {
+    const fetchOrderStatuses = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/orders/all`);
+        const data = await res.json();
+
+        if (!data.success) return;
+
+        const orders = data.orders || [];
+
+        // Count statuses
+        const counts = orders.reduce(
+          (acc, o) => {
+            const s = o.status || "Processing";
+            if (s === "Processing") acc.Processing += 1;
+            else if (s === "Confirmed") acc.Confirmed += 1;
+            else if (s === "Canceled") acc.Canceled += 1;
+            return acc;
+          },
+          { Processing: 0, Confirmed: 0, Canceled: 0 }
+        );
+
+        setOrderStatusData([
+          { name: "Processing", value: counts.Processing },
+          { name: "Confirmed", value: counts.Confirmed },
+          { name: "Canceled", value: counts.Canceled },
+        ]);
+      } catch (err) {
+        console.error("Failed to fetch order statuses:", err);
+      }
+    };
+
+    fetchOrderStatuses();
+  }, []);
+
+
+  const [bookingStatusData, setBookingStatusData] = useState([]);
+
+  useEffect(() => {
+    const fetchBookingTrends = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/bookings/trends`);
+        const data = await res.json();
+        if (!data.trends) return;
+
+        // Aggregate counts for each status
+        let pending = 0, approved = 0, cancelled = 0;
+        data.trends.forEach(t => {
+          pending += t.pending || 0;
+          approved += t.approved || 0;
+          cancelled += t.cancelled || 0;
+        });
+
+        setBookingStatusData([
+          { name: "Pending", value: pending },
+          { name: "Approved", value: approved },
+          { name: "Cancelled", value: cancelled },
+        ]);
+      } catch (err) {
+        console.error("Failed to fetch booking trends:", err);
+      }
+    };
+
+    fetchBookingTrends();
+  }, []);
+
+
 
   const stats = [
     { title: "Pending Tasks", value: 12, change: "-2%" },
@@ -291,16 +401,17 @@ export default function AdminHome() {
             </section>
 
             {/* Placeholder for charts/tables */}
-            <section className="rounded-2xl border dark:border-gray-800 bg-white/80 dark:bg-gray-900 shadow-sm h-64 sm:h-72 lg:h-80 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Your analytics will appear here.
-                </div>
-                <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-                  Hook up your API data or charts when ready.
-                </div>
+            <CustomerGrowthChart data={growthData} />
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="w-full md:w-1/2">
+                <OrderStatusChart data={orderStatusData} />
               </div>
-            </section>
+              <div className="w-full md:w-1/2">
+                <BookingStatusChart data={bookingStatusData} />
+              </div>
+            </div>
+
+            
           </div>
         </main>
       </div>
