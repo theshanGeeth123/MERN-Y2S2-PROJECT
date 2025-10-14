@@ -33,6 +33,13 @@ import Notifications from "./admin/T_Notifications/Notifications";
 import NotificationDetail from "./admin/T_Notifications/NotificationDetail";
 import NotificationCreate from "./admin/T_Notifications/NotificationCreate";
 
+
+//Staff Notifications
+
+import SNotifications from "./staff/T_Notifications/Notifications";
+import SNotificationDetail from "./staff/T_Notifications/NotificationDetail";
+import SNotificationCreate from "./staff/T_Notifications/NotificationCreate";
+
 // Customer Notifications
 import CustomerNotifications from "./T_Customer/T_Cus_notifications/CustomerNotifications";
 
@@ -225,6 +232,17 @@ function App() {
         <Route path="/ai/background-removal" element={<BackgroundRemoval />} />
         <Route path="/ai/tools" element={<AIToolsHub />} />
 
+
+{/* Staff Notifications */}
+        <Route path="/staff/notifications" element={<SNotifications />} />
+        <Route
+          path="/staff/notifications/create"
+          element={<SNotificationCreate />}
+        />
+        <Route
+          path="/staff/notifications/:id"
+          element={<SNotificationDetail />}
+        />
 
 
       </Routes>

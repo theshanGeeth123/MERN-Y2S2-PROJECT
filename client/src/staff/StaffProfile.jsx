@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useStaffAuth } from "./StaffAuthContext";
+import NavBarStaff from "../components/NavbarStaff";
 
 const fmt = (d) => {
   if (!d) return "-";
@@ -30,6 +31,9 @@ export default function StaffProfile() {
   const fullName = `${staff.firstName || ""} ${staff.lastName || ""}`.trim();
 
   return (
+
+    <><NavBarStaff/>
+
     <div className="max-w-4xl mx-auto p-6">
       
       <div className="flex items-center justify-between mb-6">
@@ -83,5 +87,6 @@ export default function StaffProfile() {
         </div>
       </div>
     </div>
+    </>
   );
 }
