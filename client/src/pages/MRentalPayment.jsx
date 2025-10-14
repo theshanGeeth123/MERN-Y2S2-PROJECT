@@ -42,6 +42,18 @@ const MRentalCart = () => {
         Confirm Your Payment
       </h2>
 
+      <div className="w-3/4 mx-auto mt-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md text-center mb-8">
+        <p className="font-semibold mb-1">⚠️ Important Notice</p>
+        <p className="text-sm">
+          Once a rental request is edited or deleted by the customer, 
+          the deposit becomes non-refundable. 
+        </p>
+        <p>
+          Refunds are only applicable if the request is 
+          officially rejected by the <b>JW-Studio</b> administration.
+        </p>
+      </div>
+
       <div className="w-full flex justify-center">
         <ul className="space-y-3 mb-6 w-3/4">
           {rentedItems.map((item) => (
