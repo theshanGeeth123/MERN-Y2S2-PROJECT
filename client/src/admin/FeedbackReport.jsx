@@ -90,25 +90,38 @@ function FeedbackReport() {
     const doc = new jsPDF({ unit: "pt", format: "a4" });
     const margin = 36;
     let y = margin;
+    const pageWidth  = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-    // Title & meta
+    // border
+    doc.setDrawColor(0, 0, 0); // Black color
+    doc.setLineWidth(1.2); // Border thickness
+    doc.rect(20, 20, pageWidth - 40, pageHeight - 40, "S");
+
+    // logo
+    const logoWidth = 120;
+    const logoHeight = 120;
+    const logoX = (pageWidth - logoWidth) / 2;
+    doc.addImage(MainLogo, "PNG", logoX, y, logoWidth, logoHeight);
+    y += 120;
+
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.text("Admin Report for Feedback - JW-Studio", margin, y);
-    y += 18;
+    doc.setFontSize(24);
+    doc.text("JW-Studio Report for Feedback", margin, y);
+    y += 20;
+
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
     doc.text(`Generated on: ${new Date().toLocaleString()}`, margin, y);
-    y += 14;
+    y += 20;
     doc.text(
       `Total: ${summary.total}   •   Excellent: ${summary.excellent}   •   Good: ${summary.good}   •   Average: ${summary.average}   •   Poor: ${summary.poor}`,
       margin,
       y
     );
-    y += 12;
+    y += 30;
 
-    // Helper to add a section heading band
-    const section = (title) => {
+    const section = (title) => { // Helper to add a section heading band
       autoTable(doc, {
         startY: y, head: [[title]], body: [],
         theme: "plain", styles: { fontSize: 10 },
@@ -120,12 +133,11 @@ function FeedbackReport() {
           cellPadding: 6,
         },
         margin: { left: margin, right: margin },
-        didDrawPage: (d) => (y = d.cursor.y),
+        didDrawPage: (d) => (y = d.cursor.y + 25),
       });
     };
 
-    // Table: Feedbacks by Date
-    const byDate = feedbacks.reduce((acc, fb) => {
+    const byDate = feedbacks.reduce((acc, fb) => { // Table: Feedbacks by Date
       const d = new Date(fb.createdAt);
       const day = isNaN(d) ? "-" : d.toISOString().slice(0, 10);
       acc[day] = (acc[day] || 0) + 1;
@@ -138,6 +150,11 @@ function FeedbackReport() {
       doc.addImage(LOGO_PATH, "PNG", 36, 30, 80, 40); // (x, y, width, height)
     } catch (err) {}
 
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(16);
+    doc.text("Total Feedbacks per day", margin, y);
+    y += 8;
+
     autoTable(doc, {
       startY: y,
       head: [["Date (YYYY-MM-DD)", "Feedbacks"]],
@@ -147,11 +164,15 @@ function FeedbackReport() {
       headStyles: { fillColor: [70, 74, 84], textColor: 255 },
       columnStyles: { 0: { halign: "left" }, 1: { halign: "center" } },
       margin: { left: margin, right: margin },
-      didDrawPage: (d) => (y = d.cursor.y),
+      didDrawPage: (d) => (y = d.cursor.y + 25),
     });
 
-    // Table: Rating breakdown
-    autoTable(doc, {
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(16);
+    doc.text("Rating Breakdown", margin, y);
+    y += 8;
+
+    autoTable(doc, { // Table: Rating breakdown
       startY: y+12,
       head: [["Rating", "Count"]],
       body: [
@@ -165,20 +186,31 @@ function FeedbackReport() {
       headStyles: { fillColor: [70, 74, 84], textColor: 255 },
       columnStyles: { 0: { halign: "left" }, 1: { halign: "center" } },
       margin: { left: margin, right: margin },
-      didDrawPage: (d) => (y = d.cursor.y),
+      didDrawPage: (d) => (y = d.cursor.y + 25),
     });
 
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(16);
+    doc.text("Photographers Analysis based on Ratings", margin, y);
+    y += 8;
+
     // Table: Photographers
+    const totalTop = topPhotographers.reduce((s, p) => s + (p.value || 0), 0);
+    const tpRows = topPhotographers.map((p, idx) => {
+      const ratePercentage = totalTop ? ((p.value / totalTop) * 100).toFixed(0) + "%" : "—";
+      return [p.name, ratePercentage];
+    });
+
     autoTable(doc, {
-      startY: y+ 12,
-      head: [["Photographer", "Feedbacks"]],
-      body: topPhotographers.map((p) => [p.name, p.value]),
+      startY: y + 12,
+      head: [["Photographer", "Rating Percentage"]],
+      body: tpRows,
       theme: "grid",
       styles: { fontSize: 9 },
       headStyles: { fillColor: [70, 74, 84], textColor: 255 },
       columnStyles: { 0: { halign: "left" }, 1: { halign: "center" } },
       margin: { left: margin, right: margin },
-      didDrawPage: (d) => (y = d.cursor.y),
+      didDrawPage: (d) => (y = d.cursor.y + 25),
     });
 
     // Footer
@@ -258,15 +290,16 @@ function FeedbackReport() {
                 <div className="bg-white p-6 rounded-lg shadow">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Photographers</h3>
                   <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
+                    <ResponsiveContainer width="80%" height="80%">
                       <PieChart>
-                        <Pie data={topPhotographers}
-                          dataKey="value" nameKey="name" outerRadius={110} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                          labelLine={false} > {topPhotographers.map((_, i) => (
-                            <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                          ))}
+                        <Pie data={topPhotographers} dataKey="value" nameKey="name" outerRadius={100}
+                          label={({ name, percent, x, y }) => ( <text  x={x} y={y} textAnchor="middle"
+                          dominantBaseline="central" fontSize={12} fontWeight={500} >
+                          {`${name} ${(percent * 100).toFixed(0)}%`} </text> )} labelLine={false} >
+                            {topPhotographers.map((_, i) => ( <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />))}
                         </Pie>
-                        <Tooltip />
+                        <Tooltip wrapperStyle={{ zIndex: 1000 }} contentStyle={{fontSize: "10px", maxWidth: "200px",  borderRadius: "8px", whiteSpace: "normal", border: "1px solid #ddd"}}
+                          labelStyle={{ fontWeight: "600", marginBottom: "4px", whiteSpace: "normal",}}/>
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
