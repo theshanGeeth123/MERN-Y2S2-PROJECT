@@ -15,15 +15,19 @@ import {
   FaBoxOpen,
   FaUser,
   FaSignOutAlt,
-  FaHome
+  FaHome,
+  FaRobot 
 } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
 import { ShoppingBag, Star, Calendar, Quote, User } from "lucide-react";
 
+
+
 const links = [
   { label: "Home", path: "/main-home", icon: <FaHome  /> },
+  { label: "AI Tools", path: "/ai/tools", icon: <FaRobot   /> },
   { label: "View Products", path: "/products", icon: <FaShoppingBag /> },
   { label: "Packages", path: "/userpackages", icon: <FaBoxOpen /> },
   { label: "My Bookings", path: "/my-bookings", icon: <FaBookOpen /> },
@@ -49,12 +53,10 @@ const CustomerHome = () => {
 
   const API_BASE = backendUrl || "http://localhost:4000";
 
-  // Lock background scroll + focus the close button when drawer is open
   useEffect(() => {
     loadAllFeedbacks();
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
-      // slight delay to allow element to mount
       setTimeout(() => closeBtnRef.current?.focus(), 0);
     } else {
       document.body.style.overflow = "";
@@ -83,13 +85,11 @@ const CustomerHome = () => {
   };
 
   const PartialStar = ({ value = 0 }) => {
-    const percent = Math.min(Math.max((value / 5) * 100, 0), 100); // 0–100%
+    const percent = Math.min(Math.max((value / 5) * 100, 0), 100); 
     return (
       <div className="relative h-5 w-5">
-        {/* Background star (gray) */}
         <Star className="absolute top-0 left-0 h-5 w-5 text-gray-300" />
 
-        {/* Foreground star (yellow) clipped to width */}
         <div
           className="absolute top-0 left-0 h-5 overflow-hidden"
           style={{ width: `${percent}%` }}
@@ -111,7 +111,7 @@ const CustomerHome = () => {
           await axios.delete(`${API_BASE}/api/cart/clear`, {
             data: { userId: userData.id },
           });
-        } catch { /* ignore */ }
+        } catch {}
       }
 
       localStorage.removeItem("customer");
@@ -157,7 +157,6 @@ const CustomerHome = () => {
 
       {/* MAIN GRID */}
       <div className="grid min-h-screen md:grid-cols-[20rem_1fr] pt-16 md:pt-0">
-        {/* SIDEBAR (desktop) - BLACK THEME */}
         <aside className="hidden md:flex md:flex-col bg-gray-900 border-r border-gray-800 shadow-lg">
           <div className="sticky top-0 z-30 bg-gray-900">
             <div className="h-20 px-6 flex items-center justify-between border-b border-gray-800">
@@ -199,7 +198,6 @@ const CustomerHome = () => {
           </div>
         </aside>
 
-        {/* MOBILE DRAWER - BLACK THEME (SCROLLABLE) */}
         {mobileOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
             <div
@@ -211,13 +209,11 @@ const CustomerHome = () => {
               role="dialog"
               aria-modal="true"
               className="absolute left-0 top-0 h-full w-80 bg-gray-900 shadow-xl flex flex-col"
-              // safe area paddings to avoid cutoffs on devices with home bar/notch
               style={{
                 paddingTop: "env(safe-area-inset-top)",
                 paddingBottom: "env(safe-area-inset-bottom)",
               }}
             >
-              {/* Drawer Header */}
               <div className="h-16 px-4 border-b border-gray-800 flex items-center justify-between">
                 <span className="font-semibold text-white text-lg">Customer Portal</span>
                 <button
@@ -276,7 +272,6 @@ const CustomerHome = () => {
           </div>
         )}
 
-        {/* CONTENT - WHITE BACKGROUND */}
         <main className="w-full bg-white">
           <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 py-8 md:py-10">
             <div className="mb-8">
@@ -286,7 +281,6 @@ const CustomerHome = () => {
               </p>
             </div>
 
-            {/* Quick actions */}
             <section>
               <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -308,7 +302,6 @@ const CustomerHome = () => {
               </div>
             </section>
 
-            {/* Stats */}
             <section className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
                 <h4 className="text-sm font-medium text-gray-500 mb-2">Recent Orders</h4>
@@ -327,7 +320,6 @@ const CustomerHome = () => {
               </div>
             </section>
 
-            {/* Customer Reviews */}
             <section>
               <h3 className="mt-12 text-lg font-medium text-gray-900 mb-4">Customer Reviews</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
@@ -339,7 +331,6 @@ const CustomerHome = () => {
                         <div className="flex-1 flex flex-col">
                           <header className="mt-2 mb-3 flex items-start justify-between gap-3">
                             <h4 className="text-sm font-semibold text-gray-900">
-                              {/* If your value is like "John Doe Photography" and you only want the name: */}
                               {(fb.selectedPhotographer )}
                             </h4>
                             <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1">
@@ -381,7 +372,6 @@ const CustomerHome = () => {
   );
 };
 
-// Enhanced NavItem component with black theme styling
 function NavItem({ icon, label, onClick, isLogout = false }) {
   return (
     <button

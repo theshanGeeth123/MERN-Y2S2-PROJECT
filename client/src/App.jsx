@@ -93,6 +93,10 @@ import StaffPackages from "./staff/Packages.jsx";
 import StaffCusMangement from "./staff/CustomerManage.jsx";
 
 import ImageGenerator from "./AI/pages/ImageGenerator";
+import BackgroundRemoval from "./AI/pages/BackgroundRemoval";
+import AIToolsHub from "./AI/pages/AIToolsHub";
+
+
 
 
 
@@ -218,6 +222,9 @@ function App() {
         <Route path="/staff/customerManage" element={<StaffCusMangement />} />
 
         <Route path="/ai/image-generator" element={<ImageGenerator />} />
+        <Route path="/ai/background-removal" element={<BackgroundRemoval />} />
+        <Route path="/ai/tools" element={<AIToolsHub />} />
+
 
 
       </Routes>
