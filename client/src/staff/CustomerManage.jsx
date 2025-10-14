@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+  import NavBarStaff from "../components/NavbarStaff";
 
 export default function CustomerManage() {
   const [allUsers, setAllUsers] = useState([]);
@@ -12,6 +13,8 @@ export default function CustomerManage() {
     key: null,
     direction: "ascending",
   });
+
+
 
   // details drawer
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -134,6 +137,7 @@ export default function CustomerManage() {
 
   return (
     <>
+    <NavBarStaff/>
   
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 2xl:mx-20 xl:mx-15">
         <div className="mx-auto max-w-7xl">
