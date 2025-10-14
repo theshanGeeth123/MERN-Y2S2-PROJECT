@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -10,6 +10,7 @@ const API_BASE =
 function PackageDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const fileInputRef = useRef();
 
   const [form, setForm] = useState({
     title: "",
@@ -23,6 +24,7 @@ function PackageDetail() {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [preview, setPreview] = useState("");
 
   useEffect(() => {
     const fetchPackage = async () => {
@@ -38,6 +40,7 @@ function PackageDetail() {
           features: Array.isArray(p.features) ? p.features.join(", ") : p.features || "",
           image: p.image || ""
         });
+        setPreview(p.image || "");
       } catch {
         alert("Failed to load package");
       } finally {
@@ -53,12 +56,38 @@ function PackageDetail() {
     setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
+  const handleImageSelect = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setErrors(prev => ({ ...prev, image: "Only image files are allowed" }));
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setErrors(prev => ({ ...prev, image: "Image size must be under 2MB" }));
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreview(reader.result);
+      setForm(prev => ({ ...prev, image: reader.result }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleEditImage = () => {
+    fileInputRef.current.click();
+  };
+
   const validateForm = () => {
     const newErrors = {};
     if (!form.title.trim()) newErrors.title = "Title is required";
     if (!form.description.trim()) newErrors.description = "Description is required";
     if (!form.price || form.price <= 0) newErrors.price = "Price must be greater than 0";
     if (!form.duration || form.duration <= 0) newErrors.duration = "Duration must be greater than 0";
+    if (!form.image) newErrors.image = "Image is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -101,15 +130,47 @@ function PackageDetail() {
           Update Package
         </h1>
 
-        {form.image && (
-          <div className="flex justify-center mb-6">
-            <img
-              src={form.image}
-              alt="Package"
-              className="w-48 h-48 object-cover rounded-lg shadow-md"
-            />
-          </div>
-        )}
+        
+        <div className="relative flex justify-center mb-6">
+          <img
+            src={preview || "https://via.placeholder.com/200"}
+            alt="Package"
+            className="w-48 h-48 object-cover rounded-lg shadow-md"
+          />
+
+         
+          <button
+            type="button"
+            onClick={handleEditImage}
+            title="Change Image"
+            className="absolute bottom-2 right-[calc(50%-100px)] bg-white border border-gray-300 p-2 rounded-full shadow hover:bg-gray-100 transition"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="black"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.862 3.487a2.25 2.25 0 013.182 3.182l-10.5 10.5a2.25 2.25 0 01-.709.47l-4.5 1.5a.75.75 0 01-.948-.948l1.5-4.5a2.25 2.25 0 01.47-.709l10.5-10.5z"
+              />
+            </svg>
+          </button>
+
+         
+          <input
+            type="file"
+            accept="image/*"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={handleImageSelect}
+          />
+        </div>
+        {errors.image && <p className="text-red-500 text-sm mb-2 text-center">{errors.image}</p>}
 
         <form onSubmit={handleSave} className="space-y-6">
           <div>
@@ -185,17 +246,6 @@ function PackageDetail() {
               value={form.features}
               onChange={handleChange}
               rows={3}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-black-700 mb-1">Image URL</label>
-            <input
-              type="text"
-              name="image"
-              value={form.image}
-              onChange={handleChange}
               className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800"
             />
           </div>
