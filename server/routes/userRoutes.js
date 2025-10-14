@@ -1,6 +1,6 @@
 import express from 'express'
 import userAuth from '../middleware/userAuth.js';
-import { getUserById, getUserData, getUserIdByEmail,updateUser,deleteUser, getAllUsers,deleteUserByAdmin} from '../controllers/userController.js';
+import { getUserById, getUserData, getUserIdByEmail,updateUser,deleteUser, getAllUsers,deleteUserByAdmin, getCustomerGrowth} from '../controllers/userController.js';
 import { feedbackSubmission, getFeedbacksById, getFeedbacks, updateFeedback, deletefeedback, getPhotographersFromStaff} from "../controllers/feedbackController.js";
 import { questionSubmission, getQuestionsAnswers, getQuestionsById, updateQuestion, updateQuestionAnswer, deleteQuestion} from "../controllers/questionController.js";
 
@@ -32,5 +32,8 @@ userRouter.put('/question', updateQuestion);
 userRouter.delete('/question', deleteQuestion);
 userRouter.put('/question-answer', updateQuestionAnswer);
 
+
+// get customer growth data
+userRouter.get("/growth", getCustomerGrowth);
 
 export default userRouter;

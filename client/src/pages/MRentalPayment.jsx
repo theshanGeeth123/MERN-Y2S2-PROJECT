@@ -15,7 +15,7 @@ const MRentalCart = () => {
 
   const navigate = useNavigate();
 
-  const FIXED_DEPOSIT = 500; // Fixed deposit
+  const FIXED_DEPOSIT = 500; // Fixed amount of deposit
 
   // Calculate total
  const getTotalDeposit = (itemsList) => {
@@ -71,7 +71,7 @@ const MRentalCart = () => {
       </div>
       <div className="w-full flex justify-center mt-1">
         <Link
-          to="/cart"
+          to="/Rcart"
           className="text-blue-500 hover:underline"
         >
            Back to Rental Cart

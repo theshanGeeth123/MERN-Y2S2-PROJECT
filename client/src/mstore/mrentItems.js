@@ -3,6 +3,7 @@ import { create } from "zustand";
 export const useRentItemsStore = create((set, get) => ({
   rentItems: [],
   rentalCart: [],
+  userEmail: null, 
 
   addItem: async (newRental) => {
     if (!newRental.name || !newRental.category || !newRental.price || !newRental.description || !newRental.image)
@@ -75,6 +76,14 @@ export const useRentItemsStore = create((set, get) => ({
   
    rentalCart: JSON.parse(localStorage.getItem("rentalCart")) || [],
 
+  // Set user email and load cart for that user 
+  setUserEmail: (email) => {
+    set({ userEmail: email });
+
+    const cartKey = `rentalCart_${email}`;
+    const userCart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    set({ rentalCart: userCart });
+  },
   addToCart: (item) => {
     set((state) => {
       

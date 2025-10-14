@@ -76,6 +76,22 @@ export const getAllOrders = async (req, res) => {
   }
 };
 
+// get orders into chart
+export const AllOrdersChart = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("userId", "name email")
+      .populate("products.productId", "name price");
+    res.status(200).json({ success: true, orders });
+  } catch (error) {
+    console.error("Get all orders error:", error.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+
+
+
 export const updateOrderStatus = async (req, res) => {
   try {
     const { orderId } = req.params;

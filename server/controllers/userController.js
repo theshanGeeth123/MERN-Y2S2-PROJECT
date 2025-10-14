@@ -33,6 +33,46 @@
 
   }
 
+  // get user Growth Data 
+export const getCustomerGrowth = async (req, res) => {
+  try {
+    const users = await userModel.find();
+
+    // Predefine months in order
+    const monthsOrder = [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    // Initialize monthly counts to 0
+    const monthly = {};
+    monthsOrder.forEach(m => (monthly[m] = 0));
+
+    users.forEach(user => {
+      // Use createdAt if exists or updatedAt
+      const dateStr = user.createdAt || user.updatedAt;
+      if (!dateStr) return; // skip if no date
+
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return; // skip invalid dates
+
+      const monthName = monthsOrder[date.getMonth()];
+      monthly[monthName] += 1;
+    });
+
+    // Convert to array for Recharts
+    const growthData = monthsOrder.map(month => ({
+      month,
+      customers: monthly[month]
+    }));
+
+    res.json(growthData);
+  } catch (err) {
+    console.error("Error in getCustomerGrowth:", err.message);
+    res.status(500).json({ error: "Server error in getCustomerGrowth" });
+  }
+};
+
 
 
   export const getUserById = async (req, res) => {
