@@ -9,11 +9,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import jsPDF from "jspdf";
+import logo from "./Main_Logo.png";
 
 const mRentalDepositChart = ({ chartData = [], loading, error }) => {
   const chartRef = useRef();
 
-  // last 30 days data 
+  // last 30 days data
   const finalChartData = useMemo(() => {
     const today = new Date();
     const last30Days = [];
@@ -52,15 +53,24 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
     const pageWidth = pdf.internal.pageSize.getWidth();
     let y = 40;
 
-    // Report title
+    // Logo
+    const imgWidth = 60;
+    const imgHeight = 60;
+    pdf.addImage(logo, "PNG", 40, 20, imgWidth, imgHeight);
+
+    // Report Title beside logo
     pdf.setFontSize(20);
     pdf.setTextColor("#0036aa");
     const title = "Rental Deposit Income Report (Last 30 Days)";
     const titleWidth = pdf.getTextWidth(title);
-    pdf.text(title, (pageWidth - titleWidth) / 2, y);
-    y += 30;
+    pdf.text(title, (pageWidth - titleWidth) / 2 + 30, 50);
 
-    // Calculations 
+    // Small line under header
+    pdf.setDrawColor(150);
+    pdf.line(40, 90, pageWidth - 40, 90);
+    y = 110;
+
+    // Calculations
     const totalIncome = finalChartData.reduce((sum, d) => sum + d.amount, 0);
     const dailyAvg = totalIncome / finalChartData.length;
 
@@ -72,7 +82,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
       weeklyTotals.push(weekTotal);
     }
 
-    // Summary Section 
+    // Summary Section
     pdf.setFontSize(14);
     pdf.setTextColor("#000");
     pdf.text(`Total Income: Rs. ${totalIncome.toFixed(2)}`, 40, y);
@@ -94,8 +104,6 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
     pdf.text("Daily Income (Last 30 Days)", 40, y);
     y += 15;
 
-
-
     const cellX = 40;
     const cellWidth = 150;
     const amountX = cellX + cellWidth + 10;
@@ -109,10 +117,9 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
     pdf.line(cellX, y, pageWidth - 40, y);
     y += 10;
 
-    // Row coloring based on amount range
+    // Row coloring based on amount
     finalChartData.forEach((d) => {
-      let color = "#000000"; // default
-
+      let color = "#000000"; 
       if (d.amount <= 1000) {
         color = "#ff0000"; 
       } else if (d.amount > 1000 && d.amount <= 5000) {
@@ -133,7 +140,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
       }
     });
 
-    // Add generated PDF timestamp
+    // generated PDF timestamp
     const generatedAt = new Date();
     const formattedTime = generatedAt.toLocaleString("en-LK", {
       year: "numeric",
@@ -200,7 +207,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
             </ResponsiveContainer>
           </div>
 
-          {/* Download button */}
+          {/* Download */}
           <div className="mt-4 text-center">
             <button
               onClick={handleDownloadPDF}
