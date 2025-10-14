@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import { useRequestStore } from "../mstore/mRequestStore";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; 
+import autoTable from "jspdf-autotable";
+import logo from "./Main_logo.png"; 
 
 const MProReqToday = () => {
   const { processedRequests = [], fetchAllProcessedRequests, loading, error } =
@@ -25,22 +26,30 @@ const MProReqToday = () => {
       if (!r.processedAt) return false;
       return new Date(r.processedAt).toISOString().split("T")[0] === todayStr;
     });
-    
+
+    // Logo
+    const imgWidth = 60; // adjust as needed
+    const imgHeight = 60;
+    pdf.addImage(logo, "PNG", 40, 20, imgWidth, imgHeight);
 
     // Header 
     pdf.setFontSize(18);
-    pdf.text("JW-Sudio - Daily Rental Requests Report", 40, 40);
+    pdf.text("JW-Studio - Daily Rental Requests Report", 120, 45);
     pdf.setFontSize(12);
-    pdf.text(`Date: ${formattedDate}`, 40, 60);
-    pdf.text(`Generated at: ${formattedTime}`, 40, 75);
+    pdf.text(`Date: ${formattedDate}`, 120, 65);
+    pdf.text(`Generated at: ${formattedTime}`, 120, 80);
 
-    // Summary 
+    // line under header
+    pdf.setDrawColor(100);
+    pdf.line(40, 90, pdf.internal.pageSize.getWidth() - 40, 90);
+
+    // Summary
     const accepted = todayRequests.filter((r) => r.status === "accept");
     const rejected = todayRequests.filter((r) => r.status === "reject");
     const totalIncome = accepted.reduce((sum, r) => sum + (r.amount || 0), 0);
     const avgDeposit = accepted.length ? totalIncome / accepted.length : 0;
 
-    const summaryY = 95;
+    const summaryY = 110;
     pdf.setFontSize(13);
     pdf.text("Summary", 40, summaryY);
 
@@ -48,10 +57,14 @@ const MProReqToday = () => {
     pdf.text(`Total Requests: ${todayRequests.length}`, 40, summaryY + 20);
     pdf.text(`Accepted Requests: ${accepted.length}`, 40, summaryY + 35);
     pdf.text(`Rejected Requests: ${rejected.length}`, 40, summaryY + 50);
-    pdf.text(`Total Income (Accepted): Rs. ${totalIncome.toFixed(2)}`, 40, summaryY + 65);
+    pdf.text(
+      `Total Income (Accepted): Rs. ${totalIncome.toFixed(2)}`,
+      40,
+      summaryY + 65
+    );
     pdf.text(`Average Deposit: Rs. ${avgDeposit.toFixed(2)}`, 40, summaryY + 80);
 
-    //  Table 
+    // Table 
     const tableData = todayRequests.map((req) => [
       Array.isArray(req.items)
         ? req.items.map((i) => i.name).join(", ")
@@ -62,8 +75,6 @@ const MProReqToday = () => {
       req.processedAt ? new Date(req.processedAt).toLocaleString() : "-",
     ]);
 
-    console.log("autoTable exists?", typeof autoTable); // debug check
-
     autoTable(pdf, {
       startY: summaryY + 100,
       head: [["Items", "Amount", "Email", "Status", "Processed At"]],
@@ -73,7 +84,7 @@ const MProReqToday = () => {
       alternateRowStyles: { fillColor: [245, 245, 245] },
     });
 
-    // set Footer
+    // Footer
     const pageHeight = pdf.internal.pageSize.getHeight();
     pdf.setFontSize(10);
     pdf.text(
@@ -88,7 +99,7 @@ const MProReqToday = () => {
   if (loading) return <p>Loading processed requests...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
 
-  // get date-time
+  // Filter Today’s Requests
   const todayStr = new Date().toISOString().split("T")[0];
   const todayRequests = processedRequests.filter((r) => {
     if (!r.processedAt) return false;
@@ -120,7 +131,7 @@ const MProReqToday = () => {
                 </td>
               </tr>
             ) : (
-              todayRequests.map((req) => ( 
+              todayRequests.map((req) => (
                 <tr key={req._id}>
                   <td className="py-2 px-4 border">
                     {Array.isArray(req.items)
@@ -165,4 +176,3 @@ const MProReqToday = () => {
 };
 
 export default MProReqToday;
-
