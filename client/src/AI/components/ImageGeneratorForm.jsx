@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { generateImage } from "../services/clipdropService";
+import NavbarCustomer from "../../components/NavbarCustomer";
 
 const ImageGeneratorForm = () => {
   const [prompt, setPrompt] = useState("");
@@ -38,8 +39,10 @@ const ImageGeneratorForm = () => {
   const handleSuggestion = (text) => setPrompt(text);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/20 p-6">
-      <div className="w-full max-w-6xl bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/60 p-8 transition-all duration-300 hover:shadow-3xl">
+
+    <><NavbarCustomer/>
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/20 pt-10  ">
+      <div className="w-full max-w-6xl bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/60 p-8 transition-all duration-300 hover:shadow-3xl ">
         {/* Two-column responsive layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* LEFT SIDE */}
@@ -153,7 +156,7 @@ const ImageGeneratorForm = () => {
             {/* Footer */}
             <div className="text-center lg:text-left mt-10 pt-6 border-t border-gray-100/60">
               <p className="text-xs text-gray-400/80 font-medium">
-                © 2025 StudioAI — Powered by ClipDrop | Professional AI Imaging for JW Camera Studio
+                © 2025 JW-Studio — Powered by ClipDrop 
               </p>
             </div>
           </div>
@@ -224,6 +227,7 @@ const ImageGeneratorForm = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
