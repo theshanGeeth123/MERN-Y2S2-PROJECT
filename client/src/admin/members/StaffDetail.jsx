@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";  
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,13 +13,6 @@ function StaffDetail() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  // Password modal state
-  const [pwOpen, setPwOpen] = useState(false);
-  const [newPw, setNewPw] = useState("");
-  const [confirmPw, setConfirmPw] = useState("");
-  const [savingPw, setSavingPw] = useState(false);
-  const [pwTouched, setPwTouched] = useState({ new: false, confirm: false });
 
   const [form, setForm] = useState({
     firstName: "",
@@ -37,9 +30,7 @@ function StaffDetail() {
   const fetchOne = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${API_BASE}/${id}`, {
-        withCredentials: true,
-      });
+      const { data } = await axios.get(`${API_BASE}/${id}`, { withCredentials: true });
       const s = data?.staff || data;
       setRow(s);
       setForm({
@@ -87,64 +78,6 @@ function StaffDetail() {
     }
   };
 
-  // ---- Password validation helpers ----
-  const pwRules = (pw) => ({
-    length: pw.length >= 6,
-    uppercase: /[A-Z]/.test(pw),
-    special: /[^A-Za-z0-9]/.test(pw),
-  });
-
-  const allPwRulesPass = (pw) => {
-    const r = pwRules(pw);
-    return r.length && r.uppercase && r.special;
-  };
-
-  const passwordsMatch = newPw && confirmPw && newPw === confirmPw;
-
-  const openPwModal = () => {
-    setNewPw("");
-    setConfirmPw("");
-    setPwTouched({ new: false, confirm: false });
-    setPwOpen(true);
-  };
-
-  const closePwModal = () => {
-    if (savingPw) return;
-    setPwOpen(false);
-    setNewPw("");
-    setConfirmPw("");
-    setPwTouched({ new: false, confirm: false });
-  };
-
-  const submitPassword = async () => {
-    // Final guard checks
-    if (!allPwRulesPass(newPw)) {
-      toast.error(
-        "Password must be at least 6 chars, include an uppercase letter and a special character."
-      );
-      return;
-    }
-    if (!passwordsMatch) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    try {
-      setSavingPw(true);
-      await axios.put(
-        `${API_BASE}/${id}`,
-        { password: newPw },
-        { withCredentials: true }
-      );
-      toast.success("Password updated");
-      closePwModal();
-    } catch {
-      toast.error("Failed to update password");
-    } finally {
-      setSavingPw(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -170,33 +103,19 @@ function StaffDetail() {
     );
   }
 
-  const rulesState = pwRules(newPw);
-  const canSavePw = allPwRulesPass(newPw) && passwordsMatch && !savingPw;
-
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 py-6">
       <div className="mx-auto max-w-5xl px-4">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
             <h1 className="mt-8 text-3xl font-bold text-green-800">
               {editing ? "Edit Staff" : "Staff Details"}
             </h1>
             <p className="mt-3 text-sm text-gray-500">
-              {editing
-                ? "Update fields and save changes."
-                : "View details of staff member."}
+              {editing ? "Update fields and save changes." : "View details of staff member."}
             </p>
           </div>
           <div className="flex gap-2">
-            {!editing && (
-              <button
-                onClick={openPwModal}
-                className="mt-8 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-800 shadow-sm hover:bg-gray-100 transition"
-              >
-                Change Password
-              </button>
-            )}
             <button
               onClick={() => navigate("/admin/staff")}
               className="mt-8 rounded-md border border-gray-300 bg-gray-700 px-4 py-2 text-sm text-white shadow-sm hover:bg-black transition"
@@ -206,7 +125,6 @@ function StaffDetail() {
           </div>
         </div>
 
-        {/* View / Edit */}
         {!editing ? (
           <>
             <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-md">
@@ -228,9 +146,7 @@ function StaffDetail() {
                     {row.firstName} {row.lastName}
                   </h2>
                   <div className="text-sm text-gray-700">{row.email}</div>
-                  <div className="text-sm capitalize text-gray-700">
-                    {row.role}
-                  </div>
+                  <div className="text-sm capitalize text-gray-700">{row.role}</div>
                 </div>
               </div>
 
@@ -247,7 +163,7 @@ function StaffDetail() {
                         Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700 ring-1 ring-gray-200">
+                      <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-gray-200">
                         Inactive
                       </span>
                     )}
@@ -260,17 +176,13 @@ function StaffDetail() {
                 <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
                   <div className="text-black font-semibold">Date of birth</div>
                   <div className="mt-1 text-gray-700">
-                    {row.dateOfBirth
-                      ? new Date(row.dateOfBirth).toLocaleDateString()
-                      : "-"}
+                    {row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString() : "-"}
                   </div>
                 </div>
                 <div className="rounded-lg border border-gray-200 p-4 shadow-sm">
                   <div className="text-black font-semibold">Date hired</div>
                   <div className="mt-1 text-gray-700">
-                    {row.dateHired
-                      ? new Date(row.dateHired).toLocaleDateString()
-                      : "-"}
+                    {row.dateHired ? new Date(row.dateHired).toLocaleDateString() : "-"}
                   </div>
                 </div>
               </div>
@@ -292,9 +204,7 @@ function StaffDetail() {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-700">
-                  First Name
-                </label>
+                <label className="block text-sm text-gray-700">First Name</label>
                 <input
                   name="firstName"
                   value={form.firstName}
@@ -353,9 +263,7 @@ function StaffDetail() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700">
-                  Date of Birth
-                </label>
+                <label className="block text-sm text-gray-700">Date of Birth</label>
                 <input
                   type="date"
                   name="dateOfBirth"
@@ -365,9 +273,7 @@ function StaffDetail() {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700">
-                  Date Hired
-                </label>
+                <label className="block text-sm text-gray-700">Date Hired</label>
                 <input
                   type="date"
                   name="dateHired"
@@ -406,110 +312,7 @@ function StaffDetail() {
           </form>
         )}
       </div>
-
-      {/* Password Modal */}
-      {pwOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white shadow-lg">
-            <div className="border-b border-gray-200 px-5 py-4">
-              <h3 className="text-base font-semibold text-gray-900">
-                Change Password
-              </h3>
-              <p className="mt-1 text-xs text-gray-500">
-                {row.firstName} {row.lastName} · {row.email}
-              </p>
-            </div>
-
-            <div className="px-5 py-4">
-              <label className="block text-sm text-gray-700">New password</label>
-              <input
-                type="password"
-                value={newPw}
-                onChange={(e) => {
-                  setNewPw(e.target.value);
-                  if (!pwTouched.new) setPwTouched((t) => ({ ...t, new: true }));
-                }}
-                onBlur={() =>
-                  setPwTouched((t) => ({ ...t, new: true }))
-                }
-                className={`mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-gray-400 ${
-                  pwTouched.new && !allPwRulesPass(newPw)
-                    ? "border-red-300"
-                    : "border-gray-300"
-                }`}
-                placeholder="Enter new password"
-              />
-
-              {/* Live rules */}
-              <ul className="mt-2 space-y-1 text-xs">
-                <PwRule ok={rulesState.length} text="At least 6 characters" />
-                <PwRule ok={rulesState.uppercase} text="Contains an uppercase letter (A–Z)" />
-                <PwRule ok={rulesState.special} text="Contains a special character (!@#$…)" />
-              </ul>
-
-              <label className="mt-4 block text-sm text-gray-700">
-                Confirm password
-              </label>
-              <input
-                type="password"
-                value={confirmPw}
-                onChange={(e) => {
-                  setConfirmPw(e.target.value);
-                  if (!pwTouched.confirm)
-                    setPwTouched((t) => ({ ...t, confirm: true }));
-                }}
-                onBlur={() =>
-                  setPwTouched((t) => ({ ...t, confirm: true }))
-                }
-                className={`mt-1 w-full rounded-md border px-3 py-2 text-sm outline-none focus:border-gray-400 ${
-                  pwTouched.confirm && !passwordsMatch
-                    ? "border-red-300"
-                    : "border-gray-300"
-                }`}
-                placeholder="Re-enter password"
-              />
-              {pwTouched.confirm && confirmPw && !passwordsMatch && (
-                <p className="mt-1 text-xs text-red-600">Passwords do not match.</p>
-              )}
-            </div>
-
-            <div className="flex items-center justify-end gap-2 border-t border-gray-200 px-5 py-3">
-              <button
-                onClick={closePwModal}
-                disabled={savingPw}
-                className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-60"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitPassword}
-                disabled={!canSavePw}
-                className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium text-white hover:bg-blue-800 disabled:opacity-60"
-              >
-                {savingPw ? "Saving…" : "Save Password"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
-  );
-}
-
-/** Small helper component for rule lines */
-function PwRule({ ok, text }) {
-  return (
-    <li className={`flex items-center gap-2 ${ok ? "text-green-600" : "text-gray-500"}`}>
-      <span
-        className={`inline-flex h-4 w-4 items-center justify-center rounded-full ring-1 ${
-          ok ? "bg-green-100 ring-green-200" : "bg-gray-100 ring-gray-200"
-        }`}
-        aria-hidden
-      >
-        {ok ? "✓" : "•"}
-      </span>
-      {text}
-    </li>
   );
 }
 

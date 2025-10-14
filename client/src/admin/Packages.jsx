@@ -3,23 +3,9 @@ import axios from "axios";
 import { FiEdit, FiTrash2, FiPlus, FiRefreshCw } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
 import NavbarAdmin from "../components/NavbarAdmin";
 
 const API_BASE = "http://localhost:4000/api/packages";
-
-const packageImages = {
-  "Portrait Photography Package":
-    "https://i.postimg.cc/d1Zzc7vD/Whats-App-Image-2025-09-02-at-09-55-18.jpg",
-  "Engagement Photoshoot Package":
-    "https://i.postimg.cc/3NMz8KJ1/Whats-App-Image-2025-09-02-at-09-55-18-2.jpg",
-  "Baby Photoshoot Package":
-    "https://i.postimg.cc/Jh29FNf9/Whats-App-Image-2025-09-02-at-09-55-14.jpg",
-  "Gold Wedding Package":
-    "https://i.postimg.cc/d01bnHx2/Whats-App-Image-2025-09-02-at-09-55-18-1.jpg",
-  "Event Photography Package":
-    "https://i.postimg.cc/BnMWT9MZ/Whats-App-Image-2025-09-02-at-09-55-19.jpg",
-};
 
 function Packages() {
   const [packages, setPackages] = useState([]);
@@ -79,8 +65,9 @@ function Packages() {
   };
 
   return (
+
     <><NavbarAdmin/>
-    <div className="min-h-screen bg-gray-100 text-gray-900 py-10 px-4">
+    <div className="min-h-screen bg-gray-100 text-gray-900 py-10 px-4 2xl:min-w-[180px] 2xl:mx-20 xl:mx-15">
       <div className="max-w-6xl mx-auto">
         
         <div className="flex flex-col sm:flex-row justify-between items-center mb-12 gap-4">
@@ -145,11 +132,9 @@ function Packages() {
                
                 <div className="min-h-[200px] flex items-center justify-center">
                   <img
-                    src={
-                      packageImages[p.title] || "https://via.placeholder.com/150"
-                    }
+                    src={p.image || "https://via.placeholder.com/150"}
                     alt={p.title || "Package Image"}
-                    className="h-40 w-40 object-cover rounded-lg"
+                    className="h-50 w-50 object-cover rounded-lg"
                   />
                 </div>
 
@@ -208,7 +193,6 @@ function Packages() {
         )}
       </div>
     </div>
-
     </>
   );
 }
