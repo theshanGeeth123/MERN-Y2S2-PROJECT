@@ -92,6 +92,9 @@ import MTodayReqAd from "./pages/mTodayReqAdmin";
 import StaffPackages from "./staff/Packages.jsx";
 import StaffCusMangement from "./staff/CustomerManage.jsx";
 
+import ImageGenerator from "./AI/pages/ImageGenerator";
+
+
 
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 const authToken = localStorage.getItem("token");
@@ -214,6 +217,7 @@ function App() {
         <Route path="/staff/packages" element={<StaffPackages />} />
         <Route path="/staff/customerManage" element={<StaffCusMangement />} />
 
+        <Route path="/ai/image-generator" element={<ImageGenerator />} />
 
 
       </Routes>
