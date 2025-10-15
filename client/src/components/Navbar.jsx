@@ -73,7 +73,9 @@ function Navbar() {
 
   return (
     <div className="w-full flex justify-between items-center p-4 sm:p-6 sm:px-24 mt-5 max-h-[100px]">
-      <a href="/"><img src={MainLogo} alt="logo" className="w-28 sm:w-32" /></a>
+      <a href="/">
+        <img src={MainLogo} alt="logo" className="w-28 sm:w-32" />
+      </a>
 
       <div className="flex items-center gap-4">
         {/* Notifications (only when logged in) */}
@@ -138,7 +140,11 @@ function Navbar() {
                   </li>
                 )}
                 <li
-                  onClick={logout}
+                  onClick={() => {
+                    if (window.confirm("Are you sure you want to log out?")) {
+                      logout();
+                    }
+                  }}
                   className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10 rounded"
                 >
                   Logout
