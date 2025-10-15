@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../context/AppContext";
+import NavbarCustomer from "../components/NavBarCustomer";
 
 function BookingForm() {
   const { userData } = useContext(AppContent);
@@ -76,7 +77,10 @@ function BookingForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4">
+
+    <><NavbarCustomer/>
+
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4 2xl:mx-20 xl:mx-15">
       <div className="w-full max-w-md bg-blue-950 p-8 rounded-2xl shadow-xl">
         <h1 className="text-3xl font-bold mb-8 text-center text-white">
           Booking Request
@@ -184,6 +188,7 @@ function BookingForm() {
         </div>
       )}
     </div>
+    </>
   );
 }
 

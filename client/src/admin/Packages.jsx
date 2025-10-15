@@ -4,6 +4,8 @@ import { FiEdit, FiTrash2, FiPlus, FiRefreshCw } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
+import NavbarAdmin from "../components/NavbarAdmin";
+
 const API_BASE = "http://localhost:4000/api/packages";
 
 function Packages() {
@@ -66,6 +68,9 @@ function Packages() {
   return (
 
     <>
+
+    <NavbarAdmin />
+
     <div className="min-h-screen bg-gray-100 text-gray-900 py-10 px-4 2xl:min-w-[180px] 2xl:mx-20 xl:mx-15">
       <div className="max-w-6xl mx-auto">
         

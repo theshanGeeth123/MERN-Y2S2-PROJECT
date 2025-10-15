@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom"; 
 
-import NavbarCustomer from '../components/NavbarCustomer';
+import NavBarCustomer from '../components/NavBarCustomer';
 
 const API_BASE = "http://localhost:4000/api/packages";
 
@@ -47,8 +47,8 @@ function UserPackages() {
 
   return (
 
-    <><NavbarCustomer/>
-    <div className="min-h-screen bg-gray-200 py-10 px-4 2xl:mx-30 xl:mx-20">
+    <><NavBarCustomer/>
+    <div className="min-h-screen bg-gray-100 py-10 px-4 2xl:mx-20 xl:mx-15">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-black mb-12">
           Explore Packages
