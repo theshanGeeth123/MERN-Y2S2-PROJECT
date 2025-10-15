@@ -50,7 +50,7 @@ function CustomerQuestionModal ({ open, onClose, question, updatedQuestion, chil
             <textarea name="askedQuestion" type="text" value={askedQuestion} required onChange={(e) => setAskedQuestion(e.target.value)}
                 className="w-full rounded-xl border border-gray-300 px-4 py-10 text-sm text-gray-800 outline-none transition focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200"/>
           </div>
-          <div className="mt-4 flex justify-end flex gap-3">
+          <div className="mt-4 flex justify-end  gap-3">
             <button type="submit"
                 className="rounded-md cursor-pointer hover:bg-black bg-indigo-500 px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Update</button>
             <button type="button" onClick={onClose}
