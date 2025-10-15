@@ -56,9 +56,9 @@ const fillDemo = () => {
   return (
 
     <><NavbarAdmin/>
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-1/3 text-indigo-300 h-[75vh]">
-      <div className="w-full flex justify-end"><X className="w-6 h-6 text-gray-700 cursor-pointer flex justify-end" onClick={handleClose} /></div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100 ">
+      <div className="bg-slate-900 p-10 rounded-2xl shadow-lg w-full sm:w-1/3 text-indigo-300 h-[80vh] ">
+      <div className=" w-full flex justify-end"><X className="w-6 h-6 text-gray-700 cursor-pointer flex justify-end" onClick={handleClose} /></div>
         <h2 className="text-3xl font-semibold text-white text-center mb-6">
           Add New Rental
         </h2>
@@ -137,7 +137,7 @@ const fillDemo = () => {
 
   <button
     type="submit"
-    className="sm:w-1/3 py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium"
+    className="sm:w-1/3 py-2.5 rounded-full bg-gradient-to-r from-indigo-500 to-indigo-900 text-white font-medium "
   >
     Add Rental
   </button>
