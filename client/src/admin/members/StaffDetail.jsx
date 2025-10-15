@@ -3,6 +3,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 
+import NavbarAdmin from "../../components/NavbarAdmin";
+
 const API_BASE = "http://localhost:4000/api/staff";
 
 function StaffDetail() {
@@ -104,7 +106,10 @@ function StaffDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 py-6">
+
+    <><NavbarAdmin/>
+
+    <div className="min-h-screen bg-gray-50 text-gray-900 py-6 2xl:mx-20 xl:mx-15">
       <div className="mx-auto max-w-5xl px-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
@@ -313,6 +318,7 @@ function StaffDetail() {
         )}
       </div>
     </div>
+    </>
   );
 }
 
