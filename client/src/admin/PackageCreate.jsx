@@ -101,7 +101,6 @@ function PackageCreate() {
         features: form.features.split(",").map(f => f.trim()),
       });
 
-      
       alert("Package added successfully!");
       navigate("/admin/packages");
 
@@ -109,6 +108,28 @@ function PackageCreate() {
       console.error(err);
       alert("Failed to create package");
     }
+  };
+
+  // ✅ Demo button handler
+  const fillDemoData = () => {
+    setForm({
+      title: "Pawani Uthsara Wedding Package",
+      description:
+        "A premium full-day wedding photography package for Pawani and Uthsara. Includes pre-shoot, ceremony, and reception coverage with professional editing.",
+      price: "125000",
+      duration: "8",
+      features:
+        "Professional editing, Drone coverage, 2 photographers, 1 videographer, 200 edited photos, Online album access",
+      image: "https://i.postimg.cc/1RCGgyQM/image2.jpg"
+    });
+    setErrors({
+      title: "",
+      description: "",
+      price: "",
+      duration: "",
+      features: "",
+      image: ""
+    });
   };
 
   const renderInput = (label, name, type = "text", rows) => (
@@ -137,45 +158,57 @@ function PackageCreate() {
   );
 
   return (
+    <>
+      <NavbarAdmin />
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="mx-auto max-w-md px-3">
+          <h1 className="text-2xl font-bold text-blue-900 mb-2">📸 Add New Package</h1>
+          <p className="text-sm text-neutral-500 mb-4">
+            Add a new photography package with details and pricing.
+          </p>
 
-    <><NavbarAdmin/>
+          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-4 border border-neutral-200">
+            <div className="grid gap-3">
+              {renderInput("Title", "title")}
+              {renderInput("Description", "description", "textarea", 4)}
+              {renderInput("Price (Rs.)", "price", "number")}
+              {renderInput("Shoot Duration (Hours)", "duration", "number")}
+              {renderInput("Features", "features", "textarea", 4)}
+              {renderInput("Image URL", "image")}
+            </div>
 
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="mx-auto max-w-md px-3">
-        <h1 className="text-2xl font-bold text-blue-900 mb-2">📸 Add New Package</h1>
-        <p className="text-sm text-neutral-500 mb-4">Add a new photography package with details and pricing.</p>
+            <div className="flex justify-between gap-2 mt-4">
+              {/* ✅ Demo Button */}
+              <button
+                type="button"
+                onClick={fillDemoData}
+                className="rounded-md bg-yellow-500 px-3 py-1 text-sm font-medium text-white hover:bg-yellow-600 transition"
+              >
+                Demo
+              </button>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-4 border border-neutral-200">
-          <div className="grid gap-3">
-            {renderInput("Title", "title")}
-            {renderInput("Description", "description", "textarea", 4)}
-            {renderInput("Price (Rs.)", "price", "number")}
-            {renderInput("Shoot Duration (Hours)", "duration", "number")}
-            {renderInput("Features", "features", "textarea", 4)}
-            {renderInput("Image URL", "image")}
-          </div>
-
-          <div className="flex justify-end gap-2 mt-4">
-            <button
-              type="button"
-              onClick={() => {
-                setForm({ title: "", description: "", price: "", duration: "", features: "", image: "" });
-                setErrors({ title: "", description: "", price: "", duration: "", features: "", image: "" });
-              }}
-              className="rounded-md border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-800 hover:bg-neutral-100 transition"
-            >
-              Clear
-            </button>
-            <button
-              type="submit"
-              className="rounded-md bg-blue-900 px-3 py-1 text-sm font-medium text-white hover:bg-blue-800 transition"
-            >
-              Create
-            </button>
-          </div>
-        </form>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForm({ title: "", description: "", price: "", duration: "", features: "", image: "" });
+                    setErrors({ title: "", description: "", price: "", duration: "", features: "", image: "" });
+                  }}
+                  className="rounded-md border border-neutral-300 bg-white px-3 py-1 text-sm text-neutral-800 hover:bg-neutral-100 transition"
+                >
+                  Clear
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-md bg-blue-900 px-3 py-1 text-sm font-medium text-white hover:bg-blue-800 transition"
+                >
+                  Create
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
     </>
   );
 }
