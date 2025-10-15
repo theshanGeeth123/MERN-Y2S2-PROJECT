@@ -2,32 +2,18 @@
 import React, { useRef, useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  FaBars,
-  FaTimes,
-  FaShoppingBag,
-  FaShoppingCart,
-  FaCreditCard,
-  FaClipboardList,
-  FaBell,
-  FaCommentDots,
-  FaQuestionCircle,
-  FaBookOpen,
-  FaBoxOpen,
-  FaUser,
-  FaSignOutAlt,
-  FaHome,
-  FaRobot 
+  FaBars, FaTimes, FaShoppingBag, FaShoppingCart, FaCreditCard, FaClipboardList,
+  FaBell, FaCommentDots, FaQuestionCircle, FaBookOpen, FaBoxOpen, FaUser,
+  FaSignOutAlt, FaHome, FaRobot
 } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../../context/AppContext";
 import { ShoppingBag, Star, Calendar, Quote, User } from "lucide-react";
 
-
-
 const links = [
-  { label: "Home", path: "/main-home", icon: <FaHome  /> },
-  { label: "AI Tools", path: "/ai/tools", icon: <FaRobot   /> },
+  { label: "Home", path: "/main-home", icon: <FaHome /> },
+  { label: "AI Tools", path: "/ai/tools", icon: <FaRobot /> },
   { label: "View Products", path: "/products", icon: <FaShoppingBag /> },
   { label: "Packages", path: "/userpackages", icon: <FaBoxOpen /> },
   { label: "My Bookings", path: "/my-bookings", icon: <FaBookOpen /> },
@@ -47,6 +33,7 @@ const CustomerHome = () => {
   const [loggingOut, setLoggingOut] = useState(false);
   const [loading, setLoading] = useState(false);
   const [feedbacks, setFeedbacks] = useState([]);
+  const [confirmOpen, setConfirmOpen] = useState(false); // NEW
 
   const { backendUrl, userData, setIsLoggedin, setUserData } =
     useContext(AppContent);
@@ -69,31 +56,29 @@ const CustomerHome = () => {
   const loadAllFeedbacks = async () => {
     setLoading(true);
     try {
-      const data = await axios.get(`http://localhost:4000/api/user/feedback`);
-      if (data.status=="200") {
-         let feedbackList = Array.isArray(data) ? data :Array.isArray(data.data) ? data.data : data.data.data || [];
-         feedbackList.reverse();
-         setFeedbacks(feedbackList);
+      const res = await axios.get(`http://localhost:4000/api/user/feedback`);
+      if (res.status === 200) {
+        let feedbackList = Array.isArray(res) ? res
+          : Array.isArray(res.data) ? res.data
+          : res.data.data || [];
+        feedbackList.reverse();
+        setFeedbacks(feedbackList);
       } else {
-         toast.error(data.message);
+        toast.error(res.message);
       }
-      setLoading(false);
     } catch (e) {
-      setLoading(false);
       toast.error("Error occurred: " + e);
+    } finally {
+      setLoading(false);
     }
   };
 
   const PartialStar = ({ value = 0 }) => {
-    const percent = Math.min(Math.max((value / 5) * 100, 0), 100); 
+    const percent = Math.min(Math.max((value / 5) * 100, 0), 100);
     return (
       <div className="relative h-5 w-5">
         <Star className="absolute top-0 left-0 h-5 w-5 text-gray-300" />
-
-        <div
-          className="absolute top-0 left-0 h-5 overflow-hidden"
-          style={{ width: `${percent}%` }}
-        >
+        <div className="absolute top-0 left-0 h-5 overflow-hidden" style={{ width: `${percent}%` }}>
           <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
         </div>
       </div>
@@ -187,7 +172,7 @@ const CustomerHome = () => {
               <NavItem
                 icon={<FaSignOutAlt />}
                 label={loggingOut ? "Logging out..." : "Logout"}
-                onClick={logout}
+                onClick={() => setConfirmOpen(true)}  // OPEN CONFIRM
                 isLogout
               />
             </div>
@@ -259,9 +244,9 @@ const CustomerHome = () => {
                     <NavItem
                       icon={<FaSignOutAlt />}
                       label={loggingOut ? "Logging out..." : "Logout"}
-                      onClick={async () => {
+                      onClick={() => {
                         setMobileOpen(false);
-                        await logout();
+                        setConfirmOpen(true); // OPEN CONFIRM IN MOBILE
                       }}
                       isLogout
                     />
@@ -331,7 +316,7 @@ const CustomerHome = () => {
                         <div className="flex-1 flex flex-col">
                           <header className="mt-2 mb-3 flex items-start justify-between gap-3">
                             <h4 className="text-sm font-semibold text-gray-900">
-                              {(fb.selectedPhotographer )}
+                              {(fb.selectedPhotographer)}
                             </h4>
                             <div className="flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1">
                               <span className="text-xs font-medium text-gray-500">{fb.rate}/5</span>
@@ -355,7 +340,7 @@ const CustomerHome = () => {
                           <div>
                             <span className="inline-flex items-center gap-1">
                               <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                              {fb.createdAt ? new Date(fb.createdAt).toISOString().split("T")[0]  : ""}
+                              {fb.createdAt ? new Date(fb.createdAt).toISOString().split("T")[0] : ""}
                             </span>
                           </div>
                         </footer>
@@ -368,6 +353,20 @@ const CustomerHome = () => {
           </div>
         </main>
       </div>
+
+      {/* CONFIRM LOGOUT MODAL */}
+      <ConfirmModal
+        open={confirmOpen}
+        title="Confirm logout"
+        description="Are you sure you want to log out? You’ll need to sign in again to access your account."
+        confirmText={loggingOut ? "Logging out..." : "Yes, log me out"}
+        cancelText="Cancel"
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={async () => {
+          setConfirmOpen(false);
+          await logout();
+        }}
+      />
     </div>
   );
 };
@@ -386,16 +385,63 @@ function NavItem({ icon, label, onClick, isLogout = false }) {
     >
       <span
         className={`inline-flex h-10 w-10 items-center justify-center rounded-lg 
-          ${
-            isLogout
-              ? "bg-gray-800 text-red-400"
-              : "bg-gray-800 text-gray-400"
-          }`}
+          ${isLogout ? "bg-gray-800 text-red-400" : "bg-gray-800 text-gray-400"}`}
       >
         {icon}
       </span>
       <span>{label}</span>
     </button>
+  );
+}
+
+/** Simple accessible confirmation modal */
+function ConfirmModal({
+  open,
+  title = "Are you sure?",
+  description,
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  onConfirm,
+  onCancel,
+}) {
+  if (!open) return null;
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirm-title"
+      aria-describedby="confirm-desc"
+    >
+      <div className="absolute inset-0 bg-black/50" onClick={onCancel} />
+      <div className="relative w-full sm:w-[28rem] bg-white rounded-2xl shadow-xl p-6 m-4">
+        <h3 id="confirm-title" className="text-lg font-semibold text-gray-900">
+          {title}
+        </h3>
+        {description && (
+          <p id="confirm-desc" className="mt-2 text-sm text-gray-600">
+            {description}
+          </p>
+        )}
+        <div className="mt-6 flex items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+          >
+            {cancelText}
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+            autoFocus
+          >
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
