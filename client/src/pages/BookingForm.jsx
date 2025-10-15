@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { AppContent } from "../context/AppContext";
-import NavbarCustomer from "../components/NavBarCustomer";
+import NavbarCustomer from "../components/NavbarCustomer";
 
 function BookingForm() {
   const { userData } = useContext(AppContent);

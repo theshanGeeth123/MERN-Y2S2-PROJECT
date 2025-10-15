@@ -113,14 +113,14 @@ function PackageCreate() {
   // ✅ Demo button handler
   const fillDemoData = () => {
     setForm({
-      title: "Pawani Uthsara Wedding Package",
+      title: "Baby Photoshoot Package",
       description:
-        "A premium full-day wedding photography package for Pawani and Uthsara. Includes pre-shoot, ceremony, and reception coverage with professional editing.",
-      price: "125000",
-      duration: "8",
+        "Capture precious moments of your baby with a short and fun session.",
+      price: "25000",
+      duration: "2",
       features:
-        "Professional editing, Drone coverage, 2 photographers, 1 videographer, 200 edited photos, Online album access",
-      image: "https://i.postimg.cc/1RCGgyQM/image2.jpg"
+        "50+ Edited Photos, Indoor/Outdoor Options, Cute Props and Costumes, Optional Printed ",
+      image: "https://i.postimg.cc/9MvzDnsF/Whats-App-Image-2025-09-02-at-09-55-14.jpg"
     });
     setErrors({
       title: "",
