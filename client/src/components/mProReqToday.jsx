@@ -1,71 +1,78 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRequestStore } from "../mstore/mRequestStore";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import logo from "./Main_logo.png"; 
+import logo from "./Main_logo.png";
 
-const MProReqToday = () => {
+const MProReqByDate = () => {
   const { processedRequests = [], fetchAllProcessedRequests, loading, error } =
     useRequestStore();
+  const [selectedDate, setSelectedDate] = useState("");
   const containerRef = useRef();
 
   useEffect(() => {
     fetchAllProcessedRequests("all");
   }, [fetchAllProcessedRequests]);
 
-  const handleDownloadTodayPDF = () => {
-    if (!containerRef.current) return;
+  const handleGeneratePDF = () => {
+    if (!selectedDate) {
+      alert("Please select a date first!");
+      return;
+    }
 
     const pdf = new jsPDF({ orientation: "portrait", unit: "px", format: "a4" });
-    const today = new Date();
-    const todayStr = today.toISOString().split("T")[0];
-    const formattedDate = today.toLocaleDateString();
-    const formattedTime = today.toLocaleTimeString();
+    const formattedDate = new Date(selectedDate).toLocaleDateString();
+    const formattedTime = new Date().toLocaleTimeString();
 
-    const todayRequests = processedRequests.filter((r) => {
+    const filteredRequests = processedRequests.filter((r) => {
       if (!r.processedAt) return false;
-      return new Date(r.processedAt).toISOString().split("T")[0] === todayStr;
+      return (
+        new Date(r.processedAt).toISOString().split("T")[0] === selectedDate
+      );
     });
 
-    // Logo
-    const imgWidth = 60; // adjust as needed
-    const imgHeight = 60;
-    pdf.addImage(logo, "PNG", 40, 20, imgWidth, imgHeight);
+    // Header Section
+    const imgWidth = 80;
+    const imgHeight = 80;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgX = (pageWidth - imgWidth) / 2; 
+    const imgY = 20;
 
-    // Header 
+    // logo
+    pdf.addImage(logo, "PNG", imgX, imgY, imgWidth, imgHeight);
+
+    // Text (Header)
+    let textStartY = imgY + imgHeight + 10;
     pdf.setFontSize(18);
-    pdf.text("JW-Studio - Daily Rental Requests Report", 120, 45);
+    pdf.text("JW-Studio - Daily Rental Requests Report", 40, textStartY);
+
     pdf.setFontSize(12);
-    pdf.text(`Date: ${formattedDate}`, 120, 65);
-    pdf.text(`Generated at: ${formattedTime}`, 120, 80);
+    pdf.text(`Report Date: ${formattedDate}`, 40, textStartY + 20);
+    pdf.text(`Generated at: ${formattedTime}`, 40, textStartY + 35);
 
-    // line under header
+    // Horizontal line under header
     pdf.setDrawColor(100);
-    pdf.line(40, 90, pdf.internal.pageSize.getWidth() - 40, 90);
+    pdf.line(40, textStartY + 45, pageWidth - 40, textStartY + 45);
 
-    // Summary
-    const accepted = todayRequests.filter((r) => r.status === "accept");
-    const rejected = todayRequests.filter((r) => r.status === "reject");
+
+    // Summary Section 
+    const accepted = filteredRequests.filter((r) => r.status === "accept");
+    const rejected = filteredRequests.filter((r) => r.status === "reject");
     const totalIncome = accepted.reduce((sum, r) => sum + (r.amount || 0), 0);
     const avgDeposit = accepted.length ? totalIncome / accepted.length : 0;
 
-    const summaryY = 110;
+    let y = textStartY + 70;
     pdf.setFontSize(13);
-    pdf.text("Summary", 40, summaryY);
-
+    pdf.text("Summary", 40, y);
     pdf.setFontSize(11);
-    pdf.text(`Total Requests: ${todayRequests.length}`, 40, summaryY + 20);
-    pdf.text(`Accepted Requests: ${accepted.length}`, 40, summaryY + 35);
-    pdf.text(`Rejected Requests: ${rejected.length}`, 40, summaryY + 50);
-    pdf.text(
-      `Total Income (Accepted): Rs. ${totalIncome.toFixed(2)}`,
-      40,
-      summaryY + 65
-    );
-    pdf.text(`Average Deposit: Rs. ${avgDeposit.toFixed(2)}`, 40, summaryY + 80);
+    pdf.text(`Total Requests: ${filteredRequests.length}`, 40, (y += 20));
+    pdf.text(`Accepted Requests: ${accepted.length}`, 40, (y += 15));
+    pdf.text(`Rejected Requests: ${rejected.length}`, 40, (y += 15));
+    pdf.text(`Total Income (Accepted): Rs. ${totalIncome.toFixed(2)}`, 40, (y += 15));
+    pdf.text(`Average Deposit: Rs. ${avgDeposit.toFixed(2)}`, 40, (y += 15));
 
-    // Table 
-    const tableData = todayRequests.map((req) => [
+    // Table Section
+    const tableData = filteredRequests.map((req) => [
       Array.isArray(req.items)
         ? req.items.map((i) => i.name).join(", ")
         : req.items || "-",
@@ -76,7 +83,7 @@ const MProReqToday = () => {
     ]);
 
     autoTable(pdf, {
-      startY: summaryY + 100,
+      startY: y + 25,
       head: [["Items", "Amount", "Email", "Status", "Processed At"]],
       body: tableData,
       styles: { fontSize: 10, cellPadding: 4 },
@@ -93,86 +100,91 @@ const MProReqToday = () => {
       pageHeight - 20
     );
 
-    pdf.save(`Daily_Rental_Requests_${todayStr}.pdf`);
+    pdf.save(`Daily_Rental_Requests_${selectedDate}.pdf`);
   };
 
   if (loading) return <p>Loading processed requests...</p>;
   if (error) return <p className="text-red-600">{error}</p>;
 
-  // Filter Today’s Requests
-  const todayStr = new Date().toISOString().split("T")[0];
-  const todayRequests = processedRequests.filter((r) => {
-    if (!r.processedAt) return false;
-    return new Date(r.processedAt).toISOString().split("T")[0] === todayStr;
+  // Filter for table preview
+  const filteredRequests = processedRequests.filter((r) => {
+    if (!selectedDate || !r.processedAt) return false;
+    return new Date(r.processedAt).toISOString().split("T")[0] === selectedDate;
   });
 
   return (
     <div className="bg-white shadow-md rounded-xl p-6 w-full">
       <h1 className="text-2xl font-semibold text-slate-800 mb-6 text-center">
-        Processed Requests of Today
+        Generate Rental Requests Report by Date
       </h1>
 
-      <div ref={containerRef} className="overflow-x-auto">
-        <table className="min-w-full text-left text-sm border">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="py-2 px-4 border">Items</th>
-              <th className="py-2 px-4 border">Amount</th>
-              <th className="py-2 px-4 border">Email</th>
-              <th className="py-2 px-4 border">Status</th>
-              <th className="py-2 px-4 border">Processed At</th>
-            </tr>
-          </thead>
-          <tbody>
-            {todayRequests.length === 0 ? (
-              <tr>
-                <td className="py-2 px-4 border" colSpan={5}>
-                  No processed requests today.
-                </td>
-              </tr>
-            ) : (
-              todayRequests.map((req) => (
-                <tr key={req._id}>
-                  <td className="py-2 px-4 border">
-                    {Array.isArray(req.items)
-                      ? req.items.map((i) => i.name).join(", ")
-                      : req.items}
-                  </td>
-                  <td className="py-2 px-4 border">{req.amount ?? "-"}</td>
-                  <td className="py-2 px-4 border">{req.email ?? "-"}</td>
-                  <td
-                    className={`py-2 px-4 border font-semibold ${
-                      req.status === "accept"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {req.status ?? "-"}
-                  </td>
-                  <td className="py-2 px-4 border">
-                    {req.processedAt
-                      ? new Date(req.processedAt).toLocaleString()
-                      : "-"}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      <div className="flex items-center justify-center gap-4 mb-6">
+        <input
+          type="date"
+          value={selectedDate}
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="border p-2 rounded"
+        />
+        <button
+          onClick={handleGeneratePDF}
+          className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
+        >
+          Generate PDF
+        </button>
       </div>
 
-      {todayRequests.length > 0 && (
-        <div className="text-center mt-6">
-          <button
-            onClick={handleDownloadTodayPDF}
-            className="bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-700"
-          >
-            Download Daily Report
-          </button>
+      {selectedDate && (
+        <div ref={containerRef} className="overflow-x-auto">
+          <table className="min-w-full text-left text-sm border">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-2 px-4 border">Items</th>
+                <th className="py-2 px-4 border">Amount</th>
+                <th className="py-2 px-4 border">Email</th>
+                <th className="py-2 px-4 border">Status</th>
+                <th className="py-2 px-4 border">Processed At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRequests.length === 0 ? (
+                <tr>
+                  <td className="py-2 px-4 border text-center" colSpan={5}>
+                    No processed requests on this date.
+                  </td>
+                </tr>
+              ) : (
+                filteredRequests.map((req) => (
+                  <tr key={req._id}>
+                    <td className="py-2 px-4 border">
+                      {Array.isArray(req.items)
+                        ? req.items.map((i) => i.name).join(", ")
+                        : req.items}
+                    </td>
+                    <td className="py-2 px-4 border">{req.amount ?? "-"}</td>
+                    <td className="py-2 px-4 border">{req.email ?? "-"}</td>
+                    <td
+                      className={`py-2 px-4 border font-semibold ${
+                        req.status === "accept"
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {req.status ?? "-"}
+                    </td>
+                    <td className="py-2 px-4 border">
+                      {req.processedAt
+                        ? new Date(req.processedAt).toLocaleString()
+                        : "-"}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
   );
 };
 
-export default MProReqToday;
+export default MProReqByDate;
