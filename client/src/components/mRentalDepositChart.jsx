@@ -206,7 +206,7 @@ const mRentalDepositChart = ({ chartData = [], loading, error }) => {
   return (
     <div className="bg-white shadow-md rounded-xl p-6 w-full">
       <h2 className="text-lg font-semibold text-slate-800 mb-4">
-        Rental Deposit Chart (Custom Date Range)
+        Rental Deposit Chart
       </h2>
 
       {/* Date Range Inputs */}
