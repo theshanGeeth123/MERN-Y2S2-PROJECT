@@ -76,7 +76,7 @@ export const useRentItemsStore = create((set, get) => ({
   
    rentalCart: JSON.parse(localStorage.getItem("rentalCart")) || [],
 
-  // Set user email and load cart for that user 
+  // user email and load cart for that user 
   setUserEmail: (email) => {
     set({ userEmail: email });
 
