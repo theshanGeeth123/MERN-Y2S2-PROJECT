@@ -115,7 +115,7 @@ const MProReqByDate = () => {
   return (
     <div className="bg-white shadow-md rounded-xl p-6 w-full">
       <h1 className="text-2xl font-semibold text-slate-800 mb-6 text-center">
-        Generate Rental Requests Report by Date
+        Daily Rental Requests
       </h1>
 
       <div className="flex items-center justify-center gap-4 mb-6">
