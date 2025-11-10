@@ -1,4 +1,4 @@
-// client/src/AI/components/BackgroundRemovalForm.jsx
+
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { removeBackground } from "../services/clipdropBgService";
