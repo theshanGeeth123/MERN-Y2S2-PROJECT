@@ -1,4 +1,4 @@
-// client/src/AI/components/ImageGeneratorForm.jsx
+
 
 import React, { useEffect, useState } from "react";
 import { generateImage } from "../services/clipdropService";
@@ -10,7 +10,7 @@ const ImageGeneratorForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Cleanup
+  
   useEffect(() => {
     return () => {
       if (imageUrl) URL.revokeObjectURL(imageUrl);

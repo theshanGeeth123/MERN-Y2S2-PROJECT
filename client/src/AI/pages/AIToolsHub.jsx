@@ -1,8 +1,8 @@
-// client/src/AI/pages/AIToolsHub.jsx
+
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Image, Scissors, Sparkles } from "lucide-react"; // modern icons
+import { Image, Scissors, Sparkles } from "lucide-react"; 
 
 import NavbarCustomer from "../../components/NavbarCustomer";
 
