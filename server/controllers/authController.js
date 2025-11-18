@@ -19,7 +19,7 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ Include age, phone, address here
+    
     const user = new userModel({ 
       name, 
       email, 
@@ -42,15 +42,7 @@ export const register = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // Send welcome email
-    // const mailOptions = {
-    //   from: process.env.SENDER_EMAIL,
-    //   to: email,
-    //   subject: 'Welcome to Greatstack',
-    //   text: `Welcome to Greatstack website, Your account has been created with email ID: ${email}`
-    // };
-
-    // await tranporter.sendMail(mailOptions);
+    
 
     return res.json({ success: true });
 
