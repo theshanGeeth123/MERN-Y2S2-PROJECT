@@ -1,49 +1,76 @@
-JW-Studio Management System 
+# JW-Studio Management System
 
-This is a full-stack MERN application built using:
+JW-Studio Management System is a full-stack MERN application designed to manage studio operations efficiently.  
+It integrates modern web technologies, secure authentication, payment processing, email services, and AI-powered features.
 
-Frontend: React + Vite
+---
 
-Backend: Node.js + Express
+## 🛠 Tech Stack
 
-Database: MongoDB
+### Frontend
+- React
+- Vite
 
-Authentication: JWT
+### Backend
+- Node.js
+- Express
 
-Email Service: Gmail SMTP
+### Database
+- MongoDB
 
-Payments: Stripe
+### Authentication
+- JSON Web Tokens (JWT)
 
-AI Integration: Google Gemini API
+### Email Service
+- Gmail SMTP
 
-Installation & Running the Project
-1️⃣ Clone the Repository
+### Payments
+- Stripe
 
+### AI Integration
+- Google Gemini API
+
+---
+
+## 🚀 Installation & Running the Project
+
+### 1️⃣ Clone the Repository
+
+```bash
 git clone https://github.com/theshanGeeth123/MERN-Y2S2-PROJECT.git
 cd MERN-Y2S2-PROJECT
 
-2️⃣ Install Backend Dependencies
+2️⃣ Backend Setup
+
+Navigate to the server directory and install dependencies:
 
 cd server
 npm install
 
-Start Backend ->
+Start the backend server:
+
 npm run dev
 # or
 node server.js
 
-Server will run on:http://localhost:4000
+The backend server will run on: http://localhost:4000
 
-3️⃣ Install Frontend Dependencies
+3️⃣ Frontend Setup
+
+Navigate to the client directory and install dependencies:
 
 cd client
 npm install
 
-Start Frontend -> 
+Start the frontend application:
+
 npm run dev
 
-Frontend will run on:http://localhost:5173
+The frontend will run on: http://localhost:5173
 
+
+⚙️ Environment Configuration
+Server Environment Variables
 
 Create a file named .env inside the server folder.
 
@@ -69,8 +96,8 @@ SENDER_EMAIL=your_email@gmail.com
 STRIPE_SECRET_KEY=your_stripe_secret_key
 
 
-Create a file named .env inside the client folder.
 
+Create a file named .env inside the client folder.
 
 # Backend API URL
 VITE_BACKEND_URL=http://localhost:4000
@@ -82,12 +109,13 @@ VITE_GEMINI_API_KEY=your_gemini_api_key
 # ClipDrop API
 VITE_CLIPDROP_API_KEY=your_clipdrop_api_key
 
+📌 Important Notes
 
+Ensure all environment variables are correctly configured before running the project.
 
+Do not commit .env files to version control.
 
+Use Gmail App Passwords for SMTP authentication.
 
+Keep Stripe keys and API keys private and secure.
 
-
-
-
-Create a file named .env inside the client folder.
