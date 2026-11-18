@@ -1,0 +1,6 @@
+
+# Security: never commit environment secrets or installed dependencies
+.env
+.env.*
+!.env.example
+node_modules/
